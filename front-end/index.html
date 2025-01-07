@@ -1,10 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Clínica</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Bem-vindo ao Plaquet.Ai</h1>
-    <button onclick="console.log('Clique!')">Teste</button>
+
+    <div class="form-container">
+        <form action="pacientes.html" method="post">
+            <h3><b>Login Clínica</b></h3>
+
+            <div class="input-container">
+                <label for="name">Nome:</label>
+                <input id="name" name="name" type="text" placeholder="Digite seu nome">
+            </div>
+
+            <div class="input-container">
+                <label for="cnpj">CNPJ:</label>
+                <input id="cnpj" name="cnpj" type="text" placeholder="Digite o CNPJ">
+            </div>
+
+            <div class="input-container">
+                <label for="senha">Senha:</label>
+                <input id="senha" name="senha" type="password" placeholder="Digite sua senha">
+                <span class="eye-icon" onclick="togglePassword()">👁️</span> <!-- Ícone para exibir/ocultar a senha -->
+            </div>
+
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const senhaInput = document.getElementById('senha');
+            if (senhaInput.type === "password") {
+                senhaInput.type = "text"; // Exibe a senha
+            } else {
+                senhaInput.type = "password"; // Oculta a senha
+            }
+        }
+    </script>
+    
 </body>
 </html>
