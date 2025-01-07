@@ -128,3 +128,20 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignorar arquivos de configuração de IDE
+.idea/
+.vscode/
+
+# Ignorar ambientes virtuais
+venv/
+.venv/
+
+# Ignorar modelos pesados
+*.pt
+*.h5
+*.pkl
+
+# Ignorar arquivos temporários
+*.log
+*.tmp
