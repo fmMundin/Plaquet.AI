@@ -1,4 +1,12 @@
-body {
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Clínica</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
     background-color: #eff1f0; /* Cor de fundo */
     font-family: Arial, sans-serif; /* Fonte padrão */
 }
@@ -12,11 +20,11 @@ form {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
-h3 {
+h5 {
     font-family: 'Times New Roman', Times, serif;
     color: #7e5dca;
-    font-size: 35px;
-    text-align: center;
+    font-size: 20px;
+    text-align: left;
     margin-bottom: 20px; /* Espaço abaixo do título */
 }
 
@@ -31,9 +39,9 @@ label {
 input {
     font-family: Verdana, sans-serif; 
     color: #313132; 
-    font-size: 14px; 
-    border: 1px solid #ccc; 
-    border-radius: 20px; 
+    font-size: 10px; 
+    border: 0px solid #ccc; 
+    border-radius: 0px; 
     padding: 10px; 
     width: 100%; /* Deixa os campos de input ocuparem toda a largura disponível */
     margin-bottom: 15px; /* Espaço entre os campos */
@@ -45,7 +53,7 @@ input:focus {
     outline: none; /* Remove o contorno padrão do navegador */
 }
 
-button {
+.historico{
     font-family: "Segoe UI", sans-serif;
     font-size: 16px;
     color: #eff1f0;
@@ -58,8 +66,8 @@ button {
     width: 100%; /* O botão ocupa a largura inteira */
 }
 
-button:hover {
-    background-color: #a842ff;
+.historico:hover {
+    color: #a842ff;
 }
 
 .form-container {
@@ -67,6 +75,7 @@ button:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .input-container {
@@ -81,3 +90,62 @@ button:hover {
     transform: translateY(-50%);
     cursor: pointer;
 }
+
+.link-button {
+    background: none;
+    color: #7e5dca;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .link-button:hover {
+    color: #a842ff;
+}
+
+.logo-container {
+    position: absolute;
+    top: -30px;
+    left: -30px;
+}
+
+.voltar {
+    font-family: "Segoe UI", sans-serif;
+    font-size: 16px;
+    color: #eff1f0;
+    background-color: #7e5dca;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* O botão ocupa a largura inteira */
+}
+
+.voltar:hover {
+    color: #a842ff;
+
+}
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <form action="historico.html" method="post">
+            <h5><b>Olá </b></h5>
+
+            <button type="submit" class="historico">Histórico</button>
+            <br><br>
+            <div style="text-align: center;">
+                <a href="nova_analise.html" class="link-button">Nova Análise</a>
+            </div>
+            <br><br>
+            <button type="button" class="entrar voltar" onclick="history.back()">Voltar</button>
+        </form>
+    </div>
+    <script src="../assets/js/renderer.js"></script>
+    
+</body>
+</html>

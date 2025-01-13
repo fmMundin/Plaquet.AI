@@ -1,54 +1,13 @@
-# Ignorar arquivos Python
+# Node.js 
+node_modules/
+package.json
+
+# Electron
+
+# Django & Python
 *.pyc
 __pycache__/
-*.pyo
-*.pyd
-*.env
-*.venv/
-*.db
-instance/
-*.sqlite3
+db.sqlite3
 
-# Ignorar arquivos de configuração do IDE
-.vscode/
-.idea/
-
-# Ignorar arquivos do Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Ignorar arquivos de sistema
-.DS_Store
-Thumbs.db
-
-# Ignorar arquivos de logs
-logs/
-*.log
-
-# Ignorar arquivos temporários
-*.tmp
-*.swp
-
-# Ignorar builds do Electron
-dist/
-build/
-
-# Ignorar arquivos de backup
-*.bak
-*.old
-
-# Ignorar arquivos do seu ambiente
-config.json
-.env.local
-*.lock
-
-# Ignorar resultados de treinamento e dados grandes
-data/
-output_yolo/
-weights/
-
-# Manter o README e arquivos essenciais no repositório
-!.gitignore
-!README.md
+# Ambiente virtual
+venv/

@@ -9,10 +9,14 @@
 <body>
 
     <div class="form-container">
+        <div class="logo-container">
+            <img src="C:\Users\Maria\Downloads" alt="Logo da Empresa" class="logo">
+        </div>
+
         <form action="pacientes.html" method="post">
             <h3><b>Login Clínica</b></h3>
 
-            <div class="input-container">
+            <div class="input-container"> 
                 <label for="name">Nome:</label>
                 <input id="name" name="name" type="text" placeholder="Digite seu nome">
             </div>
@@ -28,7 +32,13 @@
                 <span class="eye-icon" onclick="togglePassword()">👁️</span> <!-- Ícone para exibir/ocultar a senha -->
             </div>
 
-            <button type="submit">Entrar</button>
+            <button type="submit" class="entrar">Entrar</button>
+            <br><br>
+            <form action="nova_clinica.html" method="post">
+                <div style="text-align: center;">
+                    <button type="submit" class="link-button">Nova clínica</button>
+                </div>
+            </form>
         </form>
     </div>
 
@@ -42,6 +52,7 @@
             }
         }
     </script>
+    <script src="../assets/js/renderer.js"></script>
     
 </body>
 </html>

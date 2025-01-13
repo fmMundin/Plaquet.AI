@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Clínica</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+    background-color: #eff1f0; /* Cor de fundo */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+}
+
+form {
+    width: 400px; /* Largura do formulário */
+    margin: 50px auto; /* Centraliza o formulário na tela */
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+h3 {
+    font-family: 'Times New Roman', Times, serif;
+    color: #7e5dca;
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 20px; /* Espaço abaixo do título */
+}
+
+label {
+    font-family: Verdana, sans-serif;
+    color: #313132;
+    font-size: 14px;
+    margin-bottom: 5px; /* Espaço entre o rótulo e o campo */
+    display: block;
+}
+
+input {
+    font-family: Verdana, sans-serif; 
+    color: #313132; 
+    font-size: 14px; 
+    border: 1px solid #ccc; 
+    border-radius: 20px; 
+    padding: 10px; 
+    width: 100%; /* Deixa os campos de input ocuparem toda a largura disponível */
+    margin-bottom: 15px; /* Espaço entre os campos */
+    transition: all 0.3s ease; /* Suaviza a transição ao focar */
+}
+
+input:focus {
+    border-color: #7e5dca; /* Borda azul quando o campo é focado */
+    outline: none; /* Remove o contorno padrão do navegador */
+}
+
+.entrar {
+    font-family: "Segoe UI", sans-serif;
+    font-size: 16px;
+    color: #eff1f0;
+    background-color: #7e5dca;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* O botão ocupa a largura inteira */
+}
+
+.entar:hover {
+    color: #a842ff;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.input-container {
+    width: 100%;
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.link-button {
+    background: none;
+    color: #7e5dca;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .link-button:hover {
+    color: #a842ff;
+}
+
+.logo-container {
+    position: absolute;
+    top: -30px;
+    left: -30px;
+}
+
+select {
+    font-family: Verdana, sans-serif;
+    color: #313132;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    border-color: #7e5dca;
+    outline: none;
+}
+
+.voltar {
+    font-family: "Segoe UI", sans-serif;
+    font-size: 16px;
+    color: #eff1f0;
+    background-color: #7e5dca;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* O botão ocupa a largura inteira */
+}
+
+.voltar:hover {
+    color: #a842ff;
+
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <form action="pacientes.html" method="post">
+            <h3><b>Login Nova Clínica</b></h3>
+
+            <div class="input-container">
+                <label for="cnpj">CNPJ:</label>
+                <input id="cnpj" name="cnpj" type="text" placeholder="Digite o CNPJ">
+            </div>
+
+            <div class="input-container"> 
+                <label for="name">Nome:</label>
+                <input id="name" name="name" type="text" placeholder="Digite seu nome">
+            </div>
+
+            <div class="input-container">
+                <label for="cep">CEP:</label>
+                <input id="cep" name="cep" type="text" placeholder="Digite seu cep">
+            </div>
+
+            <div class="input-container">
+                <label for="ender">Endereço:</label>
+                <input id="ender" name="ender" type="text" placeholder="Digite seu endereço">
+            </div>
+
+            <div class="input-container">
+                <label for="cidade">Cidade:</label>
+                <input id="cidade" name="cidade" type="text" placeholder="Digite sua cidade">
+            </div>
+
+            <div class="input-container">
+                <label for="estado">Estado:</label>
+                <select name="estado">
+                    <option>AC</option>
+                    <option>AL</option>
+                    <option>AP</option>
+                    <option>AM</option>
+                    <option>BA</option>
+                    <option>CE</option>
+                    <option>DF</option>
+                    <option>ES</option>
+                    <option>GO</option>
+                    <option>MA</option>
+                    <option>MT</option>
+                    <option>MS</option>
+                    <option>MG</option>
+                    <option>PA</option>
+                    <option>PB</option>
+                    <option>PR</option>
+                    <option>PE</option>
+                    <option>PI</option>
+                    <option>RJ</option>
+                    <option>RN</option>
+                    <option>RS</option>
+                    <option>RO</option>
+                    <option>RR</option>
+                    <option>SC</option>
+                    <option>SP</option>
+                    <option>SE</option>
+                    <option>TO</option>
+                </select><br><br>
+            </div>
+
+            <div class="input-container">
+                <label for="pais">País:</label>
+                <input id="pais" name="pais" type="text" placeholder="Digite seu país">
+            </div>
+
+            <div class="input-container">
+                <label for="telefone">Telefone:</label>
+                <input id="telefone" name="telefone" type="text" placeholder="Digite seu telefone">
+            </div>
+
+            <div class="input-container">
+                <label for="email">E-mail:</label>
+                <input id="email" name="email" type="text" placeholder="Digite seu E-mail">
+            </div>
+
+            <button type="submit" class="entrar">Entrar</button> <br><br>
+            <button type="button" class="entrar voltar" onclick="history.back()">Voltar</button>
+        </form>
+    </div>
+</body>
+</html>
