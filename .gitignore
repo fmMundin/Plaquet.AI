@@ -3,11 +3,43 @@ node_modules/
 package.json
 
 # Electron
+electron/
+
 
 # Django & Python
 *.pyc
 __pycache__/
 db.sqlite3
+*.so
+*.egg
+*.egg-info
+dist/
+build/
+media/
+staticfiles/
 
 # Ambiente virtual
 venv/
+.env/
+*.env
+
+#IDEs
+*.log
+*.pot
+*.pyc
+*.~*
+*.swp
+.DS_store
+Thumbs.db
+
+#Sistema operacional
+*~
+.saas-cache
+.idea/
+.vscode/
+*.iml
+
+#Arquivos do GIT
+*.orig
+*.rej
+*.diff
