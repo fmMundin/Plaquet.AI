@@ -1,0 +1,11 @@
+### Comandos para Configuração do Ambiente
+
+40. Definir variáveis de ambiente para o Django:
+export DJANGO_SECRET_KEY='sua_chave_secreta'
+
+41. Configurar o banco de dados no arquivo `.env` usando `django-environ`:
+DATABASE_URL=postgres://usuario:senha@localhost/nome_do_banco
+SECRET_KEY='sua_chave_secreta'
+
+42. Instalar o `django-environ` para gerenciar variáveis de ambiente:
+pip install django-environ 

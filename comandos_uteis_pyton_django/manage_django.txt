@@ -1,0 +1,74 @@
+1. Iniciar o servidor de desenvolvimento:
+python manage.py runserver
+
+2. Criar um novo projeto Django:
+django-admin startproject nome_do_projeto .
+
+3. Criar um novo app Django:
+python manage.py startapp nome_do_app
+
+4. Criar as migrações para o banco de dados:
+python manage.py makemigrations
+
+5. Aplicar as migrações no banco de dados:
+python manage.py migrate
+
+6. Criar um superusuário para acessar o painel administrativo:
+python manage.py createsuperuser
+
+7. Verificar o status das migrações:
+python manage.py showmigrations
+
+8. Executar os testes de uma aplicação:
+python manage.py test
+
+9. Gerar arquivos de migração manualmente para um app específico:
+python manage.py makemigrations nome_do_app
+
+10. Migrar os bancos de dados de todos os apps:
+python manage.py migrate --all
+
+11. Limpar as migrações de um app:
+python manage.py flush
+
+12. Verificar configurações e variáveis do projeto:
+python manage.py diffsettings
+
+13. Exibir o que foi alterado no banco de dados, baseado nas migrações:
+python manage.py sqlmigrate nome_do_app nome_da_migracao
+
+14. Exibir as URLs de todas as views registradas no projeto:
+python manage.py show_urls
+
+15. Abrir o shell do Django para interagir com o projeto:
+python manage.py shell
+
+16. Gerar um script de backup do banco de dados:
+python manage.py dumpdata > dump.json
+
+17. Restaurar dados de um backup:
+python manage.py loaddata dump.json
+
+18. Atualizar os arquivos estáticos para produção (minificar, etc):
+python manage.py collectstatic
+
+19. Mostrar o estado atual das migrações de todos os apps:
+python manage.py migrate --plan
+
+20. Gerar o arquivo de log de migrações:
+python manage.py migrate --log
+
+21. Desfazer uma migração:
+python manage.py migrate nome_do_app zero
+
+22. Gerar um arquivo de dados de fixtures (JSON, XML, etc):
+python manage.py dumpdata app.model --indent 2
+
+23. Gerenciar configurações de cache:
+python manage.py dbshell
+
+24. Verificar problemas de dependências no projeto:
+python manage.py check
+
+25. Executar o comando de limpeza de migrações:
+python manage.py makemigrations --empty nome_do_app

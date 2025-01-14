@@ -1,0 +1,14 @@
+### Comandos para Testes
+
+43. Rodar os testes de todas as aplicações:
+python manage.py test
+
+44. Rodar os testes de um app específico:
+python manage.py test nome_do_app
+
+45. Rodar testes com cobertura (usando o pytest):
+pip install pytest pytest-django
+pytest
+
+46. Gerar um relatório de cobertura:
+pytest --cov=nome_do_app --cov-report=html 

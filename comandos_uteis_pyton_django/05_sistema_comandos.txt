@@ -1,0 +1,20 @@
+### Comandos do Sistema
+
+31. Verificar versões instaladas do Python e do Django:
+python --version
+python -m django --version
+
+32. Listar os diretórios e arquivos do projeto:
+ls -l
+
+33. Exibir o caminho completo de um arquivo/diretório:
+pwd
+
+34. Criar diretórios:
+mkdir nome_do_diretorio
+
+35. Editar arquivos diretamente no terminal (usando o nano):
+nano nome_do_arquivo
+
+36. Limpar o terminal:
+clear 
