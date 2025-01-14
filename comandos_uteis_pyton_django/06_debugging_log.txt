@@ -1,0 +1,26 @@
+### Comandos para Debugging e Log
+
+37. Ativar modo de depuração no Django (em settings.py):
+DEBUG = True
+
+38. Exibir mensagens de log (configuração para diferentes níveis de log):
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+39. Monitorar as consultas SQL do Django:
+python manage.py dbshell 

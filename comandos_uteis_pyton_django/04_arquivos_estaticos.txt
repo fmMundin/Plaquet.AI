@@ -1,0 +1,10 @@
+### Comandos para Arquivos Estáticos e Media
+
+28. Coletar arquivos estáticos para produção:
+python manage.py collectstatic
+
+29. Monitorar alterações em arquivos estáticos com o Django:
+python manage.py runserver --insecure
+
+30. Criar diretórios de mídia (caso não existam):
+mkdir -p media/uploads 

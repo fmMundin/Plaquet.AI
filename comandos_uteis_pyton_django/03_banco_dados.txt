@@ -1,0 +1,17 @@
+ 22. Acessar o banco de dados PostgreSQL via terminal:
+psql -U usuario -d nome_do_banco
+
+23. Listar os bancos de dados no PostgreSQL:
+\l
+
+24. Conectar a um banco de dados no PostgreSQL:
+\c nome_do_banco
+
+25. Exibir tabelas no PostgreSQL:
+\dt
+
+26. Exportar dados do banco de dados PostgreSQL para um arquivo:
+pg_dump nome_do_banco > backup.sql
+
+27. Restaurar dados do banco de dados PostgreSQL a partir de um arquivo:
+psql nome_do_banco < backup.sql

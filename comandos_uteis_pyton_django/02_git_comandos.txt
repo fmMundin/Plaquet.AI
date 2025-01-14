@@ -1,0 +1,35 @@
+10. Inicializar um repositório Git:
+git init
+
+11. Adicionar arquivos ao repositório:
+git add .
+
+12. Criar um commit:
+git commit -m "Mensagem do commit"
+
+13. Verificar o status do repositório:
+git status
+
+14. Verificar o histórico de commits:
+git log
+
+15. Criar uma nova branch:
+git branch nome_da_branch
+
+16. Mudar para uma branch existente:
+git checkout nome_da_branch
+
+17. Mudar e criar uma nova branch:
+git checkout -b nome_da_branch
+
+18. Mesclar uma branch ao branch atual:
+git merge nome_da_branch
+
+19. Puxar alterações de um repositório remoto:
+git pull origin nome_da_branch
+
+20. Enviar alterações para um repositório remoto:
+git push origin nome_da_branch
+
+21. Clonar um repositório remoto:
+git clone url_do_repositorio
