@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PlaquetaiAppConfig(AppConfig):
+class AnalisesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'plaquetai_app'
+    name = 'Analises'
