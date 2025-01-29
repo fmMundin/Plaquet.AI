@@ -3,13 +3,14 @@
 {% block title %}Página Inicial{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="container mt-4">
     <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="card-title text-contrast mb-0">Bem-vindo à PlaquetAI!</h1>
-                    <p class="text-muted mt-2">Sistema de análise de plaquetas</p>
+                    <h1 class="card-title text-contrast mb-0">Bem-vindo à Análise de Células!</h1>
+                    <p class="text-muted mt-2">Sistema de análise de células</p>
                 </div>
                 <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
                     data-bs-target="#novaAnaliseModal">
@@ -28,7 +29,7 @@
                     <h5 class="modal-title" id="novaAnaliseModalLabel">Nova Análise</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" enctype="multipart/form-data" action="{% url 'criar_analise' %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'criar_analise' %}" id="analiseForm">
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="mb-3">
@@ -42,7 +43,7 @@
                         <div class="mb-3">
                             <label for="img" class="form-label">Imagem para Análise</label>
                             <input type="file" class="form-control" id="img" name="img" accept="image/*" required>
-                            <div class="form-text">Selecione uma imagem clara das plaquetas.</div>
+                            <div class="form-text">Selecione uma imagem clara das células.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -65,11 +66,13 @@
                             <th>Título</th>
                             <th>Data de Criação</th>
                             <th>Paciente</th>
-                            <th>Imagem</th>
-                            <th>Resultado</th>
+                            <th>Imagem Original</th>
+                            <th>Tempo de Processamento</th>
                             <th>Plaquetas</th>
+                            <th>Células Brancas</th>
+                            <th>Células Vermelhas</th>
                             <th>Acurácia</th>
-                            <th>Análise</th>
+                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -77,23 +80,29 @@
                         {% for analise in analises %}
                         <tr>
                             <td>{{ analise.titulo }}</td>
-                            <td>{{ analise.data_criacao|date:"d/m/Y H:i" }}</td>
+                            <td>{{ analise.data_criacao|date:"d/m/Y H:i:s" }}</td>
                             <td>{{ analise.paciente }}</td>
-                            <td>{% if analise.img %}<img src="{{ analise.img.url }}" alt="Imagem" width="100">{% else
-                                %}-{% endif %}</td>
-                            <td>{% if analise.img_resultado %}<img src="{{ analise.img_resultado.url }}" alt="Resultado"
-                                    width="100">{% else %}-{% endif %}</td>
-                            <td>{{ analise.n_plaquetas|default:"-" }}</td>
-                            <td>{{ analise.acuracia|default:"-" }}</td>
-                            <td>{{ analise.data_analise|date:"d/m/Y H:i"|default:"-" }}</td>
                             <td>
-                                <form method="post" action="{% url 'deletar_analise' analise.id %}" class="d-inline"
-                                    onsubmit="return confirm('Tem certeza que deseja excluir esta análise?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                {% if analise.img %}
+                                <img src="{{ analise.img.url }}" alt="Imagem" class="img-thumbnail" width="100">
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>{{ analise.tempo_processamento|floatformat:2|default:"-" }}s</td>
+                            <td>{{ analise.n_plaquetas|default:"-" }}</td>
+                            <td>{{ analise.n_celulas_brancas|default:"-" }}</td>
+                            <td>{{ analise.n_celulas_vermelhas|default:"-" }}</td>
+                            <td>{{ analise.acuracia|floatformat:2|default:"-" }}%</td>
+                            <td>
+                                <span class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ analise.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" onclick="deletarAnalise('/Analises/deletar/{{ analise.id }}/', '{{ analise.titulo }}')" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -106,6 +115,46 @@
                 <div>Nenhuma análise encontrada. Comece criando uma nova análise!</div>
             </div>
             {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Erro -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel">
+                    <i class="fas fa-exclamation-circle me-2"></i>Erro
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Sucesso -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="successModalLabel">
+                    <i class="fas fa-check-circle me-2"></i>Sucesso
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -137,14 +186,110 @@
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
 
-    // Inicializar tema
+    // Remover todos os event listeners duplicados e manter apenas este
     document.addEventListener('DOMContentLoaded', function () {
+        // Inicializar tema
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         const icon = document.querySelector('.theme-switch i');
         if (icon) {
             icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
+
+        // Único manipulador de evento para o formulário
+        const form = document.getElementById('analiseForm');
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const submitButton = this.querySelector('button[type="submit"]');
+                const modal = document.getElementById('novaAnaliseModal');
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                
+                try {
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
+                    
+                    const formData = new FormData(this);
+                    const response = await fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        modalInstance.hide();
+                        showSuccess('Análise concluída com sucesso!');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        showError(data.error || 'Erro desconhecido ao processar análise');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    showError('Erro ao processar análise: ' + error);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Iniciar Análise';
+                }
+            });
+        }
     });
+
+    // Função para deletar análise
+    async function deletarAnalise(url, titulo) {
+        if (!confirm(`Tem certeza que deseja excluir a análise "${titulo}"?`)) return;
+
+        try {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro ao excluir: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showSuccess(data.message);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                throw new Error(data.error || 'Erro ao excluir análise');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showError(error.message);
+        }
+    }
+
+    // Função para mostrar mensagem de erro
+    function showError(message) {
+        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+        document.getElementById('errorMessage').textContent = message;
+        errorModal.show();
+    }
+
+    // Função para mostrar mensagem de sucesso
+    function showSuccess(message) {
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        document.getElementById('successMessage').textContent = message;
+        successModal.show();
+        setTimeout(() => {
+            successModal.hide();
+            location.reload();
+        }, 2000);
+    }
 </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 :root {
     --primary-color: #591288;
-    --secondary-color: #3498DB;
+    --secondary-color: #db34db;
     --accent-color: #E74C3C;
     --background-light: #ECF0F1;
 }
@@ -39,6 +39,9 @@ body {
     background-color: var(--background);
     color: var(--text-color);
     transition: all 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar-custom {
@@ -74,9 +77,30 @@ body {
 }
 
 .footer-custom {
-    background: var(--primary-color);
-    color: white;
-    padding: 1.5rem 0;
+    background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+    color: #fff;
+    margin-top: auto;
+}
+
+.footer-custom ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-custom ul li a:hover {
+    color: #e9ecef !important;
+}
+
+.footer-custom hr {
+    opacity: 0.2;
+}
+
+.footer-custom i.fas,
+.footer-custom i.fab {
+    color: #a8c7ff;
+}
+
+.footer-custom a:hover {
+    opacity: 0.8;
 }
 
 .btn-custom {
@@ -228,4 +252,8 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
     color: #ffffff;
+}
+
+main {
+    flex: 1;
 }

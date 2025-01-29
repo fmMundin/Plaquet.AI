@@ -1,45 +1,52 @@
-# Node.js 
-node_modules/
-package.json
-
-# Electron
-electron/
-
-
-# Django & Python
-*.pyc
-__pycache__/
-db.sqlite3
-*.so
-*.egg
-*.egg-info
-dist/
-build/
-media/
-staticfiles/
-
-# Ambiente virtual
-venv/
-.env/
-*.env
-
-#IDEs
+# Django
 *.log
 *.pot
 *.pyc
-*.~*
-*.swp
-.DS_store
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts
+
+# OS
+.DS_Store
 Thumbs.db
 
-#Sistema operacional
-*~
-.saas-cache
-.idea/
-.vscode/
-*.iml
-
-#Arquivos do GIT
-*.orig
-*.rej
-*.diff
+# Temp
+*.tmp
+*.temp
