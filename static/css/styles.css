@@ -10,29 +10,21 @@
     --secondary-color: #9c27b0;
     --accent-color: #e91e63;
     --background: #f5f5f5;
-    --text-color: #333333;
-    --text-muted: #666666;
+    --text-color: #333;
     --card-bg: #ffffff;
     --border-color: #e0e0e0;
     --table-stripe: #f8f3ff;
-    --modal-bg: #ffffff;
-    --input-bg: #ffffff;
-    --title-color: var(--text-color); /* Set title color to text color in light theme */
 }
 
 :root[data-theme="dark"] {
     --primary-color: #9c27b0;
-    --secondary-color: #ba68c8;
-    --accent-color: #f06292;
+    --secondary-color: #6a1b9a;
+    --accent-color: #e91e63;
     --background: #121212;
     --text-color: #ffffff;
-    --text-muted: #bbbbbb;
     --card-bg: #1e1e1e;
-    --border-color: #333333;
+    --border-color: #333;
     --table-stripe: #2a2a2a;
-    --modal-bg: #2d2d2d;
-    --input-bg: #333333;
-    --title-color: #ffffff; /* New variable for title color */
 }
 
 body {
@@ -118,18 +110,18 @@ body {
 }
 
 .modal-content {
-    background-color: var(--modal-bg);
+    background-color: var(--card-bg);
     color: var(--text-color);
 }
 
 .form-control {
-    background-color: var(--input-bg);
+    background-color: var(--background);
     color: var(--text-color);
     border-color: var(--border-color);
 }
 
 .form-control:focus {
-    background-color: var(--input-bg);
+    background-color: var(--background);
     color: var(--text-color);
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.25rem rgba(156, 39, 176, 0.25);
@@ -138,13 +130,11 @@ body {
 .btn-primary {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
-    color: #ffffff;
 }
 
 .btn-primary:hover {
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
-    color: #ffffff;
 }
 
 .theme-switch {
@@ -174,19 +164,10 @@ body {
 .card {
     background-color: var(--card-bg);
     border-color: var(--border-color);
-    color: var(--text-color);
-}
-
-.card-title {
-    color: var(--text-color);
-}
-
-.text-muted {
-    color: var(--text-muted) !important;
 }
 
 .alert-info {
-    background-color: rgba(156, 39, 176, 0.15);
+    background-color: rgba(156, 39, 176, 0.1);
     border-color: var(--primary-color);
     color: var(--text-color);
 }
@@ -205,27 +186,4 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-h1, h2, h3, h4, h5, h6 {
-    color: var(--title-color); /* Apply the new title color variable */
-}
-
-/* Nova classe para garantir contraste em textos importantes */
-.text-contrast {
-    color: var(--text-color) !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-/* Ajuste para os botões no tema escuro */
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    color: #ffffff;
-}
-
-.btn-primary:hover {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-    color: #ffffff;
 }
