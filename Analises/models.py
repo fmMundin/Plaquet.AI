@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+import os
 
 class Analise(models.Model):
     STATUS_CHOICES = [
@@ -21,6 +23,9 @@ class Analise(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     erro_msg = models.TextField(null=True, blank=True)
     tempo_processamento = models.FloatField(null=True, blank=True)
+    ultima_modificacao = models.DateTimeField(null=True, blank=True)
+    modificado_por = models.CharField(max_length=100, null=True, blank=True)
+    historico_modificacoes = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['-data_criacao']
@@ -30,6 +35,9 @@ class Analise(models.Model):
     def __str__(self):
         return f"{self.titulo} - {self.paciente}"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Salva a instância normalmente
+
     def delete(self, *args, **kwargs):
         # Deletar arquivos primeiro
         if self.img:
@@ -37,3 +45,14 @@ class Analise(models.Model):
         if self.img_resultado:
             self.img_resultado.delete()
         super().delete(*args, **kwargs)
+
+    def registrar_modificacao(self, alteracoes, usuario="Sistema"):
+        self.ultima_modificacao = timezone.now()
+        self.modificado_por = usuario
+        
+        # Adicionar nova entrada ao histórico
+        novo_registro = f"[{timezone.now().strftime('%d/%m/%Y %H:%M:%S')}] {usuario}: {alteracoes}\n"
+        if self.historico_modificacoes:
+            self.historico_modificacoes += novo_registro
+        else:
+            self.historico_modificacoes = novo_registro

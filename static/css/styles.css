@@ -257,3 +257,35 @@ h1, h2, h3, h4, h5, h6 {
 main {
     flex: 1;
 }
+
+/* Estilos para página de detalhes */
+.detail-image {
+    max-height: 400px;
+    width: auto;
+    object-fit: contain;
+}
+
+.metrics-card {
+    transition: transform 0.2s;
+}
+
+.metrics-card:hover {
+    transform: translateY(-5px);
+}
+
+.cell-count {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.cell-count.platelets {
+    color: var(--primary-color);
+}
+
+.cell-count.wbc {
+    color: var(--secondary-color);
+}
+
+.cell-count.rbc {
+    color: var(--accent-color);
+}

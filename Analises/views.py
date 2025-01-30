@@ -9,6 +9,8 @@ from pathlib import Path
 from scripts.infer import run_inference
 import traceback
 from django.db import transaction
+from django.core.files import File
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +42,18 @@ def criar_analise(request):
                 
                 logger.info(f"Análise criada: ID {analise.id}")
 
+                # Renomear a imagem se necessário
+                if analise.img:
+                    nome_original = os.path.basename(analise.img.name)
+                    nova_extensao = os.path.splitext(nome_original)[1]
+                    novo_nome = f"analise_{analise.id}{nova_extensao}"
+                    novo_path = os.path.join('analises', novo_nome)
+                    
+                    # Renomear o arquivo
+                    os.rename(analise.img.path, os.path.join(os.path.dirname(analise.img.path), novo_nome))
+                    analise.img.name = novo_path
+                    analise.save()  # Salvar novamente com o novo nome
+
                 try:
                     # Configurar caminhos absolutos
                     base_dir = Path(__file__).resolve().parent.parent
@@ -67,15 +81,28 @@ def criar_analise(request):
                     analise.tempo_processamento = round(results['processing_time'], 2)
                     analise.data_analise = datetime.now()
                     analise.status = 'concluido'
-                    
+
                     # Salvar imagem resultado
-                    result_img_path = Path(output_dir) / 'inference_output' / analise.img.name
-                    if result_img_path.exists():
-                        with open(result_img_path, 'rb') as f:
-                            analise.img_resultado.save(
-                                f"resultado_{analise.img.name}",
-                                f
-                            )
+                    try:
+                        output_dir = Path(settings.MEDIA_ROOT) / 'resultados'
+                        output_dir.mkdir(parents=True, exist_ok=True)
+                        
+                        result_img_path = Path(output_dir) / 'inference_output' / analise.img.name
+                        if result_img_path.exists():
+                            novo_nome = f"resultado_{analise.id}_{os.path.basename(analise.img.name)}"
+                            novo_path = output_dir / novo_nome
+                            
+                            # Copiar arquivo para o diretório de mídia
+                            import shutil
+                            shutil.copy2(result_img_path, novo_path)
+                            
+                            # Salvar caminho relativo no modelo
+                            relativo_path = os.path.join('resultados', novo_nome)
+                            analise.img_resultado.name = relativo_path
+                            
+                    except Exception as img_error:
+                        logger.error(f"Erro ao salvar imagem resultado: {str(img_error)}")
+                        # Não interromper o processo se falhar ao salvar a imagem
                     
                     analise.save()
                     logger.info("Análise concluída com sucesso")
@@ -120,5 +147,46 @@ def deletar_analise(request, analise_id):
             return JsonResponse({
                 'success': False,
                 'error': f'Erro ao excluir análise: {str(e)}'
+            })
+    return JsonResponse({'success': False, 'error': 'Método não permitido'})
+
+def detalhes_analise(request, analise_id):
+    try:
+        analise = get_object_or_404(Analise, pk=analise_id)
+        return render(request, 'Analises/detalhes.html', {
+            'analise': analise
+        })
+    except Exception as e:
+        logger.error(f"Erro ao exibir detalhes da análise {analise_id}: {str(e)}", exc_info=True)
+        messages.error(request, f'Erro ao exibir detalhes: {str(e)}')
+        return redirect('index')
+
+def editar_analise(request, analise_id):
+    if request.method == 'POST':
+        try:
+            analise = get_object_or_404(Analise, pk=analise_id)
+            dados_antigos = f"Título: {analise.titulo}, Paciente: {analise.paciente}"
+            
+            # Atualizar dados
+            analise.titulo = request.POST.get('titulo', analise.titulo)
+            analise.paciente = request.POST.get('paciente', analise.paciente)
+            
+            # Registrar modificação
+            alteracoes = f"Alteração nos dados (Anterior: {dados_antigos})"
+            analise.registrar_modificacao(alteracoes)
+            
+            analise.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Análise atualizada com sucesso!',
+                'ultima_modificacao': analise.ultima_modificacao.strftime('%d/%m/%Y %H:%M:%S'),
+                'modificado_por': analise.modificado_por
+            })
+        except Exception as e:
+            logger.error(f"Erro ao editar análise: {str(e)}", exc_info=True)
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
             })
     return JsonResponse({'success': False, 'error': 'Método não permitido'})

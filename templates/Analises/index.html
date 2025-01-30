@@ -100,9 +100,25 @@
                                 </span>
                             </td>
                             <td>
-                                <button type="button" onclick="deletarAnalise('/Analises/deletar/{{ analise.id }}/', '{{ analise.titulo }}')" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="btn-group">
+                                    {% if analise.status == 'concluido' %}
+                                    <a href="{% url 'detalhes_analise' analise.id %}" class="btn btn-info btn-sm" title="Ver detalhes">
+                                        <i class="fas fa-search"></i>
+                                    </a>
+                                    {% endif %}
+                                    <button type="button" onclick="editarAnalise({{ analise.id }}, &quot;{{ analise.titulo }}&quot;, &quot;{{ analise.paciente }}&quot;)" 
+                                            class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" onclick="deletarAnalise('/Analises/deletar/{{ analise.id }}/', &quot;{{ analise.titulo }}&quot;)" class="btn btn-danger btn-sm" title="Excluir">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                {% if analise.ultima_modificacao %}
+                                <small class="text-muted d-block mt-1">
+                                    <i class="fas fa-history"></i> Editado em {{ analise.ultima_modificacao|date:"d/m/Y H:i:s" }}
+                                </small>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -159,6 +175,35 @@
     </div>
 </div>
 
+<!-- Modal de Edição -->
+<div class="modal fade" id="editarAnaliseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Análise</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editarForm">
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label for="editTitulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="editTitulo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPaciente" class="form-label">Paciente</label>
+                        <input type="text" class="form-control" id="editPaciente" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Botão de tema com tooltip -->
 <button class="theme-switch" onclick="toggleTheme()" data-bs-toggle="tooltip" data-bs-placement="left"
     title="Alternar tema claro/escuro">
@@ -168,75 +213,111 @@
 
 {% block js %}
 <script>
-    function toggleTheme() {
-        const root = document.documentElement;
-        const currentTheme = root.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        root.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-
-        const icon = document.querySelector('.theme-switch i');
-        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-
-    // Inicializar tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
+    // Função única para inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+        initializeTooltips();
+        setupFormHandlers();
     });
 
-    // Remover todos os event listeners duplicados e manter apenas este
-    document.addEventListener('DOMContentLoaded', function () {
-        // Inicializar tema
+    // Inicializar tema
+    function initializeTheme() {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
-        const icon = document.querySelector('.theme-switch i');
-        if (icon) {
-            icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
+        updateThemeIcon(savedTheme);
+    }
 
-        // Único manipulador de evento para o formulário
+    // Configurar handlers do formulário
+    function setupFormHandlers() {
         const form = document.getElementById('analiseForm');
         if (form) {
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const submitButton = this.querySelector('button[type="submit"]');
-                const modal = document.getElementById('novaAnaliseModal');
-                const modalInstance = bootstrap.Modal.getInstance(modal);
-                
-                try {
-                    submitButton.disabled = true;
-                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
-                    
-                    const formData = new FormData(this);
-                    const response = await fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        modalInstance.hide();
-                        showSuccess('Análise concluída com sucesso!');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        showError(data.error || 'Erro desconhecido ao processar análise');
-                    }
-                } catch (error) {
-                    console.error('Erro:', error);
-                    showError('Erro ao processar análise: ' + error);
-                } finally {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = 'Iniciar Análise';
+            // Remover listeners existentes
+            form.replaceWith(form.cloneNode(true));
+            const newForm = document.getElementById('analiseForm');
+            
+            newForm.addEventListener('submit', handleFormSubmit);
+        }
+    }
+
+    // Handler do formulário de análise
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        const submitButton = this.querySelector('button[type="submit"]');
+        const modal = document.getElementById('novaAnaliseModal');
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
+        
+        try {
+            const formData = new FormData(this);
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                modalInstance.hide();
+                showSuccess('Análise concluída com sucesso!');
+            } else {
+                showError(data.error || 'Erro desconhecido ao processar análise');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showError('Erro ao processar análise: ' + error);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Iniciar Análise';
+        }
+    }
+
+    // Função para editar análise
+    async function editarAnalise(id, titulo, paciente) {
+        const editModal = new bootstrap.Modal(document.getElementById('editarAnaliseModal'));
+        document.getElementById('editId').value = id;
+        document.getElementById('editTitulo').value = titulo;
+        document.getElementById('editPaciente').value = paciente;
+        editModal.show();
+    }
+
+    // Handler do formulário de edição
+    document.getElementById('editarForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        
+        try {
+            const id = document.getElementById('editId').value;
+            const formData = new FormData();
+            formData.append('titulo', document.getElementById('editTitulo').value);
+            formData.append('paciente', document.getElementById('editPaciente').value);
+            
+            const response = await fetch(`/Analises/editar/${id}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editarAnaliseModal'));
+                modal.hide();
+                showSuccess('Análise atualizada com sucesso!');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showError(data.error || 'Erro ao atualizar análise');
+            }
+        } catch (error) {
+            showError('Erro ao processar a requisição: ' + error);
+        } finally {
+            submitButton.disabled = false;
         }
     });
 
@@ -290,6 +371,35 @@
             successModal.hide();
             location.reload();
         }, 2000);
+    }
+
+    // Função para alternar tema
+    function toggleTheme() {
+        const root = document.documentElement;
+        const currentTheme = root.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        root.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        const icon = document.querySelector('.theme-switch i');
+        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // Inicializar tooltips
+    function initializeTooltips() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    }
+
+    // Atualizar ícone do tema
+    function updateThemeIcon(theme) {
+        const icon = document.querySelector('.theme-switch i');
+        if (icon) {
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
     }
 </script>
 {% endblock %}
