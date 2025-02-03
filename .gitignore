@@ -51,3 +51,6 @@ Thumbs.db
 *.tmp
 *.temp
 comandos_ps.txt
+
+# Ignorar o arquivo de modelo treinado
+scripts/best.pt

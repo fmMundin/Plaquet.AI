@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from zoneinfo import ZoneInfo
 import os
 
 class Analise(models.Model):
@@ -27,6 +28,12 @@ class Analise(models.Model):
     modificado_por = models.CharField(max_length=100, null=True, blank=True)
     historico_modificacoes = models.TextField(null=True, blank=True)
 
+    # New fields for enhanced analysis
+    densidade_relativa = models.JSONField(null=True, blank=True)
+    detalhes_processamento = models.JSONField(null=True, blank=True)
+    confianca_deteccao = models.FloatField(null=True, blank=True)
+    metadados_modelo = models.JSONField(null=True, blank=True)
+
     class Meta:
         ordering = ['-data_criacao']
         verbose_name = 'Análise'
@@ -47,11 +54,12 @@ class Analise(models.Model):
         super().delete(*args, **kwargs)
 
     def registrar_modificacao(self, alteracoes, usuario="Sistema"):
-        self.ultima_modificacao = timezone.now()
+        agora = timezone.now().astimezone(ZoneInfo("America/Sao_Paulo"))
+        self.ultima_modificacao = agora
         self.modificado_por = usuario
         
         # Adicionar nova entrada ao histórico
-        novo_registro = f"[{timezone.now().strftime('%d/%m/%Y %H:%M:%S')}] {usuario}: {alteracoes}\n"
+        novo_registro = f"[{agora.strftime('%d/%m/%Y %H:%M:%S')}] {usuario}: {alteracoes}\n"
         if self.historico_modificacoes:
             self.historico_modificacoes += novo_registro
         else:
