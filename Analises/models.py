@@ -29,7 +29,6 @@ class Analise(models.Model):
     historico_modificacoes = models.TextField(null=True, blank=True)
 
     # New fields for enhanced analysis
-    densidade_relativa = models.JSONField(null=True, blank=True)
     detalhes_processamento = models.JSONField(null=True, blank=True)
     confianca_deteccao = models.FloatField(null=True, blank=True)
     metadados_modelo = models.JSONField(null=True, blank=True)

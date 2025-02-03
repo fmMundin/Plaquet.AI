@@ -17,9 +17,9 @@ from zoneinfo import ZoneInfo  # Para Python 3.9+
 logger = logging.getLogger(__name__)
 
 # Create your views here.
-def index(request):
+def analises(request):  # mudado de index para analises
     analises = Analise.objects.all().distinct()
-    return render(request, 'Analises/index.html', {'analises': analises})
+    return render(request, 'Analises/analises.html', {'analises': analises})  # mudado index.html para analises.html
 
 def criar_analise(request):
     if request.method == 'POST':
@@ -123,7 +123,7 @@ def detalhes_analise(request, analise_id):
     except Exception as e:
         logger.error(f"Erro ao exibir detalhes da análise {analise_id}: {str(e)}", exc_info=True)
         messages.error(request, f'Erro ao exibir detalhes: {str(e)}')
-        return redirect('index')
+        return redirect('analises')  # mudado de 'index' para 'analises'
 
 def editar_analise(request, analise_id):
     if request.method == 'POST':
@@ -154,3 +154,6 @@ def editar_analise(request, analise_id):
                 'error': str(e)
             })
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
+
+def index(request):
+    return render(request, 'Analises/index.html')  # Nova view para a landing page

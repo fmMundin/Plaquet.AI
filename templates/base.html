@@ -20,7 +20,7 @@
     <!-- Navbar moderna -->
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'index' %}">
+            <a class="navbar-brand" href="{% url 'index' %}">  <!-- Volta para index ao invés de analises -->
                 <i class="fas fa-microscope me-2"></i>PLaquet.AI: análise celular com Inteligência Artificial
                 
             </a>
@@ -35,8 +35,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'analises' %}">
+                            <i class="fas fa-microscope me-1"></i>Análises
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin:index' %}">
-                            <i class="fas fa-cog me-1"></i>Admin
+                            <i class="fas fa-cog me-1"></i>Área Restrita 
                         </a>
                     </li>
                 </ul>
@@ -64,12 +69,14 @@
             <div class="row g-4">
                 <div class="col-lg-4 mb-3">
                     <h5 class="text-white mb-3">Sobre o Sistema</h5>
-                    <p class="text-light mb-0">Sistema inteligente para análise de células sanguíneas utilizando técnicas avançadas de Inteligência Artificial.</p>
+                    <p class="text-light mb-0">Sistema inteligente para análise de células sanguíneas utilizando técnicas avançadas de Inteligência Artificial.<br></p>
+                    <p class="text-light mb-0">Desenvolvido por alunos do curso de Informática do CEMEP de Paulínia. <br> Maria Clara dos Santos <br> Felipe Mauricio Mundin</p>
+                    <p class="text-light mb-0"><img src="{% static 'media/cemeplogoComfundo.svg' %}" alt="CEMEP | Centro Municipal de Ensino Profissionalizante"> </p>
                 </div>
                 <div class="col-lg-4 mb-3">
                     <h5 class="text-white mb-3">Links Úteis</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'index' %}" class="text-light text-decoration-none"><i class="fas fa-home me-2"></i>Início</a></li>
+                        <li><a href="{% url 'analises' %}" class="text-light text-decoration-none"><i class="fas fa-home me-2"></i>Início</a></li>
                         <li><a href="{% url 'admin:index' %}" class="text-light text-decoration-none"><i class="fas fa-cog me-2"></i>Administração</a></li>
                         <li><a href="https://github.com/seu-usuario/plaquet-ai" target="_blank" class="text-light text-decoration-none"><i class="fab fa-github me-2"></i>GitHub</a></li>
                     </ul>
