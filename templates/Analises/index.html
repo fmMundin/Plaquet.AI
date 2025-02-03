@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Página Inicial{% endblock %}
+{% block title %}PLaquet.AI - Início{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -8,104 +9,58 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="card-title mb-0">Bem-vindo à PlaquetAI!</h1>
-                    <p class="text-muted mt-2">Sistema de análise de plaquetas</p>
+                    <h1 class="card-title text-contrast mb-0">Bem-vindo ao PLaquet.AI</h1>
+                    <p class="text-muted mt-2">Sistema de análise de células sanguíneas com Inteligência Artificial</p>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
-                    data-bs-target="#novaAnaliseModal">
-                    <i class="fas fa-plus-circle me-2"></i>Nova Análise
-                </button>
+                <a href="{% url 'analises' %}" class="btn btn-primary">
+                    <i class="fas fa-microscope me-2"></i>Ir para Análises
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Modal Nova Análise -->
-    <div class="modal fade" id="novaAnaliseModal" tabindex="-1" aria-labelledby="novaAnaliseModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="novaAnaliseModalLabel">Nova Análise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post" enctype="multipart/form-data" action="{% url 'criar_analise' %}">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="titulo" class="form-label">Título</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="paciente" class="form-label">Nome do Paciente</label>
-                            <input type="text" class="form-control" id="paciente" name="paciente" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="img" class="form-label">Imagem para Análise</label>
-                            <input type="file" class="form-control" id="img" name="img" accept="image/*" required>
-                            <div class="form-text">Selecione uma imagem clara das plaquetas.</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Iniciar Análise</button>
-                    </div>
-                </form>
+    <!-- Feature Cards -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Processamento Rápido</h3>
+                <p class="feature-text">Resultados em menos de 1 segundo, otimizando o fluxo de trabalho laboratorial.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">Alta Precisão</h3>
+                <p class="feature-text">Detecção precisa de células utilizando modelos de IA avançados.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Análise Detalhada</h3>
+                <p class="feature-text">Contagem automática e classificação de diferentes tipos de células.</p>
             </div>
         </div>
     </div>
 
-    <div class="card">
+    <!-- Como Funciona -->
+    <div class="card mt-5">
         <div class="card-body">
-            <h2 class="card-title mb-4">Análises Realizadas</h2>
-            {% if analises|length > 0 %}
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Data de Criação</th>
-                            <th>Paciente</th>
-                            <th>Imagem</th>
-                            <th>Resultado</th>
-                            <th>Plaquetas</th>
-                            <th>Acurácia</th>
-                            <th>Análise</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for analise in analises %}
-                        <tr>
-                            <td>{{ analise.titulo }}</td>
-                            <td>{{ analise.data_criacao|date:"d/m/Y H:i" }}</td>
-                            <td>{{ analise.paciente }}</td>
-                            <td>{% if analise.img %}<img src="{{ analise.img.url }}" alt="Imagem" width="100">{% else
-                                %}-{% endif %}</td>
-                            <td>{% if analise.img_resultado %}<img src="{{ analise.img_resultado.url }}" alt="Resultado"
-                                    width="100">{% else %}-{% endif %}</td>
-                            <td>{{ analise.n_plaquetas|default:"-" }}</td>
-                            <td>{{ analise.acuracia|default:"-" }}</td>
-                            <td>{{ analise.data_analise|date:"d/m/Y H:i"|default:"-" }}</td>
-                            <td>
-                                <form method="post" action="{% url 'deletar_analise' analise.id %}" class="d-inline"
-                                    onsubmit="return confirm('Tem certeza que deseja excluir esta análise?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <h2 class="text-contrast mb-4">Como Funciona</h2>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <ol class="feature-list">
+                        <li class="mb-3">Faça upload da imagem microscópica</li>
+                        <li class="mb-3">O sistema processa automaticamente</li>
+                        <li class="mb-3">Receba resultados detalhados em segundos</li>
+                    </ol>
+                </div>
+                <div class="col-md-6">
+                    <img src="{% static 'images/demo.png' %}" alt="Demonstração" class="img-fluid rounded shadow">
+                </div>
             </div>
-            {% else %}
-            <div class="alert alert-info d-flex align-items-center">
-                <i class="fas fa-info-circle me-2 fa-lg"></i>
-                <div>Nenhuma análise encontrada. Comece criando uma nova análise!</div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -132,13 +87,13 @@
     }
 
     // Inicializar tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-
-    // Inicializar tema
     document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Inicializar tema
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         const icon = document.querySelector('.theme-switch i');

@@ -22,6 +22,9 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">
                 <i class="fas fa-microscope me-2"></i>PlaquetAI
+            <a class="navbar-brand" href="{% url 'index' %}"> 
+                <i class="fas fa-microscope me-2"></i>PLaquet.AI: análise celular com Inteligência Artificial
+                
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -34,8 +37,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'analises' %}">
+                            <i class="fas fa-microscope me-1"></i>Análises
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin:index' %}">
-                            <i class="fas fa-cog me-1"></i>Admin
+                            <i class="fas fa-cog me-1"></i>Área Restrita 
                         </a>
                     </li>
                 </ul>
@@ -68,6 +76,38 @@
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">&copy; {% now 'Y' %} PlaquetAI</p>
                     <small class="text-muted">Desenvolvido com <i class="fas fa-heart text-danger"></i></small>
+            <div class="row g-4">
+                <div class="col-lg-4 mb-3">
+                    <h5 class="text-white mb-3">Sobre o Sistema</h5>
+                    <p class="text-light mb-0">Sistema inteligente para análise de células sanguíneas utilizando técnicas avançadas de Inteligência Artificial.<br></p>
+                    <p class="text-light mb-0">Desenvolvido por alunos do curso de Informática do CEMEP de Paulínia. <br> Maria Clara dos Santos <br> Felipe Mauricio Mundin</p>
+                    <p class="text-light mb-0"><img src="{% static 'media/cemeplogoComfundo.svg' %}" alt="CEMEP | Centro Municipal de Ensino Profissionalizante"> </p>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <h5 class="text-white mb-3">Links Úteis</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'analises' %}" class="text-light text-decoration-none"><i class="fas fa-home me-2"></i>Início</a></li>
+                        <li><a href="{% url 'admin:index' %}" class="text-light text-decoration-none"><i class="fas fa-cog me-2"></i>Administração</a></li>
+                        <li><a href="https://github.com/seu-usuario/plaquet-ai" target="_blank" class="text-light text-decoration-none"><i class="fab fa-github me-2"></i>GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h5 class="text-white mb-3">Contato</h5>
+                    <p class="text-light mb-2"><i class="fas fa-envelope me-2"></i>fmundin@alu.paulinia.sp.gov.br</p>
+                    <p class="text-light mb-2"><i class="fas fa-envelope me-2"></i>mcsantos@alu.paulinia.sp.gov.br</p>
+                    <p class="text-light mb-0"><i class="fas fa-code me-2"></i>Versão 2.1.1</p>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3 border-light">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-light mb-0">&copy; {% now 'Y' %} PlaquetAI. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-light mb-0">
+                        Desenvolvido com <i class="fas fa-heart text-danger"></i> por 
+                        <a href="https://github.com/seu-usuario" target="_blank" class="text-light text-decoration-none">Felipe e Maria</a>
+                    </p>
                 </div>
             </div>
         </div>
