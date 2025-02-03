@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Análise - {{ analise.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Cabeçalho -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fas fa-microscope me-2"></i>{{ analise.titulo }}</h4>
+            <a href="{% url 'index' %}" class="btn btn-light">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
+        
+        <div class="card-body">
+            <!-- Informações Básicas e Resultados -->
+            <div class="row mb-4">
+                <!-- Coluna de Informações -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações da Análise</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <tr>
+                                    <th width="40%">Paciente:</th>
+                                    <td>{{ analise.paciente }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Data da Análise:</th>
+                                    <td>{{ analise.data_analise|date:"d/m/Y H:i:s" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        <span class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ analise.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Tempo de Processamento:</th>
+                                    <td>{{ analise.tempo_processamento|floatformat:2 }} segundos</td>
+                                </tr>
+                                <tr>
+                                    <th>Acurácia:</th>
+                                    <td>{{ analise.acuracia|floatformat:2 }}%</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna de Resultados -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Contagem de Células</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <!-- Plaquetas -->
+                                <div class="col-md-4">
+                                    <div class="card bg-light text-center h-100">
+                                        <div class="card-body">
+                                            <h6>Plaquetas</h6>
+                                            <div class="display-6 text-primary">{{ analise.n_plaquetas }}</div>
+                                            <small class="text-muted">células</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Células Brancas -->
+                                <div class="col-md-4">
+                                    <div class="card bg-light text-center h-100">
+                                        <div class="card-body">
+                                            <h6>Células Brancas</h6>
+                                            <div class="display-6 text-success">{{ analise.n_celulas_brancas }}</div>
+                                            <small class="text-muted">células</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Células Vermelhas -->
+                                <div class="col-md-4">
+                                    <div class="card bg-light text-center h-100">
+                                        <div class="card-body">
+                                            <h6>Células Vermelhas</h6>
+                                            <div class="display-6 text-danger">{{ analise.n_celulas_vermelhas }}</div>
+                                            <small class="text-muted">células</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Imagens -->
+            <h5 class="mb-3"><i class="fas fa-images me-2"></i>Visualização da Análise</h5>
+            <div class="row">
+                <!-- Imagem Original -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">Imagem Original</h6>
+                        </div>
+                        <div class="card-body text-center">
+                            {% if analise.img %}
+                            <a href="{{ analise.img.url }}" target="_blank" class="d-block">
+                                <img src="{{ analise.img.url }}" alt="Imagem Original" class="img-fluid rounded detail-image">
+                            </a>
+                            <small class="text-muted mt-2 d-block">Clique na imagem para ampliar</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Imagem Processada -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">Imagem Processada com Detecções</h6>
+                        </div>
+                        <div class="card-body text-center">
+                            {% if analise.img_resultado %}
+                            <a href="{{ analise.img_resultado.url }}" target="_blank" class="d-block">
+                                <img src="{{ analise.img_resultado.url }}" alt="Imagem Processada" class="img-fluid rounded detail-image">
+                            </a>
+                            <small class="text-muted mt-2 d-block">Clique na imagem para ampliar</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
