@@ -89,7 +89,7 @@
                                 -
                                 {% endif %}
                             </td>
-                            <td>{{ analise.tempo_analise|floatformat:2|default:"-" }}s</td>
+                            <td>{{ analise.tempo_processamento|floatformat:2|default:"-" }}s</td>
                             <td>
                                 {{ analise.n_plaquetas|default:"-" }}
                                 {% if analise.densidade_relativa %}
@@ -117,7 +117,7 @@
                             <td>{{ analise.acuracia|floatformat:2|default:"-" }}%</td>
                             <td>
                                 <span class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
-                                    {{ analise.get_status_display }}
+                                    {{ analise.status }}
                                 </span>
                             </td>
                             <!-- Código corrigido -->

@@ -10,10 +10,13 @@ class Analise(models.Model):
     img = models.ImageField(upload_to='analises/', null=True, blank=True)
     img_resultado = models.ImageField(upload_to='resultados/', null=True, blank=True)
     n_plaquetas = models.IntegerField(null=True, blank=True)
+    n_celulas_brancas = models.IntegerField(null=True, blank=True)
+    n_celulas_vermelhas = models.IntegerField(null=True, blank=True)
     acuracia = models.FloatField(null=True, blank=True)
     data_analise = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, default='pendente')
     erro_msg = models.TextField(null=True, blank=True)
+    tempo_processamento = models.FloatField(null=True, blank=True)
     
     # New fields for enhanced analysis
     detalhes_processamento = models.JSONField(null=True, blank=True)

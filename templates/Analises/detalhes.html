@@ -36,7 +36,7 @@
                                     <th>Status:</th>
                                     <td>
                                         <span class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
-                                            {{ analise.get_status_display }}
+                                            {{ analise.status }}
                                         </span>
                                     </td>
                                 </tr>
