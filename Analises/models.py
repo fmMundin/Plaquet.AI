@@ -11,7 +11,6 @@ class Analise(models.Model):
     img_resultado = models.ImageField(upload_to='resultados/', null=True, blank=True)
     n_plaquetas = models.IntegerField(null=True, blank=True)
     acuracia = models.FloatField(null=True, blank=True)
-    tempo_analise = models.FloatField(null=True, blank=True)
     data_analise = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, default='pendente')
     erro_msg = models.TextField(null=True, blank=True)

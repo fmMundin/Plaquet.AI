@@ -89,7 +89,7 @@
                                 -
                                 {% endif %}
                             </td>
-                            <td>{{ analise.tempo_processamento|floatformat:2|default:"-" }}s</td>
+                            <td>{{ analise.tempo_analise|floatformat:2|default:"-" }}s</td>
                             <td>
                                 {{ analise.n_plaquetas|default:"-" }}
                                 {% if analise.densidade_relativa %}

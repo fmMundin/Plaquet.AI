@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.contrib import messages
 from .models import Analise
 from datetime import datetime
@@ -7,30 +7,32 @@ import os
 import logging
 from pathlib import Path
 from scripts.infer import run_inference
+import traceback
 from django.db import transaction
 from django.core.files import File
+from django.conf import settings
 from django.utils import timezone
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo  # Para Python 3.9+
 
 logger = logging.getLogger(__name__)
 
-def index(request):
-    return render(request, 'Analises/index.html')  # Landing page
-
-def analises(request):
+# Create your views here.
+def analises(request):  # mudado de index para analises
     analises = Analise.objects.all().distinct()
-    return render(request, 'Analises/analises.html', {'analises': analises})
+    return render(request, 'Analises/analises.html', {'analises': analises})  # mudado index.html para analises.html
 
 def criar_analise(request):
     if request.method == 'POST':
         with transaction.atomic():
             try:
+                # Validar arquivo
                 if 'img' not in request.FILES:
                     return JsonResponse({
                         'success': False,
                         'error': 'Nenhuma imagem enviada'
                     })
 
+                # Criar análise inicial
                 analise = Analise.objects.create(
                     titulo=request.POST['titulo'],
                     paciente=request.POST['paciente'],
@@ -92,18 +94,66 @@ def criar_analise(request):
                     'error': str(e)
                 })
 
-    return redirect('analises')
+    return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
 def deletar_analise(request, analise_id):
     if request.method == 'POST':
-        analise = get_object_or_404(Analise, pk=analise_id)
         try:
-            if analise.img:
-                analise.img.delete()
-            if analise.img_resultado:
-                analise.img_resultado.delete()
+            analise = get_object_or_404(Analise, pk=analise_id)
+            titulo = analise.titulo  # Guardar o título antes de deletar
             analise.delete()
-            messages.success(request, 'Análise excluída com sucesso!')
+            return JsonResponse({
+                'success': True,
+                'message': f'Análise "{titulo}" excluída com sucesso!'
+            })
         except Exception as e:
-            messages.error(request, f'Erro ao excluir análise: {str(e)}')
-    return redirect('analises')
+            logger.error(f"Erro ao excluir análise {analise_id}: {str(e)}", exc_info=True)
+            return JsonResponse({
+                'success': False,
+                'error': f'Erro ao excluir análise: {str(e)}'
+            })
+    return JsonResponse({'success': False, 'error': 'Método não permitido'})
+
+def detalhes_analise(request, analise_id):
+    try:
+        analise = get_object_or_404(Analise, pk=analise_id)
+        return render(request, 'Analises/detalhes.html', {
+            'analise': analise
+        })
+    except Exception as e:
+        logger.error(f"Erro ao exibir detalhes da análise {analise_id}: {str(e)}", exc_info=True)
+        messages.error(request, f'Erro ao exibir detalhes: {str(e)}')
+        return redirect('analises')  # mudado de 'index' para 'analises'
+
+def editar_analise(request, analise_id):
+    if request.method == 'POST':
+        try:
+            analise = get_object_or_404(Analise, pk=analise_id)
+            dados_antigos = f"Título: {analise.titulo}, Paciente: {analise.paciente}"
+            
+            # Atualizar dados
+            analise.titulo = request.POST.get('titulo', analise.titulo)
+            analise.paciente = request.POST.get('paciente', analise.paciente)
+            
+            # Registrar modificação
+            alteracoes = f"Alteração nos dados (Anterior: {dados_antigos})"
+            analise.registrar_modificacao(alteracoes)
+            
+            analise.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Análise atualizada com sucesso!',
+                'ultima_modificacao': analise.ultima_modificacao.strftime('%d/%m/%Y %H:%M:%S'),
+                'modificado_por': analise.modificado_por
+            })
+        except Exception as e:
+            logger.error(f"Erro ao editar análise: {str(e)}", exc_info=True)
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            })
+    return JsonResponse({'success': False, 'error': 'Método não permitido'})
+
+def index(request):
+    return render(request, 'Analises/index.html')  # Nova view para a landing page
