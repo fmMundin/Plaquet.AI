@@ -17,14 +17,10 @@
 </head>
 
 <body>
-    <!-- Navbar moderna -->
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">
-                <i class="fas fa-microscope me-2"></i>PlaquetAI
-            <a class="navbar-brand" href="{% url 'index' %}"> 
-                <i class="fas fa-microscope me-2"></i>PLaquet.AI: análise celular com Inteligência Artificial
-                
+                <i class="fas fa-microscope me-2"></i>Plaquet.AI: análise celular com IA
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -43,7 +39,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin:index' %}">
-                            <i class="fas fa-cog me-1"></i>Área Restrita 
+                            <i class="fas fa-cog me-1"></i>Área Restrita
                         </a>
                     </li>
                 </ul>
@@ -51,7 +47,6 @@
         </div>
     </nav>
 
-    <!-- Main Content with fade-in animation -->
     <main class="container my-4 animate-fade-in">
         {% if messages %}
         {% for message in messages %}
@@ -69,45 +64,47 @@
     <footer class="footer-custom">
         <div class="container">
             <div class="row">
-                <div class="col-md-6" style="text-align: left;">
-                    <h5 class="mb-3">PlaquetAI</h5>
-                    <p class="mb-0">Sistema inteligente para análise de plaquetas</p>
-                </div>
-                <div class="col-md-6" style="text-align: left;">
-                    <p class="mb-0">&copy; {% now 'Y' %} PlaquetAI</p>
-                    <small class="text-light">Desenvolvido com <i class="fas fa-heart text-danger"></i></small>
-                </div>
+
                 <div class="row g-4">
                     <div class="col-lg-4 mb-3">
                         <h5 class="text-white mb-3">Sobre o Sistema</h5>
-                        <p class="text-light mb-0">Sistema inteligente para análise de células sanguíneas utilizando técnicas avançadas de Inteligência Artificial.<br></p>
-                        <p class="text-light mb-0">Desenvolvido por alunos do curso de Informática do CEMEP de Paulínia.</p>
+                        <p class="text-light mb-0">Sistema inteligente para análise de células sanguíneas utilizando
+                            técnicas avançadas de Inteligência Artificial.<br></p>
+                        <p class="text-light mb-0">Desenvolvido por alunos do curso de Informática do CEMEP de Paulínia.
+                        </p>
                         <p class="text-light mb-3">
-                            <img src="{% static 'media/cemeplogoComfundo.svg' %}" 
-                                 alt="CEMEP | Centro Municipal de Ensino Profissionalizante"
-                                 width="120" 
-                                 height="auto" 
-                                 class="img-fluid rounded shadow-sm"
-                                 style="background-color: white; padding: 8px; border-radius: 8px;">
+                            <img src="{% static 'media/cemeplogoComfundo.svg' %}"
+                                alt="CEMEP | Centro Municipal de Ensino Profissionalizante" width="120" height="auto"
+                                class="img-fluid rounded shadow-sm"
+                                style="background-color: white; padding: 8px; border-radius: 8px;">
                         </p>
                     </div>
                     <div class="col-lg-4 mb-3">
                         <h5 class="text-white mb-3">Links Úteis</h5>
                         <ul class="list-unstyled">
-                            <li><a href="{% url 'analises' %}" class="text-light text-decoration-none"><i class="fas fa-home me-2"></i>Início</a></li>
-                            <li><a href="{% url 'admin:index' %}" class="text-light text-decoration-none"><i class="fas fa-cog me-2"></i>Administração</a></li>
-                            <li><a href="https://github.com/fmMundin/Plaquet.AI.git" target="_blank" class="text-light text-decoration-none"><i class="fab fa-github me-2"></i>GitHub</a></li>
-                            <li><a href="https://drive.google.com/drive/folders/1DzWvNsW9IDBFCIvsOO2te7XabB-IMXyC?usp=drive_link" target="_blank" class="text-light text-decoration-none">
-                                <img src="{% static 'media/icons8-google-drive-50.png' %}" alt="Drive" class="me-2" style="width: 16px; height: 16px;">Drive
-                            </a></li>
+                            <li><a href="{% url 'analises' %}" class="text-light text-decoration-none"><i
+                                        class="fas fa-home me-2"></i>Início</a></li>
+                            <li><a href="{% url 'admin:index' %}" class="text-light text-decoration-none"><i
+                                        class="fas fa-cog me-2"></i>Área Restrita</a></li>
+                            <li><a href="https://github.com/fmMundin/Plaquet.AI.git" target="_blank"
+                                    class="text-light text-decoration-none"><i class="fab fa-github me-2"></i>GitHub |
+                                    Repositório Open Source</a>
+                            </li>
+                            <li><a href="https://drive.google.com/drive/folders/1DzWvNsW9IDBFCIvsOO2te7XabB-IMXyC?usp=drive_link"
+                                    target="_blank" class="text-light text-decoration-none">
+                                    <img src="{% static 'media/icons8-google-drive-50.png' %}" alt="Drive" class="me-2"
+                                        style="width: 16px; height: 16px;">Drive | Documentação
+                                </a></li>
                         </ul>
                     </div>
                     <div class="col-lg-4">
                         <h5 class="text-white mb-3">Contato</h5>
                         <p class="text-light mb-1">Felipe Mauricio Mundin</p>
-                        <p class="text-light mb-2"><i class="fas fa-envelope me-2"></i>fmundin@alu.paulinia.sp.gov.br</p>
+                        <p class="text-light mb-2"><i class="fas fa-envelope me-2"></i>fmundin@alu.paulinia.sp.gov.br
+                        </p>
                         <p class="text-light mb-1">Maria Clara dos Santos</p>
-                        <p class="text-light mb-2"><i class="fas fa-envelope me-2"></i>mcsantos@alu.paulinia.sp.gov.br</p>
+                        <p class="text-light mb-2"><i class="fas fa-envelope me-2"></i>mcsantos@alu.paulinia.sp.gov.br
+                        </p>
                         <p class="text-light mb-0"><i class="fas fa-code me-2"></i>Versão 2.1.1</p>
                     </div>
                 </div>
@@ -116,8 +113,9 @@
                     <div class="col-12" style="text-align: left;">
                         <p class="text-light mb-0">&copy; {% now 'Y' %} PlaquetAI. Todos os direitos reservados.</p>
                         <p class="text-light mb-0">
-                            Desenvolvido com <i class="fas fa-heart text-danger"></i> por 
-                            <a href="https://github.com/seu-usuario" target="_blank" class="text-light text-decoration-none">Felipe e Maria</a>
+                            Desenvolvido com <i class="fas fa-heart text-danger"></i> por
+                            <a href="https://github.com/seu-usuario" target="_blank"
+                                class="text-light text-decoration-none">Felipe e Maria</a>
                         </p>
                     </div>
                 </div>
@@ -142,6 +140,9 @@
     </script>
     {% block js %}{% endblock %}
 
+</body>
+
+</html>
 </body>
 
 </html>

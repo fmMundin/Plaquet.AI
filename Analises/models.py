@@ -4,6 +4,13 @@ from zoneinfo import ZoneInfo
 import os
 
 class Analise(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('processando', 'Processando'),
+        ('concluido', 'Concluído'),
+        ('erro', 'Erro')
+    ]
+
     titulo = models.CharField(max_length=200)
     data_criacao = models.DateTimeField(auto_now_add=True)
     paciente = models.CharField(max_length=200)
@@ -14,11 +21,16 @@ class Analise(models.Model):
     n_celulas_vermelhas = models.IntegerField(null=True, blank=True)
     acuracia = models.FloatField(null=True, blank=True)
     data_analise = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=20, default='pendente')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     erro_msg = models.TextField(null=True, blank=True)
     tempo_processamento = models.FloatField(null=True, blank=True)
     
-    # New fields for enhanced analysis
+    # Campos para rastreamento
+    ultima_modificacao = models.DateTimeField(auto_now=True)
+    modificado_por = models.CharField(max_length=100, null=True, blank=True)
+    historico_modificacoes = models.JSONField(default=dict, blank=True)
+    
+    # Campos para análise detalhada
     detalhes_processamento = models.JSONField(null=True, blank=True)
     confianca_deteccao = models.FloatField(null=True, blank=True)
     metadados_modelo = models.JSONField(null=True, blank=True)
@@ -31,12 +43,30 @@ class Analise(models.Model):
     def __str__(self):
         return f"{self.titulo} - {self.paciente}"
 
+    def registrar_modificacao(self, descricao):
+        if not self.historico_modificacoes:
+            self.historico_modificacoes = {}
+        
+        timestamp = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+        if 'modificacoes' not in self.historico_modificacoes:
+            self.historico_modificacoes['modificacoes'] = []
+        
+        self.historico_modificacoes['modificacoes'].append({
+            'timestamp': timestamp,
+            'descricao': descricao
+        })
+
     def save(self, *args, **kwargs):
+        # Atualizar última modificação
+        self.ultima_modificacao = timezone.now()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        # Deletar arquivos associados
         if self.img:
-            self.img.delete()
+            if os.path.isfile(self.img.path):
+                os.remove(self.img.path)
         if self.img_resultado:
-            self.img_resultado.delete()
+            if os.path.isfile(self.img_resultado.path):
+                os.remove(self.img_resultado.path)
         super().delete(*args, **kwargs)

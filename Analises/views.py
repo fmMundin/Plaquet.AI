@@ -13,8 +13,34 @@ from django.core.files import File
 from django.conf import settings
 from django.utils import timezone
 from zoneinfo import ZoneInfo  # Para Python 3.9+
+import shutil
 
 logger = logging.getLogger(__name__)
+
+def copiar_imagem_para_static(analise):
+    """Copia as imagens da análise para a pasta static/images"""
+    try:
+        # Criar diretório se não existir
+        static_img_dir = settings.BASE_DIR / 'static' / 'images'
+        static_img_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copiar imagem original
+        if analise.img:
+            shutil.copy2(
+                analise.img.path,
+                static_img_dir / 'original.jpg'
+            )
+
+        # Copiar imagem com detecções
+        if analise.img_resultado:
+            shutil.copy2(
+                analise.img_resultado.path,
+                static_img_dir / 'detected.jpg'
+            )
+        return True
+    except Exception as e:
+        print(f"Erro ao copiar imagens: {e}")
+        return False
 
 # Create your views here.
 def analises(request):  # mudado de index para analises
@@ -75,6 +101,26 @@ def criar_analise(request):
                             )
 
                     analise.save()
+
+                    # Após análise bem sucedida, copiar para static
+                    if analise.status == 'concluido':
+                        static_img_dir = settings.BASE_DIR / 'static' / 'images'
+                        static_img_dir.mkdir(parents=True, exist_ok=True)
+                        
+                        # Copiar imagem original
+                        if analise.img:
+                            shutil.copy2(
+                                analise.img.path,
+                                static_img_dir / 'original.png'
+                            )
+                        
+                        # Copiar imagem resultado
+                        if analise.img_resultado:
+                            shutil.copy2(
+                                analise.img_resultado.path,
+                                static_img_dir / 'detected.png'
+                            )
+
                     return JsonResponse({'success': True})
 
                 except Exception as e:
@@ -137,6 +183,7 @@ def editar_analise(request, analise_id):
             
             # Registrar modificação
             alteracoes = f"Alteração nos dados (Anterior: {dados_antigos})"
+
             analise.registrar_modificacao(alteracoes)
             
             analise.save()
@@ -156,4 +203,13 @@ def editar_analise(request, analise_id):
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
 def index(request):
-    return render(request, 'Analises/index.html')  # Nova view para a landing page
+    # Atualizado para verificar arquivos .png em vez de .jpg
+    static_images_path = os.path.join(settings.BASE_DIR, 'static', 'images')
+    images_exist = (
+        os.path.exists(os.path.join(static_images_path, 'original.png')) and 
+        os.path.exists(os.path.join(static_images_path, 'detected.png'))
+    )
+    
+    return render(request, 'Analises/index.html', {
+        'original_exists': images_exist
+    })

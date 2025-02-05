@@ -1,26 +1,155 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}PLaquet.AI - Início{% endblock %}
+{% block title %}Plaquet.AI - Início{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="card-title text-contrast mb-0">Bem-vindo ao PLaquet.AI</h1>
-                    <p class="text-muted mt-2">Sistema de análise de células sanguíneas com Inteligência Artificial</p>
+<!-- Layout de duas colunas -->
+<div class="container mt-4" id="features">
+    <div class="row align-items-center">
+        <!-- Coluna Esquerda - Card de Boas-vindas -->
+        <div class="col-lg-5">
+            <div class="card welcome-card h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-4">
+                        <h1 class="card-title text-contrast">Bem-vindo ao Plaquet.AI</h1>
+                        <p class="text-muted mt-3">Sistema de análise de células sanguíneas com Inteligência Artificial
+                        </p>
+                    </div>
+
+                    <div class="welcome-features">
+                        <div class="feature-item">
+                            <i class="fas fa-bolt text-primary"></i>
+                            <div>
+                                <h5>Processamento Rápido</h5>
+                                <p>Resultados em menos de 1 segundo</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <i class="fas fa-crosshairs text-success"></i>
+                            <div>
+                                <h5>Alta Precisão</h5>
+                                <p>Detecção precisa com IA avançada</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <i class="fas fa-chart-bar text-info"></i>
+                            <div>
+                                <h5>Análise Detalhada</h5>
+                                <p>Contagem e classificação automática</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <a href="{% url 'analises' %}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-microscope me-2"></i>Começar Análise
+                        </a>
+                    </div>
                 </div>
-                <a href="{% url 'analises' %}" class="btn btn-primary">
-                    <i class="fas fa-microscope me-2"></i>Ir para Análises
-                </a>
+            </div>
+        </div>
+
+        <!-- Coluna Direita - Hero Carousel -->
+        <div class="col-lg-7">
+            <div class="card h-100"> <!-- Adicionado h-100 para manter altura igual ao card da esquerda -->
+                <div class="card-body p-0">
+                    <div class="hero-carousel" id="heroCarousel">
+                        <div class="hero-slide active">
+                            <div class="hero-image hero-image-1">
+                                <div class="hero-content">
+                                    <h3>Análise de Plaquetas</h3>
+                                    <p>Detecção precisa com IA</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-slide">
+                            <div class="hero-image hero-image-2">
+                                <div class="hero-content">
+                                    <h3>Células Brancas</h3>
+                                    <p>Identificação automática</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-slide">
+                            <div class="hero-image hero-image-3">
+                                <div class="hero-content">
+                                    <h3>Células Vermelhas</h3>
+                                    <p>Contagem precisa</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-controls">
+                            <button class="hero-prev"><i class="fas fa-chevron-left"></i></button>
+                            <div class="hero-indicators"></div>
+                            <button class="hero-next"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Feature Cards -->
-    <div class="row g-4">
+    <!-- Atualizar a seção do carrossel de amostras -->
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="text-contrast mb-4">Amostras Interativas</h2>
+            <div class="samples-carousel">
+                <div class="samples-track" id="samplesTrack">
+                    <!-- Plaquetas -->
+                    <div class="sample-slide active">
+                        <div class="sample-image-container">
+                            <img src="{% static 'images/original1.png' %}" alt="Plaquetas" class="sample-base-image">
+                            <div class="sample-overlay">
+                                <img src="{% static 'images/detected1.png' %}" alt="Detecção"
+                                    class="sample-overlay-image">
+                            </div>
+                        </div>
+                        <p class="text-center mt-2">Plaquetas <span class="badge bg-primary">Platelets</span></p>
+                    </div>
+
+                    <!-- Células Brancas -->
+                    <div class="sample-slide">
+                        <div class="sample-image-container">
+                            <img src="{% static 'images/original2.png' %}" alt="WBC" class="sample-base-image">
+                            <div class="sample-overlay">
+                                <img src="{% static 'images/detected2.png' %}" alt="Detecção"
+                                    class="sample-overlay-image">
+                            </div>
+                        </div>
+                        <p class="text-center mt-2">Células Brancas <span class="badge bg-success">WBC</span></p>
+                    </div>
+
+                    <!-- Células Vermelhas -->
+                    <div class="sample-slide">
+                        <div class="sample-image-container">
+                            <img src="{% static 'images/original3.png' %}" alt="RBC" class="sample-base-image">
+                            <div class="sample-overlay">
+                                <img src="{% static 'images/detected3.jpg' %}" alt="Detecção"
+                                    class="sample-overlay-image">
+                            </div>
+                        </div>
+                        <p class="text-center mt-2">Células Vermelhas <span class="badge bg-danger">RBC</span></p>
+                    </div>
+                </div>
+
+                <div class="samples-controls">
+                    <button class="prev" id="samplesPrevBtn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="next" id="samplesNextBtn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <p class="text-muted mt-3 text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Passe o mouse sobre as imagens para ver as detecções realizadas pela IA
+            </p>
+        </div>
+    </div>
+
+    <!-- Cards do Projeto -->
+    <div class="row g-4 mt-5">
         <div class="col-md-4">
             <div class="feature-card h-100">
                 <div class="feature-icon">⚡</div>
@@ -29,6 +158,7 @@
                 </p>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="feature-card h-100">
                 <div class="feature-icon">🎯</div>
@@ -36,30 +166,12 @@
                 <p class="feature-text">Detecção precisa de células utilizando modelos de IA avançados.</p>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="feature-card h-100">
                 <div class="feature-icon">📊</div>
                 <h3 class="feature-title">Análise Detalhada</h3>
                 <p class="feature-text">Contagem automática e classificação de diferentes tipos de células.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Como Funciona -->
-    <div class="card mt-5">
-        <div class="card-body">
-            <h2 class="text-contrast mb-4">Como Funciona</h2>
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <ol class="feature-list">
-                        <li class="mb-3">Faça upload da imagem microscópica</li>
-                        <li class="mb-3">O sistema processa automaticamente</li>
-                        <li class="mb-3">Receba resultados detalhados em segundos</li>
-                    </ol>
-                </div>
-                <div class="col-md-6">
-                    <img src="{% static 'images/demo.png' %}" alt="Demonstração" class="img-fluid rounded shadow">
-                </div>
             </div>
         </div>
     </div>
@@ -72,7 +184,22 @@
 </button>
 {% endblock %}
 
+{% block css %}
+<style>
+.hero-image-1 {
+    background-image: url("{% static 'images/hero1.jpg' %}");
+}
+.hero-image-2 {
+    background-image: url("{% static 'images/hero2.jpg' %}");
+}
+.hero-image-3 {
+    background-image: url("{% static 'images/hero3.jpg' %}");
+}
+</style>
+{% endblock %}
+
 {% block js %}
+{{ block.super }}
 <script>
     function toggleTheme() {
         const root = document.documentElement;
@@ -100,6 +227,228 @@
         if (icon) {
             icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
+    });
+
+    // Adicionar código do carousel hero
+    document.addEventListener('DOMContentLoaded', function () {
+        const heroCarousel = document.getElementById('heroCarousel');
+        const slides = heroCarousel.querySelectorAll('.hero-slide');
+        const prevBtn = heroCarousel.querySelector('.hero-prev');
+        const nextBtn = heroCarousel.querySelector('.hero-next');
+        const indicators = heroCarousel.querySelector('.hero-indicators');
+        let currentSlide = 0;
+
+        // Criar indicadores
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('hero-indicator');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            indicators.appendChild(dot);
+        });
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                indicators.children[index].classList.remove('active');
+                slide.classList.add(index === currentSlide ? 'active' : 'inactive');
+                indicators.children[index].classList.add(index === currentSlide ? 'active' : '');
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlides();
+        }
+
+        function startAutoplay() {
+            stopAutoplay();
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+            }
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // Pausar autoplay quando o mouse estiver sobre o carrossel
+        heroCarousel.addEventListener('mouseenter', stopAutoplay);
+        heroCarousel.addEventListener('mouseleave', startAutoplay);
+
+        // Iniciar autoplay
+        startAutoplay();
+        updateSlides();
+    });
+
+    // Samples Carousel
+    document.addEventListener('DOMContentLoaded', function () {
+        const track = document.getElementById('samplesTrack');
+        const slides = track.querySelectorAll('.sample-slide');
+        const prevBtn = document.getElementById('samplesPrevBtn');
+        const nextBtn = document.getElementById('samplesNextBtn');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev', 'next');
+
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else if (index === ((currentIndex - 1 + totalSlides) % totalSlides)) {
+                    slide.classList.add('prev');
+                } else if (index === ((currentIndex + 1) % totalSlides)) {
+                    slide.classList.add('next');
+                }
+            });
+        }
+
+        function moveSlide(direction) {
+            if (direction === 'next') {
+                currentIndex = (currentIndex + 1) % totalSlides;
+            } else {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            }
+            updateSlides();
+        }
+
+        // Event Listeners
+        prevBtn.addEventListener('click', () => {
+            moveSlide('prev');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            moveSlide('next');
+        });
+
+        // Hover effect apenas para slide ativo
+        slides.forEach(slide => {
+            const container = slide.querySelector('.sample-image-container');
+            const overlay = slide.querySelector('.sample-overlay');
+
+            container.addEventListener('mousemove', function (e) {
+                if (!slide.classList.contains('active')) return;
+                const rect = container.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                overlay.style.clipPath = `inset(0 ${(1 - x) * 100}% 0 0)`;
+            });
+
+            container.addEventListener('mouseleave', function () {
+                if (!slide.classList.contains('active')) return;
+                overlay.style.clipPath = 'inset(0 100% 0 0)';
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') moveSlide('prev');
+            if (e.key === 'ArrowRight') moveSlide('next');
+        });
+
+        // Initial setup
+        updateSlides();
+    });
+
+    // Hero Carousel
+    document.addEventListener('DOMContentLoaded', function() {
+        const heroCarousel = document.getElementById('heroCarousel');
+        const slides = heroCarousel.querySelectorAll('.hero-slide');
+        const prevBtn = heroCarousel.querySelector('.hero-prev');
+        const nextBtn = heroCarousel.querySelector('.hero-next');
+        const indicators = heroCarousel.querySelector('.hero-indicators');
+        let currentSlide = 0;
+        let autoplayInterval;
+
+        // Criar indicadores
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('hero-indicator');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                stopAutoplay();
+                goToSlide(index);
+                startAutoplay();
+            });
+            indicators.appendChild(dot);
+        });
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev', 'next');
+                indicators.children[index].classList.remove('active');
+
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                    indicators.children[index].classList.add('active');
+                } else if (index === (currentSlide - 1 + slides.length) % slides.length) {
+                    slide.classList.add('prev');
+                } else if (index === (currentSlide + 1) % slides.length) {
+                    slide.classList.add('next');
+                }
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlides();
+        }
+
+        function startAutoplay() {
+            stopAutoplay();
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+            }
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            stopAutoplay();
+            prevSlide();
+            startAutoplay();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            stopAutoplay();
+            nextSlide();
+            startAutoplay();
+        });
+
+        // Pausar autoplay quando o mouse estiver sobre o carrossel
+        heroCarousel.addEventListener('mouseenter', stopAutoplay);
+        heroCarousel.addEventListener('mouseleave', startAutoplay);
+
+        // Iniciar autoplay
+        startAutoplay();
+        updateSlides();
     });
 </script>
 {% endblock %}
