@@ -148,34 +148,54 @@
         </div>
     </div>
 
-    <!-- Cards do Projeto -->
-    <div class="row g-4 mt-5">
-        <div class="col-md-4">
-            <div class="feature-card h-100">
-                <div class="feature-icon">⚡</div>
-                <h3 class="feature-title">Processamento Rápido</h3>
-                <p class="feature-text">Resultados em menos de 1 segundo, otimizando o fluxo de trabalho laboratorial.
-                </p>
-            </div>
+    <!-- Seção de depoimentos -->
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="text-contrast mb-4">Depoimento</h2>
+                    <div class="testimonial-content">
+                        <p class="text-muted">"Parabéns pelo projeto! Muito bem feito e de grande relevância!"</p>
+                        <p class="text-muted">- Adriana Coelho</p>
+                    </div>
         </div>
+    </div>
 
-        <div class="col-md-4">
-            <div class="feature-card h-100">
-                <div class="feature-icon">🎯</div>
-                <h3 class="feature-title">Alta Precisão</h3>
-                <p class="feature-text">Detecção precisa de células utilizando modelos de IA avançados.</p>
-            </div>
-        </div>
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="text-contrast mb-4">Perguntas Frequentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Como funciona o Plaquet.AI?
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O Plaquet.AI utiliza algoritmos de IA para analisar imagens microscópicas e realizar a contagem
+                        precisa de plaquetas.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Qual a precisão do sistema?
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O sistema precisa passar por uma melhora na prrecisão, mas no momento, o sistema tem uma acurácia média de 60%.
+                    </div>
+                </div>
 
-        <div class="col-md-4">
-            <div class="feature-card h-100">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Análise Detalhada</h3>
-                <p class="feature-text">Contagem automática e classificação de diferentes tipos de células.</p>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Quais tipos de células são detectadas?
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O sistema detecta três tipos principais de células: plaquetas (PLT), células brancas (WBC) e células vermelhas (RBC).
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <!-- Botão de tema com tooltip -->
 <button class="theme-switch" onclick="toggleTheme()" data-bs-toggle="tooltip" data-bs-placement="left"
@@ -450,5 +470,30 @@
         startAutoplay();
         updateSlides();
     });
+
+    function toggleFaq(element) {
+        const faqItem = element.parentElement;
+        const icon = element.querySelector('i');
+        const answer = faqItem.querySelector('.faq-answer');
+        
+        // Fecha todas as outras respostas
+        document.querySelectorAll('.faq-item').forEach(item => {
+            if (item !== faqItem && item.classList.contains('active')) {
+                item.classList.remove('active');
+                item.querySelector('i').classList.remove('fa-minus');
+                item.querySelector('i').classList.add('fa-plus');
+            }
+        });
+        
+        // Alterna o estado atual
+        faqItem.classList.toggle('active');
+        if (faqItem.classList.contains('active')) {
+            icon.classList.remove('fa-plus');
+            icon.classList.add('fa-minus');
+        } else {
+            icon.classList.remove('fa-minus');
+            icon.classList.add('fa-plus');
+        }
+    }
 </script>
 {% endblock %}
