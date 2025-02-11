@@ -1,20 +1,30 @@
 # Caminhos absolutos para garantir que o YOLOv8 encontre os arquivos
-path: E:/plaquetaiModel/data  # Caminho absoluto para o diretório raiz do dataset
-train: E:/plaquetaiModel/data/train/images
-val: E:/plaquetaiModel/data/val/images
-test: E:/plaquetaiModel/data/test/images
+path: C:/plaquetaiModel/data  # Caminho base atualizado
+train: train/images
+val: val/images
+test: test/images
 
 # Labels paths (também absolutos)
 labels:
-  train: E:/plaquetaiModel/data/train/labels
-  val: E:/plaquetaiModel/data/val/labels
-  test: E:/plaquetaiModel/data/test/labels
+  train: C:/plaquetaiModel/data/train/labels
+  val: C:/plaquetaiModel/data/val/labels
+  test: C:/plaquetaiModel/data/test/labels
 
-nc: 3  # number of classes
+nc: 13  # number of classes
 names:
   0: hemacia
   1: leucocito
   2: plaqueta
+  3: linfocito
+  4: monocito
+  5: basofilo
+  6: eritroblasto
+  7: neutrofilo_banda
+  8: neutrofilo_segmentado
+  9: mielocito
+  10: metamielocito
+  11: promielocito
+  12: eosinofilo
 
 # Metadados adicionais
 description: Dataset de Células Sanguíneas
@@ -22,51 +32,36 @@ author: PlaquetAI
 date: 2025
 version: 2.0
 
-# Augmentation settings otimizados para células
-augmentation:
-  hsv_h: 0.015  # Pequenas mudanças de matiz
-  hsv_s: 0.3    # Saturação moderada
-  hsv_v: 0.2    # Valor moderado
-  degrees: 10    # Rotação suave
-  translate: 0.1 # Translação pequena
-  scale: 0.3    # Escala moderada
-  shear: 5      # Cisalhamento suave
-  perspective: 0.0  # Sem perspectiva
-  flipud: 0.2   # Flip vertical ocasional
-  fliplr: 0.5   # Flip horizontal moderado
-  mosaic: 0.5   # Mosaico moderado
-  mixup: 0.1    # Mixup suave
+# Augmentation
+hsv_h: 0.015
+hsv_s: 0.5
+hsv_v: 0.4
+degrees: 10.0
+translate: 0.1
+scale: 0.5
+shear: 0.0
+perspective: 0.0
+flipud: 0.3
+fliplr: 0.3
+mosaic: 0.5
+mixup: 0.1
+copy_paste: 0.0
 
-# Hyperparameters otimizados
-hyperparameters:
-  lr0: 0.001
-  lrf: 0.01
-  momentum: 0.937
-  weight_decay: 0.0005
-  warmup_epochs: 3.0
-  warmup_momentum: 0.8
-  warmup_bias_lr: 0.1
-  box: 7.5
-  cls: 0.5
-  cls_pw: 1.0
-  obj: 1.0
-  obj_pw: 1.0
-  iou_t: 0.20
-  anchor_t: 4.0
-  fl_gamma: 0.0
-  hsv_h: 0.015
-  hsv_s: 0.7
-  hsv_v: 0.4
-  degrees: 10.0
-  translate: 0.1
-  scale: 0.5
-  shear: 5.0
-  perspective: 0.0
-  flipud: 0.2
-  fliplr: 0.5
-  mosaic: 0.5
-  mixup: 0.1
-
-# Training settings
-dropout: 0.1
+# Parâmetros otimizados para treinamento rápido
+epochs: 20           # Reduzido de 30 para 20
+batch: 64           # Aumentado para 64 (melhor utilização da GPU)
+imgsz: 416         # Reduzido de 640 para 416 (mais rápido)
+optimizer: AdamW    
+lr0: 0.005         # Aumentado para convergência mais rápida
+lrf: 0.02          # Learning rate final aumentado
+momentum: 0.9
 weight_decay: 0.0005
+warmup_epochs: 1    # Apenas 1 época de warmup
+patience: 5        # Early stopping mais agressivo
+
+# Performance otimizada
+cache_images: true  # Cache ativado
+rect_training: true # Batch retangular ativado
+multi_scale: false  # Desativado para ser mais rápido
+workers: 8          # Aumentado para melhor throughput
+image_weights: false # Desativado para ser mais rápido

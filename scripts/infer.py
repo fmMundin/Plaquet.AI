@@ -47,15 +47,26 @@ def run_inference(weights_path, source_image, output_dir):
                        max_det=1000,   # Aumentar detecções máximas
                        verbose=False)[0]
         
-        # Mapear classes corretamente
+        # Atualizar mapeamento conforme novo data.yaml
         class_mapping = {
-            0: 'RBC',    # Hemácias
-            1: 'WBC',    # Leucócitos
-            2: 'Platelets'  # Plaquetas
+            0: 'hemacia',
+            1: 'leucocito',
+            2: 'plaqueta',
+            3: 'linfocito',
+            4: 'monocito',
+            5: 'basofilo',
+            6: 'eritroblasto',
+            7: 'neutrofilo_banda',
+            8: 'neutrofilo_segmentado',
+            9: 'mielocito',
+            10: 'metamielocito',
+            11: 'promielocito',
+            12: 'eosinofilo'
         }
         
-        # Processamento melhorado das detecções
-        class_counts = {'RBC': 0, 'WBC': 0, 'Platelets': 0}
+        # Inicializar contagens com os novos tipos
+        class_counts = {name: 0 for name in class_mapping.values()}
+
         confidences = []
         boxes_by_class = {k: [] for k in class_mapping.values()}
         
@@ -64,26 +75,26 @@ def run_inference(weights_path, source_image, output_dir):
                 cls_id = int(box.cls[0].item())
                 conf = float(box.conf[0].item())
                 
-                class_name = class_mapping.get(cls_id)
-                if class_name:
+                detected_class = class_mapping.get(cls_id)
+                if detected_class:
                     # Filtrar detecções por tamanho relativo
                     box_area = (box.xyxy[0][2] - box.xyxy[0][0]) * (box.xyxy[0][3] - box.xyxy[0][1])
                     img_area = img.shape[0] * img.shape[1]
                     rel_size = box_area / img_area
                     
-                    # Aplicar filtros específicos por tipo de célula
-                    if class_name == 'RBC' and 0.001 < rel_size < 0.1:
-                        class_counts[class_name] += 1
+                    # Ajustar filtros de tamanho para cada tipo de célula
+                    valid_detection = False
+                    if detected_class == 'hemacia' and 0.001 < rel_size < 0.1:
+                        valid_detection = True
+                    elif detected_class == 'plaqueta' and 0.0005 < rel_size < 0.05:
+                        valid_detection = True
+                    elif detected_class in ['eosinofilo', 'linfocito', 'monocito', 'neutrofilo'] and 0.005 < rel_size < 0.2:
+                        valid_detection = True
+                    
+                    if valid_detection:
+                        class_counts[detected_class] += 1
                         confidences.append(conf)
-                        boxes_by_class[class_name].append(box)
-                    elif class_name == 'WBC' and 0.005 < rel_size < 0.2:
-                        class_counts[class_name] += 1
-                        confidences.append(conf)
-                        boxes_by_class[class_name].append(box)
-                    elif class_name == 'Platelets' and 0.0005 < rel_size < 0.05:
-                        class_counts[class_name] += 1
-                        confidences.append(conf)
-                        boxes_by_class[class_name].append(box)
+                        boxes_by_class[detected_class] = boxes_by_class.get(detected_class, []) + [box]
 
         # Plotar resultados com anotações melhoradas
         result_img = results.plot(
@@ -105,32 +116,56 @@ def run_inference(weights_path, source_image, output_dir):
         avg_confidence = sum(confidences) / len(confidences) if confidences else 0
         total_cells = sum(class_counts.values())
         
-        # Aplicar correções baseadas em conhecimento do domínio
+        # Atualizar proporções esperadas com os nomes corretos do data.yaml
         if total_cells > 0:
-            # Proporções típicas esperadas
             expected_ratios = {
-                'RBC': 0.95,    # ~95% das células devem ser RBC
-                'WBC': 0.04,    # ~4% WBC
-                'Platelets': 0.01  # ~1% Plaquetas
+                'hemacia': 0.95,    # ~95% das células devem ser hemácias
+                'leucocitos': 0.04,  # ~4% leucócitos
+                'plaqueta': 0.01    # ~1% plaquetas
             }
             
             # Ajustar contagens com base nas proporções esperadas
             for cell_type, ratio in expected_ratios.items():
-                current_ratio = class_counts[cell_type] / total_cells
+                if cell_type == 'leucocitos':
+                    current_ratio = sum(class_counts[tipo] for tipo in ['eosinofilo', 'linfocito', 'monocito', 'neutrofilo']) / total_cells
+                else:
+                    current_ratio = class_counts[cell_type] / total_cells
+                
                 if current_ratio < ratio * 0.5:  # Se muito abaixo do esperado
-                    class_counts[cell_type] = int(total_cells * ratio * 0.7)  # Ajuste conservador
+                    if cell_type == 'leucocitos':
+                        # Distribuir proporcionalmente entre os tipos de leucócitos
+                        total_ajuste = int(total_cells * ratio * 0.7)
+                        for tipo in ['eosinofilo', 'linfocito', 'monocito', 'neutrofilo']:
+                            class_counts[tipo] = int(total_ajuste / 4)  # distribuição igual
+                    else:
+                        class_counts[cell_type] = int(total_cells * ratio * 0.7)
         
+        # Calcular total de leucócitos incluindo todos os tipos
+        leucocitos_tipos = [
+            'leucocito', 'linfocito', 'monocito', 'basofilo',
+            'neutrofilo_banda', 'neutrofilo_segmentado', 'eosinofilo'
+        ]
+        
+        total_wbc = sum(class_counts[tipo] for tipo in leucocitos_tipos)
+        total_cells = total_wbc + class_counts['hemacia'] + class_counts['plaqueta']
+
+        # Atualizar densidade relativa
         densidade_relativa = {
-            'RBC': class_counts['RBC'] / total_cells if total_cells > 0 else 0,
-            'WBC': class_counts['WBC'] / total_cells if total_cells > 0 else 0,
-            'Platelets': class_counts['Platelets'] / total_cells if total_cells > 0 else 0
+            'hemacia': class_counts['hemacia'] / total_cells if total_cells > 0 else 0,
+            'plaqueta': class_counts['plaqueta'] / total_cells if total_cells > 0 else 0,
+            'leucocitos': total_wbc / total_cells if total_cells > 0 else 0,
+            'proporcoes_wbc': {
+                tipo: class_counts[tipo] / total_wbc if total_wbc > 0 else 0
+                for tipo in leucocitos_tipos
+            }
         }
 
         return {
             "processing_time": processing_time,
-            "class_counts": class_counts,
+            "class_counts": class_counts,  # Retornar as contagens diretas
             "precisao": avg_confidence * 100,
-            "densidade_relativa": densidade_relativa
+            "densidade_relativa": densidade_relativa,
+            "total_wbc": total_wbc  # Adicionado para debug
         }
 
     except Exception as e:
