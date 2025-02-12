@@ -21,15 +21,14 @@
     </div>
 
     <!-- Modal Nova Análise -->
-    <div class="modal fade" id="novaAnaliseModal" tabindex="-1" aria-labelledby="novaAnaliseModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="novaAnaliseModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="novaAnaliseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="novaAnaliseModalLabel">Nova Análise</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" enctype="multipart/form-data" action="{% url 'criar_analise' %}" id="analiseForm">
+                <form method="post" enctype="multipart/form-data" id="analiseForm">
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="mb-3">
@@ -125,7 +124,7 @@
                             <td>
                                 <div class="btn-group" role="group" aria-label="Ações">
                                     {% if analise.status == 'concluido' %}
-                                    <a href="{% url 'detalhes_analise' analise.id %}" class="btn btn-info btn-sm" title="Ver detalhes">
+                                    <a href="{% url 'Analises:detalhes_analise' analise.id %}" class="btn btn-info btn-sm" title="Ver detalhes">
                                         <i class="fas fa-search"></i>
                                     </a>
                                     {% endif %}
@@ -246,205 +245,71 @@
 
 {% block js %}
 <script>
-    // Variáveis globais para modais
-    let novaAnaliseModal, editarAnaliseModal, errorModal, successModal;
+document.addEventListener('DOMContentLoaded', function() {
+    // Remover qualquer backdrop residual
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
 
-    // Inicialização quando o DOM estiver pronto
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeModals();
-        initializeTheme();
-        initializeTooltips();
-        setupFormHandlers();
-        setupEditFormHandler();  // Nova função para configurar o form de edição
+    // Inicializar modal com configurações específicas
+    const novaAnaliseModal = new bootstrap.Modal(document.getElementById('novaAnaliseModal'), {
+        backdrop: 'static',
+        keyboard: false
     });
 
-    // Inicializar modais Bootstrap
-    function initializeModals() {
-        novaAnaliseModal = new bootstrap.Modal(document.getElementById('novaAnaliseModal'));
-        editarAnaliseModal = new bootstrap.Modal(document.getElementById('editarAnaliseModal'));
-        errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-        successModal = new bootstrap.Modal(document.getElementById('successModal'));
-    }
+    // Configurar formulário
+    const form = document.getElementById('analiseForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
 
-    // Inicializar tema
-    function initializeTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme);
-    }
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processando...';
 
-    // Configurar handlers do formulário
-    function setupFormHandlers() {
-        const form = document.getElementById('analiseForm');
-        if (form) {
-            // Remover listeners existentes
-            form.replaceWith(form.cloneNode(true));
-            const newForm = document.getElementById('analiseForm');
-            
-            newForm.addEventListener('submit', handleFormSubmit);
-        }
-    }
-
-    // Setup do form de edição
-    function setupEditFormHandler() {
-        const editForm = document.getElementById('editarForm');
-        if (editForm) {
-            editForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const submitButton = this.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                
-                try {
-                    const id = document.getElementById('editId').value;
-                    const formData = new FormData();
-                    formData.append('titulo', document.getElementById('editTitulo').value);
-                    formData.append('paciente', document.getElementById('editPaciente').value);
-                    
-                    const response = await fetch(`/Analises/editar/${id}/`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    });
-                    
-                    const data = await response.json();
-                    if (data.success) {
-                        editarAnaliseModal.hide();
-                        await showSuccess('Análise atualizada com sucesso!');
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.error || 'Erro ao atualizar análise');
+                const formData = new FormData(form);
+                const response = await fetch('{% url "criar_analise" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                     }
-                } catch (error) {
-                    await showError('Erro ao processar a requisição: ' + error);
-                } finally {
-                    submitButton.disabled = false;
-                }
-            });
-        }
-    }
+                });
 
-    // Handler do formulário de análise melhorado
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-        const form = e.target;
-        const submitButton = form.querySelector('button[type="submit"]');
-        
-        try {
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
-            
-            const formData = new FormData(form);
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Fechar modal corretamente
+                    novaAnaliseModal.hide();
+                    document.querySelector('.modal-backdrop')?.remove();
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                    
+                    window.location.reload();
+                } else {
+                    throw new Error(data.error || 'Erro ao processar análise');
                 }
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                novaAnaliseModal.hide();
-                await showSuccess('Análise criada com sucesso!');
-                window.location.reload();
-            } else {
-                throw new Error(data.error || 'Erro desconhecido ao processar análise');
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
-        } catch (error) {
-            console.error('Erro:', error);
-            await showError(error.message);
-        } finally {
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Iniciar Análise';
-        }
-    }
-
-    // Função melhorada para editar análise
-    function editarAnalise(id, titulo, paciente) {
-        document.getElementById('editId').value = id;
-        document.getElementById('editTitulo').value = titulo;
-        document.getElementById('editPaciente').value = paciente;
-        editarAnaliseModal.show();
-    }
-
-    // Função melhorada para deletar análise
-    async function deletarAnalise(url, titulo) {
-        if (!confirm(`Tem certeza que deseja excluir a análise "${titulo}"?`)) return;
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                await showSuccess(data.message);
-                window.location.reload();
-            } else {
-                throw new Error(data.error || 'Erro ao excluir análise');
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            await showError(error.message);
-        }
-    }
-
-    // Função para mostrar mensagem de erro com Promise
-    function showError(message) {
-        return new Promise((resolve) => {
-            document.getElementById('errorMessage').textContent = message;
-            errorModal.show();
-            setTimeout(() => {
-                errorModal.hide();
-                resolve();
-            }, 3000);
         });
     }
 
-    // Função para mostrar mensagem de sucesso com Promise
-    function showSuccess(message) {
-        return new Promise((resolve) => {
-            document.getElementById('successMessage').textContent = message;
-            successModal.show();
-            setTimeout(() => {
-                successModal.hide();
-                resolve();
-            }, 2000);
-        });
-    }
-
-    // Função melhorada para alternar tema
-    function toggleTheme() {
-        const root = document.documentElement;
-        const currentTheme = root.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        root.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme);
-    }
-
-    // Inicializar tooltips
-    function initializeTooltips() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-    }
-
-    // Atualizar ícone do tema
-    function updateThemeIcon(theme) {
-        const icon = document.querySelector('.theme-switch i');
-        if (icon) {
-            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-    }
-</script> 
+    // Limpar modal ao fechar
+    document.getElementById('novaAnaliseModal').addEventListener('hidden.bs.modal', function() {
+        form.reset();
+        document.querySelector('.modal-backdrop')?.remove();
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
+});
+</script>
 {% endblock %}

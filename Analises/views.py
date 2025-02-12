@@ -14,6 +14,8 @@ from django.conf import settings
 from django.utils import timezone
 from zoneinfo import ZoneInfo  # Para Python 3.9+
 import shutil
+import time
+from scripts.analysis_service import analysis_service
 
 logger = logging.getLogger(__name__)
 
@@ -43,102 +45,59 @@ def copiar_imagem_para_static(analise):
         return False
 
 # Create your views here.
-def analises(request):  # mudado de index para analises
-    analises = Analise.objects.all().distinct()
-    return render(request, 'Analises/analises.html', {'analises': analises})  # mudado index.html para analises.html
+def analises(request):
+    """View para listar todas as análises"""
+    try:
+        analises = Analise.objects.all().order_by('-data_criacao')
+        return render(request, 'Analises/analises.html', {'analises': analises})
+    except Exception as e:
+        logger.error(f"Erro ao listar análises: {str(e)}")
+        messages.error(request, "Erro ao carregar análises")
+        return render(request, 'Analises/analises.html', {'analises': []})
 
 def criar_analise(request):
     if request.method == 'POST':
-        with transaction.atomic():
-            try:
-                # Validar arquivo
+        try:
+            with transaction.atomic():
                 if 'img' not in request.FILES:
-                    return JsonResponse({
-                        'success': False,
-                        'error': 'Nenhuma imagem enviada'
-                    })
+                    return JsonResponse({'success': False, 'error': 'Imagem não enviada'})
 
-                # Criar análise inicial
-                analise = Analise.objects.create(
+                # Criar análise
+                analise = Analise(
                     titulo=request.POST['titulo'],
                     paciente=request.POST['paciente'],
                     img=request.FILES['img'],
                     status='processando'
                 )
+                analise.save()
 
-                try:
-                    # Configurar caminhos
-                    base_dir = Path(__file__).resolve().parent.parent
-                    weights_path = str(base_dir / 'scripts' / 'best.pt')
-                    output_dir = str(base_dir / 'media' / 'resultados')
+                # Processar imagem
+                results = analysis_service.process_image(analise.img.path)
 
-                    # Validar arquivos
-                    for path in [weights_path, analise.img.path]:
-                        if not os.path.exists(path):
-                            raise FileNotFoundError(f"Arquivo não encontrado: {path}")
-
-                    # Executar inferência
-                    results = run_inference(weights_path, str(analise.img.path), output_dir)
-
+                if results['success']:
                     # Atualizar análise com resultados
-                    analise.n_plaquetas = int(results['class_counts'].get('Platelets', 0))
-                    analise.n_celulas_brancas = int(results['class_counts'].get('WBC', 0))
-                    analise.n_celulas_vermelhas = int(results['class_counts'].get('RBC', 0))
-                    analise.acuracia = float(results['precisao'])
-                    analise.tempo_processamento = round(float(results['processing_time']), 2)
-                    analise.densidade_relativa = results['densidade_relativa']
+                    analise.n_plaquetas = results['cell_counts'].get('plaqueta', 0)
+                    analise.n_celulas_brancas = sum(
+                        results['cell_counts'].get(tipo, 0) 
+                        for tipo in ['leucocito', 'linfocito', 'monocito', 'basofilo', 
+                                   'neutrofilo_banda', 'neutrofilo_segmentado', 'eosinofilo']
+                    )
+                    analise.n_celulas_vermelhas = results['cell_counts'].get('hemacia', 0)
+                    analise.acuracia = results['accuracy'] * 100
+                    analise.tempo_processamento = results['processing_time']
                     analise.status = 'concluido'
-                    analise.data_analise = datetime.now(tz=ZoneInfo("America/Sao_Paulo"))
-
-                    # Salvar imagem resultado
-                    result_path = Path(output_dir) / 'inference_output' / os.path.basename(analise.img.path)
-                    if result_path.exists():
-                        with open(result_path, 'rb') as f:
-                            analise.img_resultado.save(
-                                f"resultado_{analise.id}.jpg",
-                                File(f),
-                                save=False
-                            )
-
                     analise.save()
-
-                    # Após análise bem sucedida, copiar para static
-                    if analise.status == 'concluido':
-                        static_img_dir = settings.BASE_DIR / 'static' / 'images'
-                        static_img_dir.mkdir(parents=True, exist_ok=True)
-                        
-                        # Copiar imagem original
-                        if analise.img:
-                            shutil.copy2(
-                                analise.img.path,
-                                static_img_dir / 'original.png'
-                            )
-                        
-                        # Copiar imagem resultado
-                        if analise.img_resultado:
-                            shutil.copy2(
-                                analise.img_resultado.path,
-                                static_img_dir / 'detected.png'
-                            )
 
                     return JsonResponse({'success': True})
-
-                except Exception as e:
-                    logger.error(f"Erro na análise: {e}", exc_info=True)
+                else:
                     analise.status = 'erro'
-                    analise.erro_msg = str(e)
+                    analise.erro_msg = results.get('error', 'Erro desconhecido')
                     analise.save()
-                    return JsonResponse({
-                        'success': False,
-                        'error': str(e)
-                    })
+                    return JsonResponse({'success': False, 'error': results['error']})
 
-            except Exception as e:
-                logger.error(f"Erro ao criar análise: {e}", exc_info=True)
-                return JsonResponse({
-                    'success': False,
-                    'error': str(e)
-                })
+        except Exception as e:
+            logger.error(f"Erro ao processar análise: {e}")
+            return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
@@ -169,7 +128,7 @@ def detalhes_analise(request, analise_id):
     except Exception as e:
         logger.error(f"Erro ao exibir detalhes da análise {analise_id}: {str(e)}", exc_info=True)
         messages.error(request, f'Erro ao exibir detalhes: {str(e)}')
-        return redirect('analises')  # mudado de 'index' para 'analises'
+        return redirect('Analises:analises')
 
 def editar_analise(request, analise_id):
     if request.method == 'POST':
@@ -203,7 +162,6 @@ def editar_analise(request, analise_id):
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
 def index(request):
-    # Atualizado para verificar arquivos .png em vez de .jpg
     static_images_path = os.path.join(settings.BASE_DIR, 'static', 'images')
     images_exist = (
         os.path.exists(os.path.join(static_images_path, 'original.png')) and 
