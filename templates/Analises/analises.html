@@ -1,63 +1,60 @@
 {% extends "base.html" %}
-
-{% block title %}Análise{% endblock %}
+{% block title %}Análises{% endblock %}
 
 {% block content %}
-{% csrf_token %}
 <div class="container mt-4">
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="card-title text-contrast mb-0">Bem-vindo à Análise de Células!</h1>
-                    <p class="text-muted mt-2">Sistema de análise de células</p>
-                </div>
-                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
-                    data-bs-target="#novaAnaliseModal">
-                    <i class="fas fa-plus-circle me-2"></i>Nova Análise
-                </button>
-            </div>
-        </div>
+    <!-- Cabeçalho com botão -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-microscope me-2"></i>Análises</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovaAnalise">
+            <i class="fas fa-plus-circle me-2"></i>Nova Análise
+        </button>
     </div>
 
     <!-- Modal Nova Análise -->
-    <div class="modal fade" id="novaAnaliseModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="novaAnaliseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="modalNovaAnalise" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="novaAnaliseModalLabel">Nova Análise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Nova Análise</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form method="post" enctype="multipart/form-data" id="analiseForm">
+                <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="titulo" class="form-label">Título</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                            <label class="form-label">Título da Análise</label>
+                            <input type="text" class="form-control" name="titulo" required>
                         </div>
                         <div class="mb-3">
-                            <label for="paciente" class="form-label">Nome do Paciente</label>
-                            <input type="text" class="form-control" id="paciente" name="paciente" required>
+                            <label class="form-label">Nome do Paciente</label>
+                            <input type="text" class="form-control" name="paciente" required>
                         </div>
                         <div class="mb-3">
-                            <label for="img" class="form-label">Imagem para Análise</label>
-                            <input type="file" class="form-control" id="img" name="img" accept="image/*" required>
+                            <label class="form-label">Imagem para Análise</label>
+                            <input type="file" class="form-control" name="img" accept="image/*" required>
                             <div class="form-text">Selecione uma imagem clara das células.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Iniciar Análise</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
+                            Iniciar Análise
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- Lista de Análises -->
     <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Análises Realizadas</h5>
+        </div>
         <div class="card-body">
-            <h2 class="card-title text-contrast mb-4">Análises Realizadas</h2>
-            {% if analises|length > 0 %}
+            {% if analises %}
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
@@ -115,40 +112,40 @@
                             </td>
                             <td>{{ analise.acuracia|floatformat:2|default:"-" }}%</td>
                             <td>
-                                <span class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
+                                <span
+                                    class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
                                     {{ analise.status }}
                                 </span>
                             </td>
-                            <!-- Código corrigido -->
-
                             <td>
                                 <div class="btn-group" role="group" aria-label="Ações">
                                     {% if analise.status == 'concluido' %}
-                                    <a href="{% url 'Analises:detalhes_analise' analise.id %}" class="btn btn-info btn-sm" title="Ver detalhes">
+                                    <a href="{% url 'Analises:detalhes_analise' analise.id %}"
+                                        class="btn btn-info btn-sm" title="Ver detalhes">
                                         <i class="fas fa-search"></i>
                                     </a>
                                     {% endif %}
-                                    <button type="button" onclick='editarAnalise("{{ analise.id }}", "{{ analise.titulo|escapejs }}", "{{ analise.paciente|escapejs }}")' 
-                                            class="btn btn-warning btn-sm" title="Editar">
+                                    <button type="button"
+                                        onclick='editarAnalise("{{ analise.id }}", "{{ analise.titulo|escapejs }}", "{{ analise.paciente|escapejs }}")'
+                                        class="btn btn-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button type="button" onclick="deletarAnalise('{% url 'deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')" 
-                                            class="btn btn-danger btn-sm" title="Excluir">
+                                    <button type="button"
+                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')"
+                                        class="btn btn-danger btn-sm" title="Excluir">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
-                                
-                                {% if analise.ultima_modificacao %}
-                                <small class="text-muted d-block mt-1">
-                                    <i class="fas fa-history"></i> Editado em {{ analise.ultima_modificacao|date:"d/m/Y H:i:s" }}
-                                </small>
-                                {% endif %}
-                                
+
                                 {% if analise.densidade_relativa %}
-                                <small class="d-block">
-                                    RBC: {{ analise.densidade_relativa.RBC|floatformat:2 }}
-                                    WBC: {{ analise.densidade_relativa.WBC|floatformat:2 }}
-                                    PLT: {{ analise.densidade_relativa.Platelets|floatformat:2 }}
+                                <small class="d-block mt-1">
+                                    <span class="badge bg-secondary">Densidades:</span>
+                                    <span class="badge bg-danger">RBC: {{ analise.densidade_relativa.RBC|floatformat:2
+                                        }}</span>
+                                    <span class="badge bg-success">WBC: {{ analise.densidade_relativa.WBC|floatformat:2
+                                        }}</span>
+                                    <span class="badge bg-primary">PLT: {{
+                                        analise.densidade_relativa.Platelets|floatformat:2 }}</span>
                                 </small>
                                 {% endif %}
                             </td>
@@ -158,120 +155,35 @@
                 </table>
             </div>
             {% else %}
-            <div class="alert alert-info d-flex align-items-center">
-                <i class="fas fa-info-circle me-2 fa-lg"></i>
-                <div>Nenhuma análise encontrada. Comece criando uma nova análise!</div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Nenhuma análise encontrada. Use o formulário acima para criar uma
+                nova análise.
             </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-<!-- Modal de Erro -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="errorModalLabel">
-                    <i class="fas fa-exclamation-circle me-2"></i>Erro
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="errorMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Sucesso -->
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="successModalLabel">
-                    <i class="fas fa-check-circle me-2"></i>Sucesso
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="successMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Edição -->
-<div class="modal fade" id="editarAnaliseModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Análise</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="editarForm">
-                <div class="modal-body">
-                    <input type="hidden" id="editId">
-                    <div class="mb-3">
-                        <label for="editTitulo" class="form-label">Título</label>
-                        <input type="text" class="form-control" id="editTitulo" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editPaciente" class="form-label">Paciente</label>
-                        <input type="text" class="form-control" id="editPaciente" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Botão de tema com tooltip -->
-<button class="theme-switch" onclick="toggleTheme()" data-bs-toggle="tooltip" data-bs-placement="left"
-    title="Alternar tema claro/escuro">
-    <i class="fas fa-moon"></i>
-</button>
 {% endblock %}
 
 {% block js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Remover qualquer backdrop residual
-    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-    document.body.classList.remove('modal-open');
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('formNovaAnalise');
+        const modal = new bootstrap.Modal(document.getElementById('modalNovaAnalise'));
+        const spinner = form.querySelector('.spinner-border');
+        const submitBtn = form.querySelector('button[type="submit"]');
 
-    // Inicializar modal com configurações específicas
-    const novaAnaliseModal = new bootstrap.Modal(document.getElementById('novaAnaliseModal'), {
-        backdrop: 'static',
-        keyboard: false
-    });
-
-    // Configurar formulário
-    const form = document.getElementById('analiseForm');
-    if (form) {
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
+
+            // Mostrar loading
+            spinner.classList.remove('d-none');
+            submitBtn.disabled = true;
 
             try {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processando...';
-
-                const formData = new FormData(form);
-                const response = await fetch('{% url "criar_analise" %}', {
+                const formData = new FormData(this);
+                const response = await fetch('{% url "Analises:criar_analise" %}', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -280,15 +192,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    // Fechar modal corretamente
-                    novaAnaliseModal.hide();
-                    document.querySelector('.modal-backdrop')?.remove();
-                    document.body.classList.remove('modal-open');
-                    document.body.style.overflow = '';
-                    document.body.style.paddingRight = '';
-                    
+                    modal.hide();
                     window.location.reload();
                 } else {
                     throw new Error(data.error || 'Erro ao processar análise');
@@ -296,20 +202,42 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) {
                 alert(error.message);
             } finally {
+                spinner.classList.add('d-none');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
             }
         });
+
+        // Limpar form ao fechar modal
+        document.getElementById('modalNovaAnalise').addEventListener('hidden.bs.modal', function () {
+            form.reset();
+            spinner.classList.add('d-none');
+            submitBtn.disabled = false;
+        });
+    });
+
+    // Funções de editar e deletar
+    function editarAnalise(id) {
+        window.location.href = `/analises/editar/${id}/`;
     }
 
-    // Limpar modal ao fechar
-    document.getElementById('novaAnaliseModal').addEventListener('hidden.bs.modal', function() {
-        form.reset();
-        document.querySelector('.modal-backdrop')?.remove();
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-    });
-});
+    function deletarAnalise(url, titulo) {
+        if (confirm(`Deseja realmente excluir a análise "${titulo}"?`)) {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        throw new Error(data.error || 'Erro ao excluir análise');
+                    }
+                })
+                .catch(error => alert(error.message));
+        }
+    }
 </script>
 {% endblock %}

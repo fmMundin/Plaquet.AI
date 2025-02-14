@@ -25,11 +25,6 @@ class Analise(models.Model):
     erro_msg = models.TextField(null=True, blank=True)
     tempo_processamento = models.FloatField(null=True, blank=True)
     
-    # Campos para rastreamento
-    ultima_modificacao = models.DateTimeField(auto_now=True)
-    modificado_por = models.CharField(max_length=100, null=True, blank=True)
-    historico_modificacoes = models.JSONField(default=dict, blank=True)
-    
     # Campos para análise detalhada
     detalhes_processamento = models.JSONField(null=True, blank=True)
     confianca_deteccao = models.FloatField(null=True, blank=True)
@@ -43,30 +38,13 @@ class Analise(models.Model):
     def __str__(self):
         return f"{self.titulo} - {self.paciente}"
 
-    def registrar_modificacao(self, descricao):
-        if not self.historico_modificacoes:
-            self.historico_modificacoes = {}
-        
-        timestamp = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-        if 'modificacoes' not in self.historico_modificacoes:
-            self.historico_modificacoes['modificacoes'] = []
-        
-        self.historico_modificacoes['modificacoes'].append({
-            'timestamp': timestamp,
-            'descricao': descricao
-        })
-
     def save(self, *args, **kwargs):
-        # Atualizar última modificação
-        self.ultima_modificacao = timezone.now()
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         # Deletar arquivos associados
-        if self.img:
-            if os.path.isfile(self.img.path):
-                os.remove(self.img.path)
-        if self.img_resultado:
-            if os.path.isfile(self.img_resultado.path):
-                os.remove(self.img_resultado.path)
+        if self.img and os.path.isfile(self.img.path):
+            os.remove(self.img.path)
+        if self.img_resultado and os.path.isfile(self.img_resultado.path):
+            os.remove(self.img_resultado.path)
         super().delete(*args, **kwargs)

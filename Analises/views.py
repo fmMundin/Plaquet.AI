@@ -59,45 +59,78 @@ def criar_analise(request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
+                # Verificar se um arquivo foi enviado
                 if 'img' not in request.FILES:
-                    return JsonResponse({'success': False, 'error': 'Imagem não enviada'})
+                    return JsonResponse({'success': False, 'error': 'Nenhuma imagem foi enviada'})
+                
+                img_file = request.FILES['img']
+                # Verificar extensão do arquivo
+                ext = img_file.name.split('.')[-1].lower()
+                if ext not in ['jpg', 'jpeg', 'png']:
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
+                    })
 
-                # Criar análise
                 analise = Analise(
                     titulo=request.POST['titulo'],
                     paciente=request.POST['paciente'],
-                    img=request.FILES['img'],
-                    status='processando'
+                    img=img_file,
+                    status='processando',
+                    data_analise=timezone.now()
                 )
                 analise.save()
 
-                # Processar imagem
-                results = analysis_service.process_image(analise.img.path)
+                # Garantir que o diretório de resultados existe
+                result_dir = settings.MEDIA_ROOT / 'resultados'
+                result_dir.mkdir(exist_ok=True, parents=True)
 
-                if results['success']:
-                    # Atualizar análise com resultados
-                    analise.n_plaquetas = results['cell_counts'].get('plaqueta', 0)
-                    analise.n_celulas_brancas = sum(
-                        results['cell_counts'].get(tipo, 0) 
-                        for tipo in ['leucocito', 'linfocito', 'monocito', 'basofilo', 
-                                   'neutrofilo_banda', 'neutrofilo_segmentado', 'eosinofilo']
-                    )
-                    analise.n_celulas_vermelhas = results['cell_counts'].get('hemacia', 0)
-                    analise.acuracia = results['accuracy'] * 100
-                    analise.tempo_processamento = results['processing_time']
-                    analise.status = 'concluido'
-                    analise.save()
+                try:
+                    # Processar imagem
+                    logger.info(f"Iniciando processamento da imagem: {analise.img.path}")
+                    results = analysis_service.process_image(analise.img.path)
+                    
+                    if results['success'] and 'processed_image_path' in results:
+                        logger.info(f"Imagem processada com sucesso: {results['processed_image_path']}")
+                        
+                        # Salvar imagem processada
+                        processed_path = Path(results['processed_image_path'])
+                        if processed_path.exists():
+                            with processed_path.open('rb') as f:
+                                analise.img_resultado.save(
+                                    f'resultado_{analise.id}.{ext}',
+                                    File(f),
+                                    save=True
+                                )
+                                logger.info(f"Imagem resultado salva: {analise.img_resultado.path}")
+                        else:
+                            raise Exception("Arquivo de resultado não foi gerado")
 
-                    return JsonResponse({'success': True})
-                else:
+                        # Atualizar análise com resultados
+                        analise.n_plaquetas = results['cell_counts'].get('plaqueta', 0)
+                        analise.n_celulas_brancas = results['cell_counts'].get('leucocito', 0)
+                        analise.n_celulas_vermelhas = results['cell_counts'].get('hemacia', 0)
+                        analise.acuracia = results.get('accuracy', 0) * 100
+                        analise.tempo_processamento = results.get('processing_time', 0)
+                        analise.status = 'concluido'
+                        analise.save()
+                        
+                        return JsonResponse({'success': True})
+                    else:
+                        raise Exception(results.get('error', 'Erro desconhecido no processamento'))
+                
+                except Exception as e:
                     analise.status = 'erro'
-                    analise.erro_msg = results.get('error', 'Erro desconhecido')
+                    analise.erro_msg = str(e)
                     analise.save()
-                    return JsonResponse({'success': False, 'error': results['error']})
+                    raise  # Re-raise para ser capturado pelo try externo
 
         except Exception as e:
-            logger.error(f"Erro ao processar análise: {e}")
-            return JsonResponse({'success': False, 'error': str(e)})
+            logger.error(f"Erro ao processar análise: {str(e)}")
+            return JsonResponse({
+                'success': False, 
+                'error': f'Erro ao processar imagem: {str(e)}'
+            })
 
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
@@ -131,43 +164,22 @@ def detalhes_analise(request, analise_id):
         return redirect('Analises:analises')
 
 def editar_analise(request, analise_id):
+    analise = get_object_or_404(Analise, pk=analise_id)
+    
     if request.method == 'POST':
         try:
-            analise = get_object_or_404(Analise, pk=analise_id)
-            dados_antigos = f"Título: {analise.titulo}, Paciente: {analise.paciente}"
-            
-            # Atualizar dados
             analise.titulo = request.POST.get('titulo', analise.titulo)
             analise.paciente = request.POST.get('paciente', analise.paciente)
-            
-            # Registrar modificação
-            alteracoes = f"Alteração nos dados (Anterior: {dados_antigos})"
-
-            analise.registrar_modificacao(alteracoes)
-            
             analise.save()
-            
-            return JsonResponse({
-                'success': True,
-                'message': 'Análise atualizada com sucesso!',
-                'ultima_modificacao': analise.ultima_modificacao.strftime('%d/%m/%Y %H:%M:%S'),
-                'modificado_por': analise.modificado_por
-            })
+            messages.success(request, 'Análise atualizada com sucesso!')
+            return redirect('Analises:analises')
         except Exception as e:
-            logger.error(f"Erro ao editar análise: {str(e)}", exc_info=True)
-            return JsonResponse({
-                'success': False,
-                'error': str(e)
-            })
-    return JsonResponse({'success': False, 'error': 'Método não permitido'})
+            messages.error(request, f'Erro ao atualizar análise: {str(e)}')
+    
+    return render(request, 'Analises/editar.html', {'analise': analise})
 
 def index(request):
-    static_images_path = os.path.join(settings.BASE_DIR, 'static', 'images')
-    images_exist = (
-        os.path.exists(os.path.join(static_images_path, 'original.png')) and 
-        os.path.exists(os.path.join(static_images_path, 'detected.png'))
-    )
-    
+    """View para a página inicial"""
     return render(request, 'Analises/index.html', {
-        'original_exists': images_exist
+        'original_exists': True  # Simplificado para sempre mostrar o conteúdo
     })
