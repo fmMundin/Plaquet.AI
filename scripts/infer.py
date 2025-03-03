@@ -21,13 +21,20 @@ def process_image(weights_path, image_path, output_dir):
         # Calcular tempo de processamento
         processing_time = time.time() - start_time
         
-        # Preparar contagens e densidade relativa
+        # Atualizar contagens
         class_counts = {
-            'Platelets': 0, 'WBC': 0, 'RBC': 0,
-            'Lymphocyte': 0, 'Monocyte': 0, 'Basophil': 0,
-            'Erythroblast': 0, 'Band_Neutrophil': 0, 
-            'Segmented_Neutrophil': 0, 'Myelocyte': 0,
-            'Metamyelocyte': 0, 'Promyelocyte': 0,
+            'RBC': 0,          # células vermelhas
+            'WBC': 0,          # células brancas
+            'Platelets': 0,    # plaquetas
+            'Lymphocyte': 0,   # linfócitos
+            'Monocyte': 0,     # monócitos
+            'Basophil': 0,     # basófilos
+            'Erythroblast': 0, # eritroblastos
+            'Band_Neutrophil': 0,
+            'Segmented_Neutrophil': 0,
+            'Myelocyte': 0,
+            'Metamyelocyte': 0,
+            'Promyelocyte': 0,
             'Eosinophil': 0
         }
         
@@ -41,24 +48,42 @@ def process_image(weights_path, image_path, output_dir):
             conf = float(box.conf[0])
             class_name = results.names[cls]
             
-            # Mapear classes para categorias principais
-            if class_name in ['hemacia']:
+            # Mapear classes conforme o modelo atual
+            if class_name == 'hemacia':
                 class_counts['RBC'] += 1
-            elif class_name in ['leucocito', 'linfocito', 'monocito', 'basofilo', 'neutrofilo_banda',
-                              'neutrofilo_segmentado', 'mielocito', 'metamielocito', 'promielocito', 'eosinofilo']:
-                class_counts['WBC'] += 1
-                # Contagem específica
-                if class_name == 'linfocito': class_counts['Lymphocyte'] += 1
-                elif class_name == 'monocito': class_counts['Monocyte'] += 1
-                elif class_name == 'basofilo': class_counts['Basophil'] += 1
-                elif class_name == 'neutrofilo_banda': class_counts['Band_Neutrophil'] += 1
-                elif class_name == 'neutrofilo_segmentado': class_counts['Segmented_Neutrophil'] += 1
-                elif class_name == 'mielocito': class_counts['Myelocyte'] += 1
-                elif class_name == 'metamielocito': class_counts['Metamyelocyte'] += 1
-                elif class_name == 'promielocito': class_counts['Promyelocyte'] += 1
-                elif class_name == 'eosinofilo': class_counts['Eosinophil'] += 1
             elif class_name == 'plaqueta':
                 class_counts['Platelets'] += 1
+            elif class_name == 'leucocito':
+                class_counts['WBC'] += 1
+            elif class_name == 'linfocito':
+                class_counts['Lymphocyte'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'monocito':
+                class_counts['Monocyte'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'basofilo':
+                class_counts['Basophil'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'eritroblasto':
+                class_counts['Erythroblast'] += 1
+            elif class_name == 'neutrofilo_banda':
+                class_counts['Band_Neutrophil'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'neutrofilo_segmentado':
+                class_counts['Segmented_Neutrophil'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'mielocito':
+                class_counts['Myelocyte'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'metamielocito':
+                class_counts['Metamyelocyte'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'promielocito':
+                class_counts['Promyelocyte'] += 1
+                class_counts['WBC'] += 1
+            elif class_name == 'eosinofilo':
+                class_counts['Eosinophil'] += 1
+                class_counts['WBC'] += 1
             
             total_confidence += conf
 

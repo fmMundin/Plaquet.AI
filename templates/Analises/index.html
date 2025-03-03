@@ -1,220 +1,114 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Plaquet.AI - Início{% endblock %}
+{% block title %}Plaquet.AI - Sistema de Análise de Células{% endblock %}
 
 {% block content %}
-<!-- Layout de duas colunas -->
-<div class="container mt-4" id="features">
+<div class="container mt-4">
+    <!-- Seção Hero -->
     <div class="row align-items-center">
-        <!-- Coluna Esquerda - Card de Boas-vindas -->
-        <div class="col-lg-5">
-            <div class="card welcome-card h-100">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-4">
-                        <h1 class="card-title text-contrast">Bem-vindo ao Plaquet.AI</h1>
-                        <p class="text-muted mt-3">Sistema de análise de células sanguíneas com Inteligência Artificial
-                        </p>
-                    </div>
-
-                    <div class="welcome-features">
-                        <div class="feature-item">
-                            <i class="fas fa-bolt text-primary"></i>
-                            <div>
-                                <h5>Processamento Rápido</h5>
-                                <p>Resultados em menos de 1 segundo</p>
-                            </div>
-                        </div>
-
-                        <div class="feature-item">
-                            <i class="fas fa-crosshairs text-success"></i>
-                            <div>
-                                <h5>Alta Precisão</h5>
-                                <p>Detecção precisa com IA avançada</p>
-                            </div>
-                        </div>
-
-                        <div class="feature-item">
-                            <i class="fas fa-chart-bar text-info"></i>
-                            <div>
-                                <h5>Análise Detalhada</h5>
-                                <p>Contagem e classificação automática</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto">
-                        <a href="{% url 'Analises:analises' %}" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-microscope me-2"></i>Começar Análise
-                        </a>
-                    </div>
+        <div class="col-lg-6">
+            <div class="welcome-card p-4">
+                <h1 class="display-4">Bem-vindo ao Plaquet.AI</h1>
+                <p class="lead">Sistema inteligente para análise de células sanguíneas usando Inteligência Artificial.
+                </p>
+                <div class="mt-4">
+                    <a href="{% url 'Analises:analises' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-microscope me-2"></i>Começar Análise
+                    </a>
                 </div>
             </div>
         </div>
-
-        <!-- Coluna Direita - Hero Carousel -->
-        <div class="col-lg-7">
-            <div class="card h-100"> <!-- Adicionado h-100 para manter altura igual ao card da esquerda -->
-                <div class="card-body p-0">
-                    <div class="hero-carousel" id="heroCarousel">
-                        <div class="hero-slide active">
-                            <div class="hero-image hero-image-1">
-                                <div class="hero-content">
-                                    <h3>Análise de Plaquetas</h3>
-                                    <p>Detecção precisa com IA</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hero-slide">
-                            <div class="hero-image hero-image-2">
-                                <div class="hero-content">
-                                    <h3>Células Brancas</h3>
-                                    <p>Identificação automática</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hero-slide">
-                            <div class="hero-image hero-image-3">
-                                <div class="hero-content">
-                                    <h3>Células Vermelhas</h3>
-                                    <p>Contagem precisa</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hero-controls">
-                            <button class="hero-prev"><i class="fas fa-chevron-left"></i></button>
-                            <div class="hero-indicators"></div>
-                            <button class="hero-next"><i class="fas fa-chevron-right"></i></button>
+        <div class="col-lg-6">
+            <!-- Hero Carousel -->
+            <div id="heroCarousel" class="hero-carousel">
+                <div class="hero-slides">
+                    <div class="hero-slide active">
+                        <div class="hero-image hero-image-1"></div>
+                        <div class="hero-content">
+                            <h3>Análise Inteligente</h3>
+                            <p>Detecção automática de células sanguíneas</p>
                         </div>
                     </div>
+                    <div class="hero-slide">
+                        <div class="hero-image hero-image-2"></div>
+                        <div class="hero-content">
+                            <h3>Resultados Precisos</h3>
+                            <p>Alta acurácia na identificação de células</p>
+                        </div>
+                    </div>
+                    <div class="hero-slide">
+                        <div class="hero-image hero-image-3"></div>
+                        <div class="hero-content">
+                            <h3>Interface Amigável</h3>
+                            <p>Sistema fácil e intuitivo de usar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-controls">
+                    <button class="hero-prev"><i class="fas fa-chevron-left"></i></button>
+                    <div class="hero-indicators"></div>
+                    <button class="hero-next"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Atualizar a seção do carrossel de amostras -->
-    <div class="card mt-5">
-        <div class="card-body">
-            <h2 class="text-contrast mb-4">Amostras Interativas</h2>
-            <div class="samples-carousel">
-                <div class="samples-track" id="samplesTrack">
-                    <!-- Plaquetas -->
-                    <div class="sample-slide active">
-                        <div class="sample-image-container">
-                            <img src="{% static 'images/original1.png' %}" alt="Plaquetas" class="sample-base-image">
-                            <div class="sample-overlay">
-                                <img src="{% static 'images/detected1.png' %}" alt="Detecção"
-                                    class="sample-overlay-image">
-                            </div>
-                        </div>
-                        <p class="text-center mt-2">Plaquetas <span class="badge bg-primary">Platelets</span></p>
-                    </div>
-
-                    <!-- Células Brancas -->
-                    <div class="sample-slide">
-                        <div class="sample-image-container">
-                            <img src="{% static 'images/original2.png' %}" alt="WBC" class="sample-base-image">
-                            <div class="sample-overlay">
-                                <img src="{% static 'images/detected2.png' %}" alt="Detecção"
-                                    class="sample-overlay-image">
-                            </div>
-                        </div>
-                        <p class="text-center mt-2">Células Brancas <span class="badge bg-success">WBC</span></p>
-                    </div>
-
-                    <!-- Células Vermelhas -->
-                    <div class="sample-slide">
-                        <div class="sample-image-container">
-                            <img src="{% static 'images/original3.png' %}" alt="RBC" class="sample-base-image">
-                            <div class="sample-overlay">
-                                <img src="{% static 'images/detected3.jpg' %}" alt="Detecção"
-                                    class="sample-overlay-image">
-                            </div>
-                        </div>
-                        <p class="text-center mt-2">Células Vermelhas <span class="badge bg-danger">RBC</span></p>
-                    </div>
-                </div>
-
-                <div class="samples-controls">
-                    <button class="prev" id="samplesPrevBtn"><i class="fas fa-chevron-left"></i></button>
-                    <button class="next" id="samplesNextBtn"><i class="fas fa-chevron-right"></i></button>
-                </div>
+    <!-- Seção de Recursos -->
+    <div class="feature-grid mt-5">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-microscope"></i>
             </div>
-
-            <p class="text-muted mt-3 text-center">
-                <i class="fas fa-info-circle me-2"></i>
-                Passe o mouse sobre as imagens para ver as detecções realizadas pela IA
-            </p>
+            <h3 class="feature-title">Análise Automática</h3>
+            <p class="feature-text">Detecção e contagem automática de células sanguíneas usando IA avançada.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Resultados Precisos</h3>
+            <p class="feature-text">Alta precisão na identificação e classificação de diferentes tipos de células.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="feature-title">Rápido e Eficiente</h3>
+            <p class="feature-text">Processamento rápido de imagens e resultados em tempo real.</p>
         </div>
     </div>
 
-    <!-- Seção de depoimentos -->
-    <div class="card mt-5">
-        <div class="card-body">
-            <h2 class="text-contrast mb-4">Depoimento</h2>
-                    <div class="testimonial-content">
-                        <p class="text-muted">"Parabéns pelo projeto! Muito bem feito e de grande relevância!"</p>
-                        <p class="text-muted">- Adriana Coelho</p>
-                    </div>
-        </div>
-    </div>
-
-    <div class="card mt-5">
-        <div class="card-body">
-            <h2 class="text-contrast mb-4">Perguntas Frequentes</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        Como funciona o Plaquet.AI?
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="faq-answer">
-                        O Plaquet.AI utiliza algoritmos de IA para analisar imagens microscópicas e realizar a contagem
-                        precisa de plaquetas.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        Qual a precisão do sistema?
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="faq-answer">
-                        O sistema precisa passar por uma melhora na prrecisão, mas no momento, o sistema tem uma acurácia média de 75%.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        Quais tipos de células são detectadas?
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="faq-answer">
-                        O sistema detecta três tipos principais de células: plaquetas (PLT), células brancas (WBC) e células vermelhas (RBC).
-                    </div>
-                </div>
+    <!-- Seção de Demonstração -->
+    <div class="image-comparison-wrapper mt-5">
+        <h3 class="text-center mb-4">Veja como funciona</h3>
+        <div id="samplesCarousel" class="samples-carousel">
+            <div id="samplesTrack" class="samples-track">
+                <!-- Slides serão adicionados dinamicamente -->
+            </div>
+            <div class="samples-controls">
+                <button id="samplesPrevBtn" class="prev"><i class="fas fa-chevron-left"></i></button>
+                <button id="samplesNextBtn" class="next"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </div>
-
-<!-- Botão de tema com tooltip -->
-<button class="theme-switch" onclick="toggleTheme()" data-bs-toggle="tooltip" data-bs-placement="left"
-    title="Alternar tema claro/escuro">
-    <i class="fas fa-moon"></i>
-</button>
+</div>
 {% endblock %}
 
 {% block css %}
+{{ block.super }}
 <style>
-.hero-image-1 {
-    background-image: url("{% static 'images/hero1.jpg' %}");
-}
-.hero-image-2 {
-    background-image: url("{% static 'images/hero2.jpg' %}");
-}
-.hero-image-3 {
-    background-image: url("{% static 'images/hero3.jpg' %}");
-}
+    .hero-image-1 {
+        background-image: url("{% static 'images/hero1.jpg' %}");
+    }
+
+    .hero-image-2 {
+        background-image: url("{% static 'images/hero2.jpg' %}");
+    }
+
+    .hero-image-3 {
+        background-image: url("{% static 'images/hero3.jpg' %}");
+    }
 </style>
 {% endblock %}
 
@@ -385,115 +279,79 @@
     });
 
     // Hero Carousel
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const heroCarousel = document.getElementById('heroCarousel');
-        const slides = heroCarousel.querySelectorAll('.hero-slide');
-        const prevBtn = heroCarousel.querySelector('.hero-prev');
-        const nextBtn = heroCarousel.querySelector('.hero-next');
-        const indicators = heroCarousel.querySelector('.hero-indicators');
-        let currentSlide = 0;
-        let autoplayInterval;
+        if (heroCarousel) {
+            const slides = heroCarousel.querySelectorAll('.hero-slide');
+            const prevBtn = heroCarousel.querySelector('.hero-prev');
+            const nextBtn = heroCarousel.querySelector('.hero-next');
+            const indicators = heroCarousel.querySelector('.hero-indicators');
+            let currentSlide = 0;
+            let autoplayInterval;
 
-        // Criar indicadores
-        slides.forEach((_, index) => {
-            const dot = document.createElement('button');
-            dot.classList.add('hero-indicator');
-            if (index === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => {
+            // Criar indicadores
+            slides.forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.classList.add('hero-indicator');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                indicators.appendChild(dot);
+            });
+
+            function updateSlides() {
+                slides.forEach((slide, index) => {
+                    slide.classList.remove('active');
+                    if (index === currentSlide) {
+                        slide.classList.add('active');
+                        indicators.children[index].classList.add('active');
+                    } else {
+                        indicators.children[index].classList.remove('active');
+                    }
+                });
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                updateSlides();
+            }
+
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                updateSlides();
+            }
+
+            function goToSlide(index) {
+                currentSlide = index;
+                updateSlides();
+            }
+
+            function startAutoplay() {
                 stopAutoplay();
-                goToSlide(index);
+                autoplayInterval = setInterval(nextSlide, 5000);
+            }
+
+            function stopAutoplay() {
+                if (autoplayInterval) {
+                    clearInterval(autoplayInterval);
+                }
+            }
+
+            // Event Listeners
+            prevBtn.addEventListener('click', () => {
+                prevSlide();
+                stopAutoplay();
                 startAutoplay();
             });
-            indicators.appendChild(dot);
-        });
 
-        function updateSlides() {
-            slides.forEach((slide, index) => {
-                slide.classList.remove('active', 'prev', 'next');
-                indicators.children[index].classList.remove('active');
-
-                if (index === currentSlide) {
-                    slide.classList.add('active');
-                    indicators.children[index].classList.add('active');
-                } else if (index === (currentSlide - 1 + slides.length) % slides.length) {
-                    slide.classList.add('prev');
-                } else if (index === (currentSlide + 1) % slides.length) {
-                    slide.classList.add('next');
-                }
+            nextBtn.addEventListener('click', () => {
+                nextSlide();
+                stopAutoplay();
+                startAutoplay();
             });
-        }
 
-        function goToSlide(index) {
-            currentSlide = index;
-            updateSlides();
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            updateSlides();
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            updateSlides();
-        }
-
-        function startAutoplay() {
-            stopAutoplay();
-            autoplayInterval = setInterval(nextSlide, 5000);
-        }
-
-        function stopAutoplay() {
-            if (autoplayInterval) {
-                clearInterval(autoplayInterval);
-            }
-        }
-
-        // Event listeners
-        prevBtn.addEventListener('click', () => {
-            stopAutoplay();
-            prevSlide();
+            // Iniciar autoplay
             startAutoplay();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            stopAutoplay();
-            nextSlide();
-            startAutoplay();
-        });
-
-        // Pausar autoplay quando o mouse estiver sobre o carrossel
-        heroCarousel.addEventListener('mouseenter', stopAutoplay);
-        heroCarousel.addEventListener('mouseleave', startAutoplay);
-
-        // Iniciar autoplay
-        startAutoplay();
-        updateSlides();
+        }
     });
-
-    function toggleFaq(element) {
-        const faqItem = element.parentElement;
-        const icon = element.querySelector('i');
-        const answer = faqItem.querySelector('.faq-answer');
-        
-        // Fecha todas as outras respostas
-        document.querySelectorAll('.faq-item').forEach(item => {
-            if (item !== faqItem && item.classList.contains('active')) {
-                item.classList.remove('active');
-                item.querySelector('i').classList.remove('fa-minus');
-                item.querySelector('i').classList.add('fa-plus');
-            }
-        });
-        
-        // Alterna o estado atual
-        faqItem.classList.toggle('active');
-        if (faqItem.classList.contains('active')) {
-            icon.classList.remove('fa-plus');
-            icon.classList.add('fa-minus');
-        } else {
-            icon.classList.remove('fa-minus');
-            icon.classList.add('fa-plus');
-        }
-    }
 </script>
 {% endblock %}
