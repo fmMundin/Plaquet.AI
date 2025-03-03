@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 import logging
 from pathlib import Path
-from scripts.infer import run_inference
+from scripts.infer import process_image  # Mudamos para process_image
 import traceback
 from django.db import transaction
 from django.core.files import File
@@ -86,15 +86,25 @@ def criar_analise(request):
                 result_dir.mkdir(exist_ok=True, parents=True)
 
                 try:
+                    # Configurar caminhos
+                    base_dir = Path(__file__).resolve().parent.parent
+                    weights_path = str(base_dir / 'scripts' / 'best.pt')
+                    output_dir = str(base_dir / 'media' / 'resultados')
+
+                    # Validar arquivos
+                    for path in [weights_path, analise.img.path]:
+                        if not os.path.exists(path):
+                            raise FileNotFoundError(f"Arquivo não encontrado: {path}")
+
                     # Processar imagem
                     logger.info(f"Iniciando processamento da imagem: {analise.img.path}")
-                    results = analysis_service.process_image(analise.img.path)
+                    results = process_image(weights_path, str(analise.img.path), output_dir)
                     
-                    if results['success'] and 'processed_image_path' in results:
-                        logger.info(f"Imagem processada com sucesso: {results['processed_image_path']}")
+                    if results['success']:  # Removida a verificação de 'processed_image_path'
+                        logger.info("Imagem processada com sucesso")
                         
                         # Salvar imagem processada
-                        processed_path = Path(results['processed_image_path'])
+                        processed_path = Path(results['output_path'])  # Usando 'output_path' ao invés de 'processed_image_path'
                         if processed_path.exists():
                             with processed_path.open('rb') as f:
                                 analise.img_resultado.save(
@@ -106,10 +116,19 @@ def criar_analise(request):
                         else:
                             raise Exception("Arquivo de resultado não foi gerado")
 
-                        # Atualizar análise com resultados
-                        analise.n_plaquetas = results['cell_counts'].get('plaqueta', 0)
-                        analise.n_celulas_brancas = results['cell_counts'].get('leucocito', 0)
-                        analise.n_celulas_vermelhas = results['cell_counts'].get('hemacia', 0)
+                        # Atualizar análise com resultados detalhados
+                        analise.n_plaquetas = results['class_counts']['Platelets']
+                        analise.n_celulas_brancas = results['class_counts']['WBC']
+                        analise.n_celulas_vermelhas = results['class_counts']['RBC']
+                        analise.n_linfocitos = results['class_counts']['Lymphocyte']
+                        analise.n_monocitos = results['class_counts']['Monocyte']
+                        analise.n_basofilos = results['class_counts']['Basophil']
+                        analise.n_neutrofilos_banda = results['class_counts']['Band_Neutrophil']
+                        analise.n_neutrofilos_segmentados = results['class_counts']['Segmented_Neutrophil']
+                        analise.n_mielocitos = results['class_counts']['Myelocyte']
+                        analise.n_metamielocitos = results['class_counts']['Metamyelocyte']
+                        analise.n_promielocitos = results['class_counts']['Promyelocyte']
+                        analise.n_eosinofilos = results['class_counts']['Eosinophil']
                         analise.acuracia = results.get('accuracy', 0) * 100
                         analise.tempo_processamento = results.get('processing_time', 0)
                         analise.status = 'concluido'
