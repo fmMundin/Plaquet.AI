@@ -94,36 +94,38 @@ def criar_analise(request):
                         if processed_path.exists():
                             with processed_path.open('rb') as f:
                                 analise.img_resultado.save(
-                                    f'resultado_{analise.id}{Path(img_file.name).suffix}',
+                                    f'resultado_{analise.id}.jpg',
                                     File(f),
                                     save=True
                                 )
 
-                        # Atualizar contagens
+                        # Atualizar dados da análise
                         counts = results['class_counts']
-                        analise.n_plaquetas = counts['plaqueta']
-                        analise.n_celulas_brancas = counts['leucocito']
-                        analise.n_celulas_vermelhas = counts['hemacia']
-                        analise.n_linfocitos = counts['linfocito']
-                        analise.n_monocitos = counts['monocito']
-                        analise.n_basofilos = counts['basofilo']
-                        analise.n_neutrofilos_banda = counts['neutrofilo_banda']
-                        analise.n_neutrofilos_segmentados = counts['neutrofilo_segmentado']
-                        analise.n_mielocitos = counts['mielocito']
-                        analise.n_metamielocitos = counts['metamielocito']
-                        analise.n_promielocitos = counts['promielocito']
-                        analise.n_eosinofilos = counts['eosinofilo']
+                        analise.n_plaquetas = counts.get('Platelets', 0)
+                        analise.n_celulas_brancas = counts.get('WBC', 0)
+                        analise.n_celulas_vermelhas = counts.get('RBC', 0)
+                        analise.n_linfocitos = counts.get('Lymphocyte', 0)
+                        analise.n_monocitos = counts.get('Monocyte', 0)
+                        analise.n_basofilos = counts.get('Basophil', 0)
+                        analise.n_neutrofilos_banda = counts.get('Band_Neutrophil', 0)
+                        analise.n_neutrofilos_segmentados = counts.get('Segmented_Neutrophil', 0)
+                        analise.n_mielocitos = counts.get('Myelocyte', 0)
+                        analise.n_metamielocitos = counts.get('Metamyelocyte', 0)
+                        analise.n_promielocitos = counts.get('Promyelocyte', 0)
+                        analise.n_eosinofilos = counts.get('Eosinophil', 0)
                         
-                        analise.acuracia = results['accuracy'] * 100
+                        analise.acuracia = results['accuracy']
                         analise.tempo_processamento = results['processing_time']
                         analise.status = 'concluido'
                         analise.save()
                         
+                        logger.info(f"Análise {analise.id} processada com sucesso. Acurácia: {analise.acuracia:.2f}%")
                         return JsonResponse({'success': True})
                     else:
                         raise Exception(results.get('error', 'Erro no processamento'))
-                
+
                 except Exception as e:
+                    logger.error(f"Erro no processamento: {str(e)}")
                     analise.status = 'erro'
                     analise.erro_msg = str(e)
                     analise.save()

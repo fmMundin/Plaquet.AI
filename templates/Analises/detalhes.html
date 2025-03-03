@@ -3,243 +3,142 @@
 
 {% block title %}Detalhes da Análise - {{ analise.titulo }}{% endblock %}
 
-{% block css %}
-<style>
-    .image-container {
-        position: relative;
-        width: 100%;
-        max-height: 500px;
-        overflow: hidden;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .detail-image {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        max-height: 500px;
-        background-color: var(--card-bg);
-        transition: transform 0.3s ease;
-    }
-
-    .image-container:hover .detail-image {
-        transform: scale(1.02);
-    }
-
-    .image-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .image-container:hover .image-overlay {
-        opacity: 1;
-    }
-
-    .zoom-icon {
-        color: white;
-        font-size: 2rem;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="container mt-4">
-    <!-- Cabeçalho -->
-    <div class="card mb-4">
+    <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0"><i class="fas fa-microscope me-2"></i>{{ analise.titulo }}</h4>
             <a href="{% url 'Analises:analises' %}" class="btn btn-light">
                 <i class="fas fa-arrow-left me-2"></i>Voltar
             </a>
         </div>
-
+        
         <div class="card-body">
-            <!-- Informações e Contagens -->
+            <!-- Métricas Principais -->
             <div class="row mb-4">
-                <!-- Coluna de Informações -->
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-light">
-                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações da Análise</h5>
-                        </div>
-                        <div class="card-body">
-                            <table class="table">
-                                <tr>
-                                    <th width="40%">Paciente:</th>
-                                    <td>{{ analise.paciente }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Data da Análise:</th>
-                                    <td>{{ analise.data_analise|date:"d/m/Y H:i:s" }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Status:</th>
-                                    <td>
-                                        <span
-                                            class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
-                                            {{ analise.status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Tempo de Processamento:</th>
-                                    <td>{{ analise.tempo_processamento|floatformat:2 }} segundos</td>
-                                </tr>
-                                <tr>
-                                    <th>Acurácia:</th>
-                                    <td>{{ analise.acuracia|floatformat:2 }}%</td>
-                                </tr>
-                            </table>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6>Acurácia da Detecção</h6>
+                            <h2 class="text-primary">{{ analise.acuracia|floatformat:2 }}%</h2>
                         </div>
                     </div>
                 </div>
-
-                <!-- Coluna de Contagens -->
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Contagem de Células</h5>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6>Tempo de Processamento</h6>
+                            <h2 class="text-success">{{ analise.tempo_processamento|floatformat:2 }}s</h2>
                         </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <!-- Células principais -->
-                                <div class="col-md-4">
-                                    <div class="card bg-light text-center h-100">
-                                        <div class="card-body">
-                                            <h6>Plaquetas</h6>
-                                            <div class="display-6 text-primary">{{ analise.n_plaquetas|default:0 }}
-                                            </div>
-                                            <small class="text-muted">células</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-light text-center h-100">
-                                        <div class="card-body">
-                                            <h6>Células Brancas</h6>
-                                            <div class="display-6 text-success">{{ analise.n_celulas_brancas|default:0
-                                                }}</div>
-                                            <small class="text-muted">células</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-light text-center h-100">
-                                        <div class="card-body">
-                                            <h6>Células Vermelhas</h6>
-                                            <div class="display-6 text-danger">{{ analise.n_celulas_vermelhas|default:0
-                                                }}</div>
-                                            <small class="text-muted">células</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-<<<<<<< HEAD
-            <!-- Atualizar a seção de Contagens -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Contagem Detalhada de Células</h5>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6>Status</h6>
+                            <h2>
+                                <span class="badge {% if analise.status == 'concluido' %}bg-success{% elif analise.status == 'erro' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ analise.status }}
+                                </span>
+                            </h2>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <!-- Células Principais -->
-                                <div class="col-md-4">
-                                    <h6 class="border-bottom pb-2">Contagens Principais</h6>
-                                    <div class="list-group">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Plaquetas
-                                            <span class="badge bg-primary">{{ analise.n_plaquetas }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Células Brancas
-                                            <span class="badge bg-success">{{ analise.n_celulas_brancas }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Células Vermelhas
-                                            <span class="badge bg-danger">{{ analise.n_celulas_vermelhas }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+            </div>
 
-                                <!-- Leucócitos -->
-                                <div class="col-md-4">
-                                    <h6 class="border-bottom pb-2">Leucócitos</h6>
-                                    <div class="list-group">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Linfócitos
-                                            <span class="badge bg-info">{{ analise.n_linfocitos }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Monócitos
-                                            <span class="badge bg-info">{{ analise.n_monocitos }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Basófilos
-                                            <span class="badge bg-info">{{ analise.n_basofilos }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Eosinófilos
-                                            <span class="badge bg-info">{{ analise.n_eosinofilos }}</span>
-                                        </div>
-                                    </div>
+            <!-- Contagem de Células -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-microscope me-2"></i>Contagem Detalhada de Células</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Células Principais -->
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2 mb-3">Contagem Principal</h6>
+                            <div class="list-group mb-3">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-circle text-primary me-2"></i>Plaquetas</span>
+                                    <span class="badge bg-primary rounded-pill">{{ analise.n_plaquetas|default:"0" }}</span>
                                 </div>
-
-                                <!-- Neutrófilos e outros -->
-                                <div class="col-md-4">
-                                    <h6 class="border-bottom pb-2">Neutrófilos e Precursores</h6>
-                                    <div class="list-group">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Neutrófilos Banda
-                                            <span class="badge bg-warning">{{ analise.n_neutrofilos_banda }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Neutrófilos Segmentados
-                                            <span class="badge bg-warning">{{ analise.n_neutrofilos_segmentados }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Mielócitos
-                                            <span class="badge bg-warning">{{ analise.n_mielocitos }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Metamielócitos
-                                            <span class="badge bg-warning">{{ analise.n_metamielocitos }}</span>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            Promielócitos
-                                            <span class="badge bg-warning">{{ analise.n_promielocitos }}</span>
-                                        </div>
-                                    </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-circle text-success me-2"></i>Células Brancas</span>
+                                    <span class="badge bg-success rounded-pill">{{ analise.n_celulas_brancas|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-circle text-danger me-2"></i>Células Vermelhas</span>
+                                    <span class="badge bg-danger rounded-pill">{{ analise.n_celulas_vermelhas|default:"0" }}</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Métricas de Performance -->
-                            <div class="row mt-4">
-                                <div class="col-md-6">
-                                    <div class="card bg-light">
-                                        <div class="card-body text-center">
-                                            <h6 class="card-title">Acurácia da Detecção</h6>
-                                            <h2 class="text-primary mb-0">{{ analise.acuracia|floatformat:1 }}%</h2>
-                                        </div>
-                                    </div>
+                        <!-- Leucócitos -->
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2 mb-3">Leucócitos</h6>
+                            <div class="list-group mb-3">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Linfócitos
+                                    <span class="badge bg-info rounded-pill">{{ analise.n_linfocitos|default:"0" }}</span>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="card bg-light">
-                                        <div class="card-body text-center">
-                                            <h6 class="card-title">Tempo de Processamento</h6>
-                                            <h2 class="text-success mb-0">{{ analise.tempo_processamento|floatformat:2 }}s</h2>
-                                        </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Monócitos
+                                    <span class="badge bg-info rounded-pill">{{ analise.n_monocitos|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Basófilos
+                                    <span class="badge bg-info rounded-pill">{{ analise.n_basofilos|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Eosinófilos
+                                    <span class="badge bg-info rounded-pill">{{ analise.n_eosinofilos|default:"0" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Neutrófilos e Outros -->
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2 mb-3">Neutrófilos e Precursores</h6>
+                            <div class="list-group mb-3">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Neutrófilos Banda
+                                    <span class="badge bg-warning rounded-pill">{{ analise.n_neutrofilos_banda|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Neutrófilos Segmentados
+                                    <span class="badge bg-warning rounded-pill">{{ analise.n_neutrofilos_segmentados|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Mielócitos
+                                    <span class="badge bg-warning rounded-pill">{{ analise.n_mielocitos|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Metamielócitos
+                                    <span class="badge bg-warning rounded-pill">{{ analise.n_metamielocitos|default:"0" }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    Promielócitos
+                                    <span class="badge bg-warning rounded-pill">{{ analise.n_promielocitos|default:"0" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métricas -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 text-center">
+                                        <h6 class="mb-2">Acurácia da Detecção</h6>
+                                        <h3 class="mb-0">{{ analise.acuracia|floatformat:1 }}%</h3>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <h6 class="mb-2">Tempo de Processamento</h6>
+                                        <h3 class="mb-0">{{ analise.tempo_processamento|floatformat:2 }}s</h3>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <h6 class="mb-2">Total de Células</h6>
+                                        <h3 class="mb-0">{{ analise.n_celulas_totais }}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -248,242 +147,50 @@
                 </div>
             </div>
 
-            <!-- Seção de Imagens -->
-            <div class="row mb-4">
-                <h5 class="mb-3"><i class="fas fa-images me-2"></i>Visualização da Análise</h5>
-                <!-- Imagem Original -->
-                <div class="col-md-6">
+            <!-- Imagens -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
                             <h6 class="mb-0">Imagem Original</h6>
                         </div>
-                        <div class="card-body text-center">
+                        <div class="card-body">
                             {% if analise.img %}
-                            <div class="image-container">
-                                <img src="{{ analise.img.url }}" alt="Imagem Original" class="detail-image">
-                                <a href="{{ analise.img.url }}" target="_blank" class="image-overlay">
-                                    <i class="fas fa-search-plus zoom-icon"></i>
-                                </a>
-                            </div>
+                                <img src="{{ analise.img.url }}" class="img-fluid rounded" alt="Imagem Original">
                             {% else %}
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>Imagem não disponível
-                            </div>
+                                <div class="alert alert-info">Imagem não disponível</div>
                             {% endif %}
                         </div>
-=======
-                                <h6 class="mb-3">Detalhamento de Células Brancas:</h6> <!-- Células específicas -->
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <div class="col-md-3">
-                                            <hr>
-                                            <div class="card bg-light"> </div>
-                                            <div class="card-body text-center">
-                                                <small>Linfócitos</small>
-                                                <div class="h4 mb-0">{{ analise.n_linfocitos|default:0 }}</div>
-                                            </div>agens -->
-                                        </div>w mb-4">
-                                    </div>><i class="fas fa-images me-2"></i>Visualização da Análise</h5>
-                                    <div class="col-md-3">-->
-                                        <div class="card bg-light">
-                                            <div class="card-body text-center">
-                                                <div class="card h-100">
-                                                    <small>Monócitos</small>">
-                                                    <div class="h4 mb-0">{{ analise.n_monocitos|default:0 }}</div>
-                                                    s="mb-0">Imagem Original</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="card bg-light"> <img src="{{ analise.img.url }}"
-                                                    alt="Imagem Original" class="detail-image">
-                                                <div class="card-body text-center"> <a href="{{ analise.img.url }}"
-                                                        target="_blank" class="image-overlay">
-                                                        <small>Basófilos</small> <i
-                                                            class="fas fa-search-plus zoom-icon"></i>
-                                                        <div class="h4 mb-0">{{ analise.n_basofilos|default:0 }}</div>
-                                                </div>
-                                            </div> {% else %}
-                                        </div>
-                                        <div class="alert alert-info">
-                                            <div class="col-md-3"> <i class="fas fa-info-circle me-2"></i>Imagem não
-                                                disponível
-                                                <div class="card bg-light"> </div>
-                                                <div class="card-body text-center"> {% endif %}
-                                                    <small>Eosinófilos</small>
-                                                </div>
-                                                <div class="h4 mb-0">{{ analise.n_eosinofilos|default:0 }}</div>
-                                            </div>
-                                        </div>
-                                    </div>ções -->
-                                    <div class="col-md-3">
-                                        <div class="card bg-light">
-                                            <div class="card h-100">
-                                                <div class="card-body text-center">">
-                                                </div>utrófilos Banda</small>etecções</h6>
-                                            </div>
-                                            <div class="h4 mb-0">{{ analise.n_neutrofilos_banda|default:0 }}
-                                                <div class="col-md-3">
-                                                    <div class="card-body text-center">
-                                                        <div class="card bg-light"> </div>
-                                                        <small>Mielócitos</small>
-                                                    </div>
-                                                    <div class="h4 mb-0">{{ analise.n_mielocitos|default:0 }}</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3"> </div>
-                                            <div class="card bg-light">
-                                                <div class="col-md-3"> <img src="{{ analise.img_resultado.url }}" </div>
-                                                    <div class="card-body text-center"> alt="Detecções" <div
-                                                            class="card bg-light"> class="detail-image">
-                                                            <small>Metamielócitos</small>
-                                                            <div class="card-body text-center"> <a <div
-                                                                    class="h4 mb-0">{{
-                                                                    analise.n_metamielocitos|default:0 }}</div> href="{{
-                                                            analise.img_resultado.url }}" target="_blank"
-                                                        </div> <small>Neutrófilos Segmentados</small>overlay">
-                                                    </div>
-                                                    <div class="h4 mb-0">{{
-                                                    </div> analise.n_neutrofilos_segmentados|default:0
-                                                </div> }}
-                                            </div>m-icon"></i>
-                                        </div>
-                                    </div>
-                                </div> {% else %}
-                            </div>ass="alert alert-warning">
-                        </div>fa-exclamation-triangle me-2"></i>
-                    </div> {% if analise.status == 'processando' %}
-                    essamento em andamento...
-                    <!-- Seção de Imagens -->
-                    <div class="row mb-4">em processada não disponível
-                        <h5 class="mb-3"><i class="fas fa-images me-2"></i>Visualização da Análise</h5> {% endif %}
-                        <!-- Imagem Original -->
                     </div>
-                    <div class="col-md-6"> {% endif %}
-                        <div class="card h-100"> </div>
-                        <div class="card-header"> </div>
-                        <h6 class="mb-0">Imagem Original</h6>
->>>>>>> 0d4ab17eb600516ab25e5426b34952f777c135f5
-                    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    {% endblock %}</script> }); }); }); } window.open(e.target.src, '_blank'); if
-                    (e.target.parentElement.classList.contains('image-container')) { img.addEventListener('click',
-                    function (e) { images.forEach(img => { const images = document.querySelectorAll('.detail-image'); //
-                    Adicionar funcionalidade de zoom nas imagens tooltips.forEach(tooltip => new
-                    bootstrap.Tooltip(tooltip)); const tooltips =
-                    document.querySelectorAll('[data-bs-toggle="tooltip"]'); // Inicializar tooltips
-                    document.addEventListener('DOMContentLoaded', function () {
-                    <script>{% block js %} {% endblock %}</div >    </div >        </div >            </div >                </div >                    </div >                        </div > {% endif %}                            </div > {% endif %}                                Imagem processada não disponível                                {% else %}
-
-
-
-
-
-
-
-
-
-                    Processamento em andamento... {% if analise.status == 'processando' %} <i
-                        class="fas fa-exclamation-triangle me-2"></i>
-                    <div class="alert alert-warning"> {% else %} </div> </a > <i
-                        class="fas fa-search-plus zoom-icon"></i> <a href="{{ analise.img_resultado.url }}"
-                        target="_blank" class="image-overlay"> <img src="{{ analise.img_resultado.url }}"
-                            alt="Detecções" class="detail-image">
-                        <div class="image-container"> {% if analise.img_resultado %} <div class="card-body text-center">
-                            </div>
-                            <h6 class="mb-0">Detecções</h6>
-                            <div class="card-header">
-                                <div class="card h-100">
-                                    <div class="col-md-6"> <!-- Imagem com Detecções --> </div>
-                                </div>
-                            </div> {% endif %}
-                        </div> <i class="fas fa-info-circle me-2"></i>Imagem não disponível <div
-                            class="alert alert-info"> {% else %} </div>
-                    </a> <i class="fas fa-search-plus zoom-icon"></i> <a href="{{ analise.img.url }}" target="_blank"
-                        class="image-overlay"> <img src="{{ analise.img.url }}" alt="Imagem Original"
-                            class="detail-image">
-                        <div class="image-container"> {% if analise.img %} <div class="card-body text-center"> </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">Resultado da Análise</h6>
                         </div>
+                        <div class="card-body">
+                            {% if analise.img_resultado %}
+                                <img src="{{ analise.img_resultado.url }}" class="img-fluid rounded" alt="Resultado">
+                            {% else %}
+                                <div class="alert alert-warning">Resultado não disponível</div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div >
-                            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-                        {% block js %}
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                // Inicializar tooltips
-                const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip));
-
-                            // Adicionar funcionalidade de zoom nas imagens
-                            const images = document.querySelectorAll('.detail-image');
-                images.forEach(img => {
-                                img.addEventListener('click', function (e) {
-                                    if (e.target.parentElement.classList.contains('image-container')) {
-                                        window.open(e.target.src, '_blank');
-                                    }
-                                });
-                });
-            });
-                    </script>
-                    {% endblock %}
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    });
+</script>
+{% endblock %}
