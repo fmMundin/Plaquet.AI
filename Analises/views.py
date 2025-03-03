@@ -59,19 +59,18 @@ def criar_analise(request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                # Verificar se um arquivo foi enviado
+                # Validar imagem
                 if 'img' not in request.FILES:
                     return JsonResponse({'success': False, 'error': 'Nenhuma imagem foi enviada'})
                 
                 img_file = request.FILES['img']
-                # Verificar extensão do arquivo
-                ext = img_file.name.split('.')[-1].lower()
-                if ext not in ['jpg', 'jpeg', 'png']:
+                if not img_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
                     return JsonResponse({
                         'success': False, 
                         'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
                     })
 
+                # Criar análise
                 analise = Analise(
                     titulo=request.POST['titulo'],
                     paciente=request.POST['paciente'],
@@ -81,68 +80,54 @@ def criar_analise(request):
                 )
                 analise.save()
 
-                # Garantir que o diretório de resultados existe
-                result_dir = settings.MEDIA_ROOT / 'resultados'
-                result_dir.mkdir(exist_ok=True, parents=True)
-
                 try:
                     # Configurar caminhos
-                    base_dir = Path(__file__).resolve().parent.parent
-                    weights_path = str(base_dir / 'scripts' / 'best.pt')
-                    output_dir = str(base_dir / 'media' / 'resultados')
-
-                    # Validar arquivos
-                    for path in [weights_path, analise.img.path]:
-                        if not os.path.exists(path):
-                            raise FileNotFoundError(f"Arquivo não encontrado: {path}")
+                    weights_path = str(settings.BASE_DIR / 'scripts' / 'best.pt')
+                    output_dir = str(settings.MEDIA_ROOT / 'resultados')
 
                     # Processar imagem
-                    logger.info(f"Iniciando processamento da imagem: {analise.img.path}")
                     results = process_image(weights_path, str(analise.img.path), output_dir)
                     
-                    if results['success']:  # Removida a verificação de 'processed_image_path'
-                        logger.info("Imagem processada com sucesso")
-                        
+                    if results['success']:
                         # Salvar imagem processada
-                        processed_path = Path(results['output_path'])  # Usando 'output_path' ao invés de 'processed_image_path'
+                        processed_path = Path(results['output_path'])
                         if processed_path.exists():
                             with processed_path.open('rb') as f:
                                 analise.img_resultado.save(
-                                    f'resultado_{analise.id}.{ext}',
+                                    f'resultado_{analise.id}{Path(img_file.name).suffix}',
                                     File(f),
                                     save=True
                                 )
-                                logger.info(f"Imagem resultado salva: {analise.img_resultado.path}")
-                        else:
-                            raise Exception("Arquivo de resultado não foi gerado")
 
-                        # Atualizar análise com resultados detalhados
-                        analise.n_plaquetas = results['class_counts']['Platelets']
-                        analise.n_celulas_brancas = results['class_counts']['WBC']
-                        analise.n_celulas_vermelhas = results['class_counts']['RBC']
-                        analise.n_linfocitos = results['class_counts']['Lymphocyte']
-                        analise.n_monocitos = results['class_counts']['Monocyte']
-                        analise.n_basofilos = results['class_counts']['Basophil']
-                        analise.n_neutrofilos_banda = results['class_counts']['Band_Neutrophil']
-                        analise.n_neutrofilos_segmentados = results['class_counts']['Segmented_Neutrophil']
-                        analise.n_mielocitos = results['class_counts']['Myelocyte']
-                        analise.n_metamielocitos = results['class_counts']['Metamyelocyte']
-                        analise.n_promielocitos = results['class_counts']['Promyelocyte']
-                        analise.n_eosinofilos = results['class_counts']['Eosinophil']
-                        analise.acuracia = results.get('accuracy', 0) * 100
-                        analise.tempo_processamento = results.get('processing_time', 0)
+                        # Atualizar contagens
+                        counts = results['class_counts']
+                        analise.n_plaquetas = counts['plaqueta']
+                        analise.n_celulas_brancas = counts['leucocito']
+                        analise.n_celulas_vermelhas = counts['hemacia']
+                        analise.n_linfocitos = counts['linfocito']
+                        analise.n_monocitos = counts['monocito']
+                        analise.n_basofilos = counts['basofilo']
+                        analise.n_neutrofilos_banda = counts['neutrofilo_banda']
+                        analise.n_neutrofilos_segmentados = counts['neutrofilo_segmentado']
+                        analise.n_mielocitos = counts['mielocito']
+                        analise.n_metamielocitos = counts['metamielocito']
+                        analise.n_promielocitos = counts['promielocito']
+                        analise.n_eosinofilos = counts['eosinofilo']
+                        
+                        analise.acuracia = results['accuracy'] * 100
+                        analise.tempo_processamento = results['processing_time']
                         analise.status = 'concluido'
                         analise.save()
                         
                         return JsonResponse({'success': True})
                     else:
-                        raise Exception(results.get('error', 'Erro desconhecido no processamento'))
+                        raise Exception(results.get('error', 'Erro no processamento'))
                 
                 except Exception as e:
                     analise.status = 'erro'
                     analise.erro_msg = str(e)
                     analise.save()
-                    raise  # Re-raise para ser capturado pelo try externo
+                    raise
 
         except Exception as e:
             logger.error(f"Erro ao processar análise: {str(e)}")
