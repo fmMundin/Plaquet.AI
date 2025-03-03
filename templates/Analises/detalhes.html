@@ -148,6 +148,109 @@
                 </div>
             </div>
 
+            <!-- Atualizar a seção de Contagens -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Contagem Detalhada de Células</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Células Principais -->
+                                <div class="col-md-4">
+                                    <h6 class="border-bottom pb-2">Contagens Principais</h6>
+                                    <div class="list-group">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Plaquetas
+                                            <span class="badge bg-primary">{{ analise.n_plaquetas }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Células Brancas
+                                            <span class="badge bg-success">{{ analise.n_celulas_brancas }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Células Vermelhas
+                                            <span class="badge bg-danger">{{ analise.n_celulas_vermelhas }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Leucócitos -->
+                                <div class="col-md-4">
+                                    <h6 class="border-bottom pb-2">Leucócitos</h6>
+                                    <div class="list-group">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Linfócitos
+                                            <span class="badge bg-info">{{ analise.n_linfocitos }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Monócitos
+                                            <span class="badge bg-info">{{ analise.n_monocitos }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Basófilos
+                                            <span class="badge bg-info">{{ analise.n_basofilos }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Eosinófilos
+                                            <span class="badge bg-info">{{ analise.n_eosinofilos }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Neutrófilos e outros -->
+                                <div class="col-md-4">
+                                    <h6 class="border-bottom pb-2">Neutrófilos e Precursores</h6>
+                                    <div class="list-group">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Neutrófilos Banda
+                                            <span class="badge bg-warning">{{ analise.n_neutrofilos_banda }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Neutrófilos Segmentados
+                                            <span class="badge bg-warning">{{ analise.n_neutrofilos_segmentados }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Mielócitos
+                                            <span class="badge bg-warning">{{ analise.n_mielocitos }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Metamielócitos
+                                            <span class="badge bg-warning">{{ analise.n_metamielocitos }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Promielócitos
+                                            <span class="badge bg-warning">{{ analise.n_promielocitos }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Métricas de Performance -->
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Acurácia da Detecção</h6>
+                                            <h2 class="text-primary mb-0">{{ analise.acuracia|floatformat:1 }}%</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Tempo de Processamento</h6>
+                                            <h2 class="text-success mb-0">{{ analise.tempo_processamento|floatformat:2 }}s</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Seção de Imagens -->
             <div class="row mb-4">
                 <h5 class="mb-3"><i class="fas fa-images me-2"></i>Visualização da Análise</h5>
