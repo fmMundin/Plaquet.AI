@@ -1588,3 +1588,163 @@ body {
     max-height: 300px;
     padding: 0 1.5rem 1.5rem 1.5rem;
 }
+
+/* Ajustes para o Modal */
+.modal {
+    background: none !important;
+}
+
+.modal-backdrop {
+    opacity: 0.5 !important;
+}
+
+.modal-dialog {
+    z-index: 1050;
+}
+
+.modal-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+.modal .form-control {
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+}
+
+.modal .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(156, 39, 176, 0.25);
+}
+
+.modal .form-label {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.modal .btn-close {
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Ajustes para o Modal */
+.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+.modal .form-control {
+    background-color: var(--background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.modal .form-control:focus {
+    background-color: var(--background);
+    color: var (--text-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(156, 39, 176, 0.25);
+}
+
+.modal .form-label {
+    color: var (--text-color);
+}
+
+/* Correção dos estilos do Modal */
+.modal-backdrop {
+    display: none !important;
+}
+
+.modal {
+    background: none !important;
+    pointer-events: auto !important;
+}
+
+.modal-dialog {
+    z-index: 1050;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header,
+.modal-footer,
+.modal-body {
+    background-color: var(--card-bg) !important;
+    pointer-events: auto !important;
+}
+
+.modal .form-control {
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    pointer-events: auto !important;
+}
+
+/* Correções do Modal */
+.modal {
+    z-index: 1050;
+    pointer-events: auto !important;
+    background: none !important;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+.modal-dialog {
+    pointer-events: auto !important;
+    z-index: 1055;    
+}
+
+.modal-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    pointer-events: auto !important;
+}
+
+.modal-header, 
+.modal-body,
+.modal-footer {
+    pointer-events: auto !important;
+    background-color: var(--card-bg) !important;
+}
+
+.modal .form-control {
+    pointer-events: auto !important;
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+}

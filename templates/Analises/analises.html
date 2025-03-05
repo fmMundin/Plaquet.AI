@@ -12,27 +12,27 @@
     </div>
 
     <!-- Modal Nova Análise -->
-    <div class="modal fade" id="modalNovaAnalise" tabindex="-1">
+    <div class="modal fade" id="modalNovaAnalise" tabindex="-1" aria-labelledby="modalNovaAnaliseLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Nova Análise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="modalNovaAnaliseLabel">Nova Análise</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Título da Análise</label>
-                            <input type="text" class="form-control" name="titulo" required>
+                            <label for="titulo" class="form-label">Título da Análise</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Nome do Paciente</label>
-                            <input type="text" class="form-control" name="paciente" required>
+                            <label for="paciente" class="form-label">Nome do Paciente</label>
+                            <input type="text" class="form-control" id="paciente" name="paciente" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Imagem para Análise</label>
-                            <input type="file" class="form-control" name="img" accept="image/*" required>
+                            <label for="img" class="form-label">Imagem para Análise</label>
+                            <input type="file" class="form-control" id="img" name="img" accept="image/*" required>
                             <div class="form-text">Selecione uma imagem clara das células.</div>
                         </div>
                     </div>
@@ -169,8 +169,20 @@
 {% block js %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const modalElement = document.getElementById('modalNovaAnalise');
+        const modal = new bootstrap.Modal(modalElement);
+        
+        // Garantir que o modal seja totalmente visível e interativo
+        modalElement.addEventListener('shown.bs.modal', function () {
+            document.getElementById('titulo').focus();
+        });
+
+        // Resetar o formulário quando o modal for fechado
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            document.getElementById('formNovaAnalise').reset();
+        });
+
         const form = document.getElementById('formNovaAnalise');
-        const modal = new bootstrap.Modal(document.getElementById('modalNovaAnalise'));
         const spinner = form.querySelector('.spinner-border');
         const submitBtn = form.querySelector('button[type="submit"]');
 
