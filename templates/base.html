@@ -45,7 +45,7 @@
         </div>
     </nav>
 
-    <main class="container my-4 animate-fade-in">
+    <main class="main-content container my-4 animate-fade-in">
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -58,8 +58,8 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer moderno -->
-    <footer class="footer-custom">
+    <!-- Footer -->
+    <footer class="footer footer-custom">
         <div class="container">
             <div class="row">
 
@@ -138,9 +138,47 @@
     </script>
     {% block js %}{% endblock %}
 
-</body>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-</html>
+        .main-content {
+            flex: 1 0 auto;
+            min-height: calc(100vh - 60px);
+            padding-bottom: 2rem;
+            margin-bottom: 100vh;
+        }
+
+        .navbar {
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .footer {
+            min-height: 400px;
+            background-color: #212529 !important; /* Cor preta do Bootstrap */
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-custom {
+            background-color: #212529 !important;
+            color: white;
+        }
+
+        /* Ajuste para telas menores */
+        @media (max-height: 768px) {
+            .main-content {
+                margin-bottom: 80vh;
+            }
+        }
+    </style>
+
 </body>
 
 </html>

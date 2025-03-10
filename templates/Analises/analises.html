@@ -11,43 +11,6 @@
         </button>
     </div>
 
-    <!-- Modal Nova Análise -->
-    <div class="modal fade" id="modalNovaAnalise" tabindex="-1" aria-labelledby="modalNovaAnaliseLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalNovaAnaliseLabel">Nova Análise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="titulo" class="form-label">Título da Análise</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="paciente" class="form-label">Nome do Paciente</label>
-                            <input type="text" class="form-control" id="paciente" name="paciente" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="img" class="form-label">Imagem para Análise</label>
-                            <input type="file" class="form-control" id="img" name="img" accept="image/*" required>
-                            <div class="form-text">Selecione uma imagem clara das células.</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
-                            Iniciar Análise
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Lista de Análises -->
     <div class="card">
         <div class="card-header">
@@ -122,18 +85,18 @@
                                     {% if analise.status == 'concluido' %}
                                     <a href="{% url 'Analises:detalhes_analise' analise.id %}"
                                         class="btn btn-info btn-sm" title="Ver detalhes">
-                                        <i class="fas fa-search"></i>
+                                        <i class="fas fa-file-medical-alt"></i>
                                     </a>
                                     {% endif %}
                                     <button type="button"
                                         onclick='editarAnalise("{{ analise.id }}", "{{ analise.titulo|escapejs }}", "{{ analise.paciente|escapejs }}")'
                                         class="btn btn-warning btn-sm" title="Editar">
-                                        <i class="fas fa-edit"></i>
+                                        <i class="fas fa-pen-to-square"></i>
                                     </button>
                                     <button type="button"
-                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')"
+                                        onclick="confirmarExclusao('{{ analise.id }}', '{{ analise.titulo|escapejs }}')"
                                         class="btn btn-danger btn-sm" title="Excluir">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash-can"></i>
                                     </button>
                                 </div>
 
@@ -164,24 +127,230 @@
     </div>
 </div>
 
+<style>
+    .modal-dialog-draggable {
+        position: fixed;
+        margin: 0;
+        pointer-events: none;
+    }
+    
+    .modal-dialog-draggable .modal-content {
+        pointer-events: auto;
+        border: 2px solid #0d6efd;
+        box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    }
+
+    .draggable-handle {
+        cursor: move;
+    }
+
+    .modal.fade.minimize .modal-dialog {
+        transform: translateY(calc(100vh - 60px));
+    }
+
+    .modal.fade.show .modal-dialog {
+        transform: none;
+        transition: transform 0.3s ease-out;
+    }
+
+    .btn-light {
+        padding: 0.25rem 0.5rem;
+        line-height: 1;
+    }
+
+    .image-upload-container {
+        margin-bottom: 1rem;
+    }
+
+    .drop-zone {
+        border: 2px dashed #ccc;
+        border-radius: 4px;
+        padding: 2rem;
+        text-align: center;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+        border-color: #0d6efd;
+        background: #e9ecef;
+    }
+
+    .drop-zone .file-input {
+        display: none;
+    }
+
+    .selected-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .image-preview {
+        position: relative;
+        width: calc(50% - 5px);
+        aspect-ratio: 1;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-preview .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(255,255,255,0.9);
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #dc3545;
+    }
+
+    .image-preview .remove-image:hover {
+        background: #fff;
+        color: #bb2d3b;
+    }
+
+    /* Ajustes para os modais */
+    .modal-backdrop {
+        z-index: 1040;
+    }
+
+    .modal {
+        z-index: 1045;
+    }
+
+    .modal-dialog-draggable {
+        z-index: 1050;
+        position: fixed;
+        margin: 0;
+        pointer-events: none;
+    }
+
+    /* Estilo para container de modais */
+    .modals-container {
+        position: relative;
+        z-index: 1100;
+    }
+
+    /* Garantir que o footer não sobreponha os modais */
+    footer {
+        z-index: 1000;
+        position: relative;
+    }
+</style>
+
+<!-- Mover todos os modais para um container específico no final do body, antes do footer -->
+<div class="modals-container">
+    <!-- Modal Nova Análise -->
+    <div class="modal fade" id="modalNovaAnalise" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalNovaAnaliseLabel">
+                        <i class="fas fa-file-medical me-2"></i>Nova Análise
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título da Análise</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paciente" class="form-label">Nome do Paciente</label>
+                            <input type="text" class="form-control" id="paciente" name="paciente" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Imagens para Análise (1-4 imagens)</label>
+                            <div class="image-upload-container">
+                                <div class="selected-images row g-2" id="selectedImages"></div>
+                                <div class="drop-zone" id="dropZone">
+                                    <input type="file" class="file-input" id="img" name="img" accept="image/*" multiple required>
+                                    <!-- Mudança: removido [] do name -->
+                                    <div class="drop-zone-content">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                        <p class="mb-0">Arraste as imagens aqui ou clique para selecionar</p>
+                                        <small class="text-muted">Máximo: 4 imagens</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text">Selecione entre 1 e 4 imagens claras das células.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
+                            Iniciar Análise
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-triangle-exclamation me-2"></i>Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-trash-can fa-4x text-danger mb-3"></i>
+                        <p class="mb-0">Tem certeza que deseja excluir a análise:</p>
+                        <h5 class="mt-2" id="tituloAnaliseExclusao"></h5>
+                    </div>
+                    <p class="text-muted text-center">Esta ação não poderá ser desfeita.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-xmark me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarExclusao">
+                        <i class="fas fa-trash-can me-2"></i>Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('modalNovaAnalise');
         const modal = new bootstrap.Modal(modalElement);
-        
-        // Garantir que o modal seja totalmente visível e interativo
+
+        // Remover código relacionado ao draggable
         modalElement.addEventListener('shown.bs.modal', function () {
             document.getElementById('titulo').focus();
         });
 
-        // Resetar o formulário quando o modal for fechado
-        modalElement.addEventListener('hidden.bs.modal', function () {
-            document.getElementById('formNovaAnalise').reset();
-        });
-
+        // Restante do código do formulário e upload de imagens
         const form = document.getElementById('formNovaAnalise');
         const spinner = form.querySelector('.spinner-border');
         const submitBtn = form.querySelector('button[type="submit"]');
@@ -189,12 +358,28 @@
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            const formData = new FormData();
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert('Por favor, selecione pelo menos uma imagem.');
+                return;
+            }
+
+            // Adicionar outros campos
+            formData.append('titulo', document.getElementById('titulo').value);
+            formData.append('paciente', document.getElementById('paciente').value);
+
+            // Adicionar cada arquivo separadamente
+            for (let i = 0; i < files.length; i++) {
+                formData.append('img', files[i]);
+            }
+
             // Mostrar loading
             spinner.classList.remove('d-none');
             submitBtn.disabled = true;
 
             try {
-                const formData = new FormData(this);
                 const response = await fetch('{% url "Analises:criar_analise" %}', {
                     method: 'POST',
                     body: formData,
@@ -225,6 +410,133 @@
             spinner.classList.add('d-none');
             submitBtn.disabled = false;
         });
+
+        // Adicionar após a inicialização do form
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('img');
+        const selectedImagesContainer = document.getElementById('selectedImages');
+
+        // Prevenir comportamento padrão do drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Destacar drop zone
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        // Manipular arquivos soltos
+        dropZone.addEventListener('drop', handleDrop, false);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFiles);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles({ target: { files: files } });
+        }
+
+        function handleFiles(e) {
+            const files = [...e.target.files];
+            if (files.length > 4) {
+                alert('Você pode selecionar no máximo 4 imagens.');
+                fileInput.value = '';
+                selectedImagesContainer.innerHTML = '';
+                return;
+            }
+
+            if (files.length === 0) {
+                fileInput.value = '';
+                selectedImagesContainer.innerHTML = '';
+                return;
+            }
+
+            // Limpar previews existentes
+            selectedImagesContainer.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                if (!file.type.startsWith('image/')) {
+                    alert(`O arquivo ${file.name} não é uma imagem válida.`);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'image-preview col-6';
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="remove-image" data-index="${index}" title="Remover imagem">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    selectedImagesContainer.appendChild(preview);
+
+                    // Adicionar evento para remover imagem
+                    preview.querySelector('.remove-image').addEventListener('click', function() {
+                        preview.remove();
+                        updateFileInput();
+                        
+                        // Verifica se não há mais imagens
+                        if (selectedImagesContainer.children.length === 0) {
+                            fileInput.value = '';
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updateFileInput() {
+            const dt = new DataTransfer();
+            const previews = selectedImagesContainer.querySelectorAll('.image-preview');
+            if (previews.length === 0) {
+                fileInput.value = '';
+                return;
+            }
+            
+            [...fileInput.files].forEach((file, index) => {
+                if ([...previews].some(p => p.querySelector('.remove-image').dataset.index == index)) {
+                    dt.items.add(file);
+                }
+            });
+            
+            fileInput.files = dt.files;
+        }
+
+        // Garantir que os modais sempre fiquem por cima
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function () {
+                const zIndex = 1045 + (10 * document.querySelectorAll('.modal.show').length);
+                this.style.zIndex = zIndex;
+                setTimeout(() => {
+                    const backdrop = document.querySelector('.modal-backdrop:last-child');
+                    if (backdrop) {
+                        backdrop.style.zIndex = zIndex - 5;
+                    }
+                }, 0);
+            });
+        });
     });
 
     // Funções de editar e deletar
@@ -232,24 +544,42 @@
         window.location.href = `/analises/editar/${id}/`;
     }
 
-    function deletarAnalise(url, titulo) {
-        if (confirm(`Deseja realmente excluir a análise "${titulo}"?`)) {
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.error || 'Erro ao excluir análise');
-                    }
-                })
-                .catch(error => alert(error.message));
-        }
+    function confirmarExclusao(id, titulo) {
+        const modal = new bootstrap.Modal(document.getElementById('modalConfirmarExclusao'));
+        document.getElementById('tituloAnaliseExclusao').textContent = titulo;
+        
+        // Configurar o botão de confirmação
+        const btnConfirmar = document.getElementById('btnConfirmarExclusao');
+        btnConfirmar.onclick = () => deletarAnalise(id);
+        
+        modal.show();
+    }
+
+    function deletarAnalise(id) {
+        const btnConfirmar = document.getElementById('btnConfirmarExclusao');
+        const iconOriginal = btnConfirmar.innerHTML;
+        btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Excluindo...';
+        btnConfirmar.disabled = true;
+
+        fetch(`/analises/deletar/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                throw new Error(data.error || 'Erro ao excluir análise');
+            }
+        })
+        .catch(error => {
+            alert(error.message);
+            btnConfirmar.innerHTML = iconOriginal;
+            btnConfirmar.disabled = false;
+        });
     }
 </script>
 {% endblock %}
