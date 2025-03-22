@@ -161,8 +161,23 @@ def deletar_analise(request, analise_id):
 def detalhes_analise(request, analise_id):
     try:
         analise = get_object_or_404(Analise, pk=analise_id)
+        
+        # Mapear as contagens para o formato correto
+        contagens = {
+            'plaquetas': analise.n_plaquetas or 0,
+            'celulas_brancas': analise.n_celulas_brancas or 0,
+            'celulas_vermelhas': analise.n_celulas_vermelhas or 0,
+            'linfocitos': analise.n_linfocitos or 0,
+            'monocitos': analise.n_monocitos or 0,
+            'basofilos': analise.n_basofilos or 0,
+            'eosinofilos': analise.n_eosinofilos or 0,
+            'neutrofilos_banda': analise.n_neutrofilos_banda or 0,
+            'neutrofilos_segmentados': analise.n_neutrofilos_segmentados or 0
+        }
+        
         return render(request, 'Analises/detalhes.html', {
-            'analise': analise
+            'analise': analise,
+            'contagens': contagens
         })
     except Exception as e:
         logger.error(f"Erro ao exibir detalhes da análise {analise_id}: {str(e)}", exc_info=True)

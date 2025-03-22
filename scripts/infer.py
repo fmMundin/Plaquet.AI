@@ -3,14 +3,28 @@ import cv2
 import time
 from pathlib import Path
 import numpy as np
+import torch
 
 def process_image(weights_path, image_path, output_dir):
-    """Processa uma imagem usando o modelo YOLOv8"""
+    """Processa uma imagem usando o modelo YOLOv8 com otimizações"""
     try:
-        # Carregar modelo e fazer inferência
+        # Configurar CUDA para melhor performance
+        if torch.cuda.is_available():
+            torch.backends.cudnn.benchmark = True
+            torch.backends.cudnn.deterministic = False
+
+        # Carregar modelo com otimizações
         model = YOLO(weights_path)
+        model.fuse()  # Fundir camadas para maior velocidade
+        
+        # Configurar para inferência rápida
+        model.conf = 0.25  # Reduzir threshold de confiança
+        model.iou = 0.45  # Ajustar IOU para melhor balanço
+        
         start_time = time.time()
-        results = model(image_path)[0]
+        
+        # Fazer inferência com otimizações
+        results = model(image_path, verbose=False)[0]  # Desativar verbose
         processing_time = time.time() - start_time
 
         # Inicializar contadores
@@ -21,70 +35,58 @@ def process_image(weights_path, image_path, output_dir):
             'Myelocyte': 0, 'Metamyelocyte': 0,
             'Promyelocyte': 0, 'Eosinophil': 0
         }
-        total_confidence = 0
 
-        # Processar cada detecção
-        for box in results.boxes:
-            cls_id = int(box.cls[0])
-            conf = float(box.conf[0])
-            class_name = results.names[cls_id]
-            total_confidence += conf
+        # Processar resultados eficientemente
+        boxes = results.boxes
+        total_detections = len(boxes)
+        if total_detections > 0:
+            # Processar todas as detecções de uma vez
+            classes = boxes.cls.cpu().numpy().astype(int)
+            confs = boxes.conf.cpu().numpy()
+            total_confidence = confs.sum() * 100  # Converter para porcentagem
 
-            # Mapear classes
-            if class_name == 'hemacia':
-                class_counts['RBC'] += 1
-            elif class_name == 'plaqueta':
-                class_counts['Platelets'] += 1
-            elif class_name == 'leucocito':
-                class_counts['WBC'] += 1
-            elif class_name == 'linfocito':
-                class_counts['Lymphocyte'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'monocito':
-                class_counts['Monocyte'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'basofilo':
-                class_counts['Basophil'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'neutrofilo_banda':
-                class_counts['Band_Neutrophil'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'neutrofilo_segmentado':
-                class_counts['Segmented_Neutrophil'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'mielocito':
-                class_counts['Myelocyte'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'metamielocito':
-                class_counts['Metamyelocyte'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'promielocito':
-                class_counts['Promyelocyte'] += 1
-                class_counts['WBC'] += 1
-            elif class_name == 'eosinofilo':
-                class_counts['Eosinophil'] += 1
-                class_counts['WBC'] += 1
+            # Mapear classes mais eficientemente
+            class_mapping = {
+                'hemacia': 'RBC',
+                'plaqueta': 'Platelets',
+                'leucocito': 'WBC',
+                'linfocito': ['Lymphocyte', 'WBC'],
+                'monocito': ['Monocyte', 'WBC'],
+                'basofilo': ['Basophil', 'WBC'],
+                'neutrofilo_banda': ['Band_Neutrophil', 'WBC'],
+                'neutrofilo_segmentado': ['Segmented_Neutrophil', 'WBC'],
+                'mielocito': ['Myelocyte', 'WBC'],
+                'metamielocito': ['Metamyelocyte', 'WBC'],
+                'promielocito': ['Promyelocyte', 'WBC'],
+                'eosinofilo': ['Eosinophil', 'WBC']
+            }
 
-        # Calcular acurácia média
-        num_detections = len(results.boxes)
-        accuracy = (total_confidence / num_detections * 100) if num_detections > 0 else 0
+            # Contagem otimizada
+            for cls_id in classes:
+                class_name = results.names[cls_id]
+                mapped_classes = class_mapping.get(class_name, [])
+                if isinstance(mapped_classes, list):
+                    for mapped_class in mapped_classes:
+                        class_counts[mapped_class] += 1
+                else:
+                    class_counts[mapped_classes] += 1
 
-        # Salvar imagem com detecções
+        # Salvar imagem processada de forma otimizada
         output_path = Path(output_dir) / f"detected_{Path(image_path).name}"
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        res_plotted = results.plot()
-        cv2.imwrite(str(output_path), res_plotted)
+        
+        res_plotted = results.plot(line_width=1)  # Reduzir espessura das linhas
+        cv2.imwrite(str(output_path), res_plotted, [cv2.IMWRITE_JPEG_QUALITY, 90])  # Comprimir imagem
 
         return {
             'success': True,
             'class_counts': class_counts,
-            'accuracy': accuracy,
             'processing_time': processing_time,
+            'accuracy': round(total_confidence / total_detections if total_detections > 0 else 0, 2),
             'output_path': str(output_path)
         }
 
     except Exception as e:
-        print(f"Erro no processamento: {str(e)}")
         return {
             'success': False,
             'error': str(e)

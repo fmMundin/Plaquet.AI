@@ -85,18 +85,17 @@
                                     {% if analise.status == 'concluido' %}
                                     <a href="{% url 'Analises:detalhes_analise' analise.id %}"
                                         class="btn btn-info btn-sm" title="Ver detalhes">
-                                        <i class="fas fa-file-medical-alt"></i>
+                                        <i class="fas fa-search"></i>
                                     </a>
                                     {% endif %}
-                                    <button type="button"
-                                        onclick='editarAnalise("{{ analise.id }}", "{{ analise.titulo|escapejs }}", "{{ analise.paciente|escapejs }}")'
+                                    <a href="{% url 'Analises:editar_analise' analise.id %}"
                                         class="btn btn-warning btn-sm" title="Editar">
-                                        <i class="fas fa-pen-to-square"></i>
-                                    </button>
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                     <button type="button"
-                                        onclick="confirmarExclusao('{{ analise.id }}', '{{ analise.titulo|escapejs }}')"
+                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')"
                                         class="btn btn-danger btn-sm" title="Excluir">
-                                        <i class="fas fa-trash-can"></i>
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
 
@@ -133,11 +132,11 @@
         margin: 0;
         pointer-events: none;
     }
-    
+
     .modal-dialog-draggable .modal-content {
         pointer-events: auto;
         border: 2px solid #0d6efd;
-        box-shadow: 0 0 20px rgba(0,0,0,0.15);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     }
 
     .draggable-handle {
@@ -172,7 +171,8 @@
         transition: all 0.3s;
     }
 
-    .drop-zone:hover, .drop-zone.dragover {
+    .drop-zone:hover,
+    .drop-zone.dragover {
         border-color: #0d6efd;
         background: #e9ecef;
     }
@@ -206,7 +206,7 @@
         position: absolute;
         top: 5px;
         right: 5px;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255, 255, 255, 0.9);
         border: none;
         border-radius: 50%;
         width: 24px;
@@ -250,6 +250,90 @@
         z-index: 1000;
         position: relative;
     }
+
+    /* Correções para o Modal */
+    .modal-content {
+        background-color: var(--card-bg) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-backdrop {
+        opacity: 0.5 !important;
+        display: block !important;
+    }
+
+    .modal {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        background-color: var(--card-bg) !important;
+    }
+
+    .modal .form-control {
+        background-color: var(--background) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color);
+        opacity: 1 !important;
+    }
+
+    .modal .form-control:focus {
+        background-color: var(--background) !important;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(106, 27, 154, 0.25);
+    }
+
+    .modal-dialog {
+        pointer-events: auto !important;
+    }
+
+    /* Remove estilos antigos e adiciona novos */
+    .modal {
+        background: none !important;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .modal-content {
+        background-color: #fff !important;
+        color: #333 !important;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        background-color: #fff !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-body {
+        background-color: #fff !important;
+    }
+
+    .modal-footer {
+        background-color: #fff !important;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .form-control {
+        background-color: #fff !important;
+        color: #333 !important;
+        border: 1px solid #ced4da !important;
+    }
+
+    .form-label {
+        color: #333 !important;
+    }
+
+    .form-text {
+        color: #6c757d !important;
+    }
 </style>
 
 <!-- Mover todos os modais para um container específico no final do body, antes do footer -->
@@ -259,37 +343,26 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalNovaAnaliseLabel">
+                    <h5 class="modal-title">
                         <i class="fas fa-file-medical me-2"></i>Nova Análise
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="modal-body">
+                    <div class="modal-body bg-white">
                         <div class="mb-3">
-                            <label for="titulo" class="form-label">Título da Análise</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                            <label class="form-label text-dark">Título da Análise</label>
+                            <input type="text" class="form-control" name="titulo" required>
                         </div>
                         <div class="mb-3">
-                            <label for="paciente" class="form-label">Nome do Paciente</label>
-                            <input type="text" class="form-control" id="paciente" name="paciente" required>
+                            <label class="form-label text-dark">Nome do Paciente</label>
+                            <input type="text" class="form-control" name="paciente" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Imagens para Análise (1-4 imagens)</label>
-                            <div class="image-upload-container">
-                                <div class="selected-images row g-2" id="selectedImages"></div>
-                                <div class="drop-zone" id="dropZone">
-                                    <input type="file" class="file-input" id="img" name="img" accept="image/*" multiple required>
-                                    <!-- Mudança: removido [] do name -->
-                                    <div class="drop-zone-content">
-                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
-                                        <p class="mb-0">Arraste as imagens aqui ou clique para selecionar</p>
-                                        <small class="text-muted">Máximo: 4 imagens</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-text">Selecione entre 1 e 4 imagens claras das células.</div>
+                            <label class="form-label text-dark">Imagem para Análise</label>
+                            <input type="file" class="form-control" name="img" accept="image/*" required>
+                            <div class="form-text">Selecione uma imagem clara das células.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -338,48 +411,44 @@
 {% endblock %}
 
 {% block js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const modalElement = document.getElementById('modalNovaAnalise');
-        const modal = new bootstrap.Modal(modalElement);
-
-        // Remover código relacionado ao draggable
-        modalElement.addEventListener('shown.bs.modal', function () {
-            document.getElementById('titulo').focus();
-        });
-
-        // Restante do código do formulário e upload de imagens
         const form = document.getElementById('formNovaAnalise');
+        const modal = new bootstrap.Modal(document.getElementById('modalNovaAnalise'));
         const spinner = form.querySelector('.spinner-border');
         const submitBtn = form.querySelector('button[type="submit"]');
 
+        // Otimiza o formulário
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const formData = new FormData();
-            const files = fileInput.files;
-            
-            if (files.length === 0) {
-                alert('Por favor, selecione pelo menos uma imagem.');
+            // Validação básica
+            const titulo = form.querySelector('[name="titulo"]').value.trim();
+            const paciente = form.querySelector('[name="paciente"]').value.trim();
+            const imgFile = form.querySelector('[name="img"]').files[0];
+
+            if (!titulo || !paciente || !imgFile) {
+                alert('Por favor, preencha todos os campos e selecione uma imagem');
                 return;
             }
 
-            // Adicionar outros campos
-            formData.append('titulo', document.getElementById('titulo').value);
-            formData.append('paciente', document.getElementById('paciente').value);
-
-            // Adicionar cada arquivo separadamente
-            for (let i = 0; i < files.length; i++) {
-                formData.append('img', files[i]);
+            // Validar tipo de arquivo
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(imgFile.type)) {
+                alert('Por favor, selecione apenas arquivos JPG, JPEG ou PNG');
+                return;
             }
 
             // Mostrar loading
-            spinner.classList.remove('d-none');
             submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
 
             try {
+                const formData = new FormData();
+                formData.append('titulo', titulo);
+                formData.append('paciente', paciente);
+                formData.append('img', imgFile);
+
                 const response = await fetch('{% url "Analises:criar_analise" %}', {
                     method: 'POST',
                     body: formData,
@@ -391,7 +460,6 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    modal.hide();
                     window.location.reload();
                 } else {
                     throw new Error(data.error || 'Erro ao processar análise');
@@ -399,187 +467,50 @@
             } catch (error) {
                 alert(error.message);
             } finally {
-                spinner.classList.add('d-none');
                 submitBtn.disabled = false;
+                spinner.classList.add('d-none');
             }
         });
 
-        // Limpar form ao fechar modal
-        document.getElementById('modalNovaAnalise').addEventListener('hidden.bs.modal', function () {
+        // Função otimizada para deletar análise
+        window.deletarAnalise = function (url, titulo) {
+            const confirmar = confirm(`Deseja realmente excluir a análise "${titulo}"?`);
+
+            if (!confirmar) return;
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro na requisição');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        throw new Error(data.error || 'Erro ao excluir análise');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao excluir análise: ' + error.message);
+                });
+        };
+
+        // Limpar formulário ao fechar modal
+        const modalElement = document.getElementById('modalNovaAnalise');
+        modalElement.addEventListener('hidden.bs.modal', function () {
             form.reset();
             spinner.classList.add('d-none');
             submitBtn.disabled = false;
         });
-
-        // Adicionar após a inicialização do form
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('img');
-        const selectedImagesContainer = document.getElementById('selectedImages');
-
-        // Prevenir comportamento padrão do drop
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
-
-        // Destacar drop zone
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
-
-        // Manipular arquivos soltos
-        dropZone.addEventListener('drop', handleDrop, false);
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFiles);
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        function highlight() {
-            dropZone.classList.add('dragover');
-        }
-
-        function unhighlight() {
-            dropZone.classList.remove('dragover');
-        }
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles({ target: { files: files } });
-        }
-
-        function handleFiles(e) {
-            const files = [...e.target.files];
-            if (files.length > 4) {
-                alert('Você pode selecionar no máximo 4 imagens.');
-                fileInput.value = '';
-                selectedImagesContainer.innerHTML = '';
-                return;
-            }
-
-            if (files.length === 0) {
-                fileInput.value = '';
-                selectedImagesContainer.innerHTML = '';
-                return;
-            }
-
-            // Limpar previews existentes
-            selectedImagesContainer.innerHTML = '';
-            
-            files.forEach((file, index) => {
-                if (!file.type.startsWith('image/')) {
-                    alert(`O arquivo ${file.name} não é uma imagem válida.`);
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.createElement('div');
-                    preview.className = 'image-preview col-6';
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview">
-                        <button type="button" class="remove-image" data-index="${index}" title="Remover imagem">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    selectedImagesContainer.appendChild(preview);
-
-                    // Adicionar evento para remover imagem
-                    preview.querySelector('.remove-image').addEventListener('click', function() {
-                        preview.remove();
-                        updateFileInput();
-                        
-                        // Verifica se não há mais imagens
-                        if (selectedImagesContainer.children.length === 0) {
-                            fileInput.value = '';
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function updateFileInput() {
-            const dt = new DataTransfer();
-            const previews = selectedImagesContainer.querySelectorAll('.image-preview');
-            if (previews.length === 0) {
-                fileInput.value = '';
-                return;
-            }
-            
-            [...fileInput.files].forEach((file, index) => {
-                if ([...previews].some(p => p.querySelector('.remove-image').dataset.index == index)) {
-                    dt.items.add(file);
-                }
-            });
-            
-            fileInput.files = dt.files;
-        }
-
-        // Garantir que os modais sempre fiquem por cima
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            modal.addEventListener('show.bs.modal', function () {
-                const zIndex = 1045 + (10 * document.querySelectorAll('.modal.show').length);
-                this.style.zIndex = zIndex;
-                setTimeout(() => {
-                    const backdrop = document.querySelector('.modal-backdrop:last-child');
-                    if (backdrop) {
-                        backdrop.style.zIndex = zIndex - 5;
-                    }
-                }, 0);
-            });
-        });
     });
-
-    // Funções de editar e deletar
-    function editarAnalise(id) {
-        window.location.href = `/analises/editar/${id}/`;
-    }
-
-    function confirmarExclusao(id, titulo) {
-        const modal = new bootstrap.Modal(document.getElementById('modalConfirmarExclusao'));
-        document.getElementById('tituloAnaliseExclusao').textContent = titulo;
-        
-        // Configurar o botão de confirmação
-        const btnConfirmar = document.getElementById('btnConfirmarExclusao');
-        btnConfirmar.onclick = () => deletarAnalise(id);
-        
-        modal.show();
-    }
-
-    function deletarAnalise(id) {
-        const btnConfirmar = document.getElementById('btnConfirmarExclusao');
-        const iconOriginal = btnConfirmar.innerHTML;
-        btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Excluindo...';
-        btnConfirmar.disabled = true;
-
-        fetch(`/analises/deletar/${id}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                throw new Error(data.error || 'Erro ao excluir análise');
-            }
-        })
-        .catch(error => {
-            alert(error.message);
-            btnConfirmar.innerHTML = iconOriginal;
-            btnConfirmar.disabled = false;
-        });
-    }
 </script>
 {% endblock %}
