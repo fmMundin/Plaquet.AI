@@ -805,7 +805,7 @@ body {
     height: 300px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .hero-slide {
@@ -839,7 +839,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6));
 }
 
 .hero-content {
@@ -850,7 +850,7 @@ body {
     padding: 1.5rem;
     color: white;
     z-index: 2;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     transform: translateY(0);
     transition: transform 0.6s ease;
 }
@@ -873,8 +873,8 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     display: flex;
     align-items: center;
@@ -898,7 +898,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255, 255, 255, 0.5);
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1058,7 +1058,8 @@ body {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    height: 250px; /* Reduzido para melhor proporção */
+    height: 250px;
+    /* Reduzido para melhor proporção */
     overflow: hidden;
     padding: 20px 0;
 }
@@ -1075,7 +1076,8 @@ body {
 
 .comparison-slide {
     position: relative;
-    width: 180px; /* Reduzido para um tamanho mais compacto */
+    width: 180px;
+    /* Reduzido para um tamanho mais compacto */
     transform: scale(0.85);
     opacity: 0.4;
     filter: blur(1px);
@@ -1088,7 +1090,8 @@ body {
     opacity: 1;
     filter: none;
     pointer-events: all;
-    width: 200px; /* Tamanho do slide ativo */
+    width: 200px;
+    /* Tamanho do slide ativo */
 }
 
 .image-hover-comparison {
@@ -1105,7 +1108,8 @@ body {
 .overlay-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Mudado para cover para melhor preenchimento */
+    object-fit: cover;
+    /* Mudado para cover para melhor preenchimento */
     background-color: var(--card-bg);
 }
 
@@ -1134,8 +1138,13 @@ body {
     background: var(--secondary-color);
 }
 
-.carousel-control.prev { left: 10px; }
-.carousel-control.next { right: 10px; }
+.carousel-control.prev {
+    left: 10px;
+}
+
+.carousel-control.next {
+    right: 10px;
+}
 
 /* Ajuste do texto e badge */
 .comparison-slide p {
@@ -1157,7 +1166,8 @@ body {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    height: 300px; /* Reduzido de 400px */
+    height: 300px;
+    /* Reduzido de 400px */
     overflow: hidden;
 }
 
@@ -1168,12 +1178,14 @@ body {
     display: flex;
     align-items: center;
     width: max-content;
-    gap: 15px; /* Reduzido de 20px */
+    gap: 15px;
+    /* Reduzido de 20px */
 }
 
 .comparison-slide {
     position: relative;
-    width: 220px; /* Reduzido de 280px */
+    width: 220px;
+    /* Reduzido de 280px */
     transform: scale(0.8);
     opacity: 0.4;
     filter: blur(2px);
@@ -1186,36 +1198,50 @@ body {
     opacity: 1;
     filter: none;
     pointer-events: all;
-    width: 250px; /* Reduzido de 300px */
+    width: 250px;
+    /* Reduzido de 300px */
 }
 
 .image-hover-comparison {
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 8px; /* Reduzido de 12px */
+    border-radius: 8px;
+    /* Reduzido de 12px */
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Reduzido shadow */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    /* Reduzido shadow */
 }
 
 /* Ajuste dos controles */
 .carousel-control {
-    width: 35px; /* Reduzido de 40px */
-    height: 35px; /* Reduzido de 40px */
+    width: 35px;
+    /* Reduzido de 40px */
+    height: 35px;
+    /* Reduzido de 40px */
 }
 
-.carousel-control.prev { left: 10px; }
-.carousel-control.next { right: 10px; }
+.carousel-control.prev {
+    left: 10px;
+}
+
+.carousel-control.next {
+    right: 10px;
+}
 
 /* Ajuste do texto e badge */
 .comparison-slide p {
-    font-size: 0.9rem; /* Reduzido de 1.1rem */
-    margin-top: 0.75rem; /* Reduzido de 1rem */
+    font-size: 0.9rem;
+    /* Reduzido de 1.1rem */
+    margin-top: 0.75rem;
+    /* Reduzido de 1rem */
 }
 
 .comparison-slide .badge {
-    font-size: 0.7rem; /* Reduzido de 0.8rem */
-    padding: 0.2em 0.5em; /* Reduzido padding */
+    font-size: 0.7rem;
+    /* Reduzido de 0.8rem */
+    padding: 0.2em 0.5em;
+    /* Reduzido padding */
 }
 
 /* Ajustes do Hero Carousel na coluna direita */
@@ -1318,7 +1344,7 @@ body {
     margin: 2rem auto;
     max-width: 900px;
 }
-    
+
 
 .comparison-slide.active {
     transform: scale(1);
@@ -1338,7 +1364,7 @@ body {
     height: 300px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .hero-slide {
@@ -1368,7 +1394,7 @@ body {
     left: 0;
     right: 0;
     padding: 1.5rem;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     color: white;
 }
 
@@ -1392,8 +1418,10 @@ body {
     height: 300px;
     margin: 0 auto;
     perspective: 1000px;
-    overflow: visible; /* Alterado de hidden para visible */
-    padding: 20px 0 60px; /* Aumentado padding-bottom para acomodar legendas */
+    overflow: visible;
+    /* Alterado de hidden para visible */
+    padding: 20px 0 60px;
+    /* Aumentado padding-bottom para acomodar legendas */
 }
 
 .samples-track {
@@ -1409,11 +1437,13 @@ body {
     width: 200px;
     left: 50%;
     top: 50%;
-    transform-origin: 50% 50% -250px; /* Define o raio do círculo */
+    transform-origin: 50% 50% -250px;
+    /* Define o raio do círculo */
     transition: all 0.5s ease-in-out;
     opacity: 0;
     pointer-events: none;
-    text-align: center; /* Centralizar conteúdo */
+    text-align: center;
+    /* Centralizar conteúdo */
 }
 
 .sample-slide.active {
@@ -1437,12 +1467,14 @@ body {
 
 .sample-image-container {
     width: 100%;
-    height: 200px; /* Altura fixa para a imagem */
+    height: 200px;
+    /* Altura fixa para a imagem */
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     background: var(--card-bg);
-    margin-bottom: 10px; /* Espaço entre imagem e legenda */
+    margin-bottom: 10px;
+    /* Espaço entre imagem e legenda */
 }
 
 /* Estilos da legenda */
@@ -1454,7 +1486,8 @@ body {
     transition: opacity 0.3s ease;
     position: absolute;
     width: 100%;
-    bottom: -40px; /* Posicionar abaixo da imagem */
+    bottom: -40px;
+    /* Posicionar abaixo da imagem */
     left: 0;
 }
 
@@ -1507,8 +1540,13 @@ body {
     background: var(--secondary-color);
 }
 
-.samples-controls .prev { left: 10px; }
-.samples-controls .next { right: 10px; }
+.samples-controls .prev {
+    left: 10px;
+}
+
+.samples-controls .next {
+    right: 10px;
+}
 
 .faq-container {
     max-width: 800px;
@@ -1587,4 +1625,238 @@ body {
 .faq-item.active .faq-answer {
     max-height: 300px;
     padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+/* Ajustes para o Modal */
+.modal {
+    background: none !important;
+}
+
+.modal-backdrop {
+    opacity: 0.5 !important;
+}
+
+.modal-dialog {
+    z-index: 1050;
+}
+
+.modal-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+}
+
+.modal .form-control {
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+}
+
+.modal .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(156, 39, 176, 0.25);
+}
+
+.modal .form-label {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.modal .btn-close {
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Ajustes para o Modal */
+.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+.modal .form-control {
+    background-color: var(--background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.modal .form-control:focus {
+    background-color: var(--background);
+    color: var (--text-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(156, 39, 176, 0.25);
+}
+
+.modal .form-label {
+    color: var (--text-color);
+}
+
+/* Correção dos estilos do Modal */
+.modal-backdrop {
+    display: none !important;
+}
+
+.modal {
+    background: none !important;
+    pointer-events: auto !important;
+}
+
+.modal-dialog {
+    z-index: 1050;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header,
+.modal-footer,
+.modal-body {
+    background-color: var(--card-bg) !important;
+    pointer-events: auto !important;
+}
+
+.modal .form-control {
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    pointer-events: auto !important;
+}
+
+/* Correções do Modal */
+.modal {
+    z-index: 1050;
+    pointer-events: auto !important;
+    background: none !important;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+.modal-dialog {
+    pointer-events: auto !important;
+    z-index: 1055;
+}
+
+.modal-content {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    pointer-events: auto !important;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    pointer-events: auto !important;
+    background-color: var(--card-bg) !important;
+}
+
+.modal .form-control {
+    pointer-events: auto !important;
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+}
+
+/* Reset de estilos do Modal */
+.modal {
+    background: none !important;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+.modal-content {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    background-color: #fff !important;
+    color: #333 !important;
+}
+
+.modal .form-control {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 1px solid #ced4da !important;
+}
+
+.modal .form-label {
+    color: #333 !important;
+}
+
+.modal .form-text {
+    color: #6c757d !important;
+}
+
+/* Reset de estilos do Modal */
+.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    background-color: #fff !important;
+    color: #333 !important;
+}
+
+.modal .form-control {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 1px solid #ced4da;
+}
+
+.modal .form-label {
+    color: #333 !important;
+}
+
+.modal .form-text {
+    color: #6c757d !important;
+}
+
+.modal-backdrop {
+    opacity: 0.5;
 }

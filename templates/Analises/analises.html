@@ -11,43 +11,6 @@
         </button>
     </div>
 
-    <!-- Modal Nova Análise -->
-    <div class="modal fade" id="modalNovaAnalise" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Nova Análise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Título da Análise</label>
-                            <input type="text" class="form-control" name="titulo" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nome do Paciente</label>
-                            <input type="text" class="form-control" name="paciente" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Imagem para Análise</label>
-                            <input type="file" class="form-control" name="img" accept="image/*" required>
-                            <div class="form-text">Selecione uma imagem clara das células.</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
-                            Iniciar Análise
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Lista de Análises -->
     <div class="card">
         <div class="card-header">
@@ -125,11 +88,10 @@
                                         <i class="fas fa-search"></i>
                                     </a>
                                     {% endif %}
-                                    <button type="button"
-                                        onclick='editarAnalise("{{ analise.id }}", "{{ analise.titulo|escapejs }}", "{{ analise.paciente|escapejs }}")'
+                                    <a href="{% url 'Analises:editar_analise' analise.id %}"
                                         class="btn btn-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     <button type="button"
                                         onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')"
                                         class="btn btn-danger btn-sm" title="Excluir">
@@ -164,6 +126,288 @@
     </div>
 </div>
 
+<style>
+    .modal-dialog-draggable {
+        position: fixed;
+        margin: 0;
+        pointer-events: none;
+    }
+
+    .modal-dialog-draggable .modal-content {
+        pointer-events: auto;
+        border: 2px solid #0d6efd;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .draggable-handle {
+        cursor: move;
+    }
+
+    .modal.fade.minimize .modal-dialog {
+        transform: translateY(calc(100vh - 60px));
+    }
+
+    .modal.fade.show .modal-dialog {
+        transform: none;
+        transition: transform 0.3s ease-out;
+    }
+
+    .btn-light {
+        padding: 0.25rem 0.5rem;
+        line-height: 1;
+    }
+
+    .image-upload-container {
+        margin-bottom: 1rem;
+    }
+
+    .drop-zone {
+        border: 2px dashed #ccc;
+        border-radius: 4px;
+        padding: 2rem;
+        text-align: center;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+        border-color: #0d6efd;
+        background: #e9ecef;
+    }
+
+    .drop-zone .file-input {
+        display: none;
+    }
+
+    .selected-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .image-preview {
+        position: relative;
+        width: calc(50% - 5px);
+        aspect-ratio: 1;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-preview .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #dc3545;
+    }
+
+    .image-preview .remove-image:hover {
+        background: #fff;
+        color: #bb2d3b;
+    }
+
+    /* Ajustes para os modais */
+    .modal-backdrop {
+        z-index: 1040;
+    }
+
+    .modal {
+        z-index: 1045;
+    }
+
+    .modal-dialog-draggable {
+        z-index: 1050;
+        position: fixed;
+        margin: 0;
+        pointer-events: none;
+    }
+
+    /* Estilo para container de modais */
+    .modals-container {
+        position: relative;
+        z-index: 1100;
+    }
+
+    /* Garantir que o footer não sobreponha os modais */
+    footer {
+        z-index: 1000;
+        position: relative;
+    }
+
+    /* Correções para o Modal */
+    .modal-content {
+        background-color: var(--card-bg) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-backdrop {
+        opacity: 0.5 !important;
+        display: block !important;
+    }
+
+    .modal {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        background-color: var(--card-bg) !important;
+    }
+
+    .modal .form-control {
+        background-color: var(--background) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color);
+        opacity: 1 !important;
+    }
+
+    .modal .form-control:focus {
+        background-color: var(--background) !important;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(106, 27, 154, 0.25);
+    }
+
+    .modal-dialog {
+        pointer-events: auto !important;
+    }
+
+    /* Remove estilos antigos e adiciona novos */
+    .modal {
+        background: none !important;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .modal-content {
+        background-color: #fff !important;
+        color: #333 !important;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        background-color: #fff !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-body {
+        background-color: #fff !important;
+    }
+
+    .modal-footer {
+        background-color: #fff !important;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .form-control {
+        background-color: #fff !important;
+        color: #333 !important;
+        border: 1px solid #ced4da !important;
+    }
+
+    .form-label {
+        color: #333 !important;
+    }
+
+    .form-text {
+        color: #6c757d !important;
+    }
+</style>
+
+<!-- Mover todos os modais para um container específico no final do body, antes do footer -->
+<div class="modals-container">
+    <!-- Modal Nova Análise -->
+    <div class="modal fade" id="modalNovaAnalise" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-medical me-2"></i>Nova Análise
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body bg-white">
+                        <div class="mb-3">
+                            <label class="form-label text-dark">Título da Análise</label>
+                            <input type="text" class="form-control" name="titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark">Nome do Paciente</label>
+                            <input type="text" class="form-control" name="paciente" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark">Imagem para Análise</label>
+                            <input type="file" class="form-control" name="img" accept="image/*" required>
+                            <div class="form-text">Selecione uma imagem clara das células.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
+                            Iniciar Análise
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-triangle-exclamation me-2"></i>Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-trash-can fa-4x text-danger mb-3"></i>
+                        <p class="mb-0">Tem certeza que deseja excluir a análise:</p>
+                        <h5 class="mt-2" id="tituloAnaliseExclusao"></h5>
+                    </div>
+                    <p class="text-muted text-center">Esta ação não poderá ser desfeita.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-xmark me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarExclusao">
+                        <i class="fas fa-trash-can me-2"></i>Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
@@ -174,15 +418,37 @@
         const spinner = form.querySelector('.spinner-border');
         const submitBtn = form.querySelector('button[type="submit"]');
 
+        // Otimiza o formulário
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            // Validação básica
+            const titulo = form.querySelector('[name="titulo"]').value.trim();
+            const paciente = form.querySelector('[name="paciente"]').value.trim();
+            const imgFile = form.querySelector('[name="img"]').files[0];
+
+            if (!titulo || !paciente || !imgFile) {
+                alert('Por favor, preencha todos os campos e selecione uma imagem');
+                return;
+            }
+
+            // Validar tipo de arquivo
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(imgFile.type)) {
+                alert('Por favor, selecione apenas arquivos JPG, JPEG ou PNG');
+                return;
+            }
+
             // Mostrar loading
-            spinner.classList.remove('d-none');
             submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
 
             try {
-                const formData = new FormData(this);
+                const formData = new FormData();
+                formData.append('titulo', titulo);
+                formData.append('paciente', paciente);
+                formData.append('img', imgFile);
+
                 const response = await fetch('{% url "Analises:criar_analise" %}', {
                     method: 'POST',
                     body: formData,
@@ -194,7 +460,6 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    modal.hide();
                     window.location.reload();
                 } else {
                     throw new Error(data.error || 'Erro ao processar análise');
@@ -202,33 +467,30 @@
             } catch (error) {
                 alert(error.message);
             } finally {
-                spinner.classList.add('d-none');
                 submitBtn.disabled = false;
+                spinner.classList.add('d-none');
             }
         });
 
-        // Limpar form ao fechar modal
-        document.getElementById('modalNovaAnalise').addEventListener('hidden.bs.modal', function () {
-            form.reset();
-            spinner.classList.add('d-none');
-            submitBtn.disabled = false;
-        });
-    });
+        // Função otimizada para deletar análise
+        window.deletarAnalise = function (url, titulo) {
+            const confirmar = confirm(`Deseja realmente excluir a análise "${titulo}"?`);
 
-    // Funções de editar e deletar
-    function editarAnalise(id) {
-        window.location.href = `/analises/editar/${id}/`;
-    }
+            if (!confirmar) return;
 
-    function deletarAnalise(url, titulo) {
-        if (confirm(`Deseja realmente excluir a análise "${titulo}"?`)) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
             fetch(url, {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
                 }
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro na requisição');
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         window.location.reload();
@@ -236,8 +498,19 @@
                         throw new Error(data.error || 'Erro ao excluir análise');
                     }
                 })
-                .catch(error => alert(error.message));
-        }
-    }
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao excluir análise: ' + error.message);
+                });
+        };
+
+        // Limpar formulário ao fechar modal
+        const modalElement = document.getElementById('modalNovaAnalise');
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            form.reset();
+            spinner.classList.add('d-none');
+            submitBtn.disabled = false;
+        });
+    });
 </script>
 {% endblock %}
