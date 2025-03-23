@@ -21,35 +21,43 @@
         </div>
         <div class="col-lg-6">
             <!-- Hero Carousel -->
-            <div id="heroCarousel" class="hero-carousel">
-                <div class="hero-slides">
-                    <div class="hero-slide active">
-                        <div class="hero-image hero-image-1"></div>
-                        <div class="hero-content">
+            <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{% static 'C:/Plaquet.AI/media/geral/hero2.png' %}" class="d-block w-100" alt="Hero 2">
+                        <div class="carousel-caption">
                             <h3>Análise Inteligente</h3>
                             <p>Detecção automática de células sanguíneas</p>
                         </div>
                     </div>
-                    <div class="hero-slide">
-                        <div class="hero-image hero-image-2"></div>
-                        <div class="hero-content">
+                    <div class="carousel-item">
+                        <img src="{% static 'C:/Plaquet.AI/media/geral/hero3.png' %}" class="d-block w-100" alt="Hero 3">
+                        <div class="carousel-caption">
                             <h3>Resultados Precisos</h3>
                             <p>Alta acurácia na identificação de células</p>
                         </div>
                     </div>
-                    <div class="hero-slide">
-                        <div class="hero-image hero-image-3"></div>
-                        <div class="hero-content">
+                    <div class="carousel-item">
+                        <img src="{% static 'C:/Plaquet.AI/media/geral/hero4.png' %}" class="d-block w-100" alt="Hero 4">
+                        <div class="carousel-caption">
                             <h3>Interface Amigável</h3>
                             <p>Sistema fácil e intuitivo de usar</p>
                         </div>
                     </div>
                 </div>
-                <div class="hero-controls">
-                    <button class="hero-prev"><i class="fas fa-chevron-left"></i></button>
-                    <div class="hero-indicators"></div>
-                    <button class="hero-next"><i class="fas fa-chevron-right"></i></button>
-                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                    <span class="visually-hidden">Próximo</span>
+                </button>
             </div>
         </div>
     </div>
@@ -80,15 +88,31 @@
     </div>
 
     <!-- Seção de Demonstração -->
-    <div class="image-comparison-wrapper mt-5">
-        <h3 class="text-center mb-4">Veja como funciona</h3>
-        <div id="samplesCarousel" class="samples-carousel">
-            <div id="samplesTrack" class="samples-track">
-                <!-- Slides serão adicionados dinamicamente -->
+    <div class="demonstration-section mt-5">
+        <h3 class="text-center mb-4">Exemplos de Detecção</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="detection-example">
+                    <div class="detection-image original">
+                        <img src="{% static 'media/exemplos/original1.jpg' %}" alt="Imagem Original" class="img-fluid">
+                        <div class="image-label">Original</div>
+                    </div>
+                    <div class="detection-image detected">
+                        <img src="{% static 'media/exemplos/detectado1.jpg' %}" alt="Imagem com Detecções" class="img-fluid">
+                        <div class="image-label">Detecções</div>
+                    </div>
+                </div>
             </div>
-            <div class="samples-controls">
-                <button id="samplesPrevBtn" class="prev"><i class="fas fa-chevron-left"></i></button>
-                <button id="samplesNextBtn" class="next"><i class="fas fa-chevron-right"></i></button>
+            <div class="col-md-6">
+                <div class="detection-stats">
+                    <h4>Resultados da Detecção</h4>
+                    <ul class="detection-list">
+                        <li><span class="stat-label">Plaquetas:</span> <span class="stat-value">127</span></li>
+                        <li><span class="stat-label">Células Brancas:</span> <span class="stat-value">45</span></li>
+                        <li><span class="stat-label">Células Vermelhas:</span> <span class="stat-value">892</span></li>
+                        <li><span class="stat-label">Acurácia:</span> <span class="stat-value">98.5%</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -96,18 +120,101 @@
 {% endblock %}
 
 {% block css %}
-{{ block.super }}
 <style>
     .hero-image-1 {
-        background-image: url("{% static 'images/hero1.jpg' %}");
+        background-image: url("{% static 'C:/Plaquet.AI/media/geral/hero2.png' %}");
     }
 
     .hero-image-2 {
-        background-image: url("{% static 'images/hero2.jpg' %}");
+        background-image: url("{% static 'C:/Plaquet.AI/media/geral/hero3.png' %}");
     }
 
     .hero-image-3 {
-        background-image: url("{% static 'images/hero3.jpg' %}");
+        background-image: url("{% static 'C:/Plaquet.AI/media/geral/hero4.png' %}");
+    }
+
+    /* Estilos do Carrossel */
+    #heroCarousel {
+        margin-bottom: 2rem;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .carousel-item img {
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .carousel-caption {
+        background: rgba(0,0,0,0.6);
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    /* Estilos da Seção de Demonstração */
+    .detection-example {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 2rem;
+    }
+
+    .detection-image {
+        flex: 1;
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .image-label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .detection-stats {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .detection-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .detection-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .stat-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .stat-value {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .carousel-item img {
+            height: 300px;
+        }
+
+        .detection-example {
+            flex-direction: column;
+        }
     }
 </style>
 {% endblock %}
