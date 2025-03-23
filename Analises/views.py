@@ -61,31 +61,32 @@ def analises(request):
 def criar_analise(request):
     if request.method == 'POST':
         try:
+            # Validar imagem primeiro
+            if 'img' not in request.FILES:
+                return JsonResponse({'success': False, 'error': 'Nenhuma imagem foi enviada'})
+            
+            img_file = request.FILES['img']
+            if not img_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
+                })
+
+            # Gerar título automático baseado na data e hora
+            titulo = timezone.now().strftime("Análise_%Y%m%d_%H%M%S")
+            
             with transaction.atomic():
-                # Validar imagem
-                if 'img' not in request.FILES:
-                    return JsonResponse({'success': False, 'error': 'Nenhuma imagem foi enviada'})
-                
-                img_file = request.FILES['img']
-                if not img_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    return JsonResponse({
-                        'success': False, 
-                        'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
-                    })
+                # Criar e salvar análise
+                analise = Analise(
+                    titulo=titulo,
+                    paciente=request.POST['paciente'],
+                    img=img_file,
+                    status='processando',
+                    data_analise=timezone.now()
+                )
+                analise.save()
 
                 try:
-                    start_time = time.time()
-                    
-                    # Criar e salvar análise primeiro
-                    analise = Analise(
-                        titulo=request.POST['titulo'],
-                        paciente=request.POST['paciente'],
-                        img=img_file,  # Salvar imagem original
-                        status='processando',
-                        data_analise=timezone.now()
-                    )
-                    analise.save()
-
                     # Configurar caminhos
                     weights_path = str(settings.BASE_DIR / 'scripts' / 'best.pt')
                     output_dir = str(settings.MEDIA_ROOT / 'resultados')
@@ -103,7 +104,7 @@ def criar_analise(request):
                         if processed_path.exists():
                             with processed_path.open('rb') as f:
                                 analise.img_resultado.save(
-                                    f'resultado_{analise.id}.jpg',
+                                    f'resultado_{analise.titulo}.jpg',
                                     File(f),
                                     save=True
                                 )
@@ -128,13 +129,14 @@ def criar_analise(request):
                         analise.status = 'concluido'
                         analise.save()
                         
-                        logger.info(f"Análise {analise.id} processada com sucesso. Acurácia: {analise.acuracia:.2f}%")
                         return JsonResponse({'success': True})
                     else:
-                        raise Exception(results.get('error', 'Erro no processamento'))
+                        analise.status = 'erro'
+                        analise.erro_msg = results.get('error', 'Erro desconhecido no processamento')
+                        analise.save()
+                        raise Exception(analise.erro_msg)
 
                 except Exception as e:
-                    logger.error(f"Erro no processamento: {str(e)}")
                     analise.status = 'erro'
                     analise.erro_msg = str(e)
                     analise.save()
@@ -152,7 +154,7 @@ def criar_analise(request):
 def deletar_analise(request, analise_id):
     if request.method == 'POST':
         try:
-            analise = get_object_or_404(Analise, pk=analise_id)
+            analise = get_object_or_404(Analise, titulo=analise_id)  # Mudado para usar titulo
             titulo = analise.titulo  # Guardar o título antes de deletar
             analise.delete()
             return JsonResponse({
@@ -169,7 +171,7 @@ def deletar_analise(request, analise_id):
 
 def detalhes_analise(request, analise_id):
     try:
-        analise = get_object_or_404(Analise, pk=analise_id)
+        analise = get_object_or_404(Analise, titulo=analise_id)  # Mudado para usar titulo
         
         # Mapear as contagens para o formato correto
         contagens = {
@@ -194,7 +196,7 @@ def detalhes_analise(request, analise_id):
         return redirect('Analises:analises')
 
 def editar_analise(request, analise_id):
-    analise = get_object_or_404(Analise, pk=analise_id)
+    analise = get_object_or_404(Analise, titulo=analise_id)  # Mudado para usar titulo
     
     if request.method == 'POST':
         try:
@@ -210,6 +212,10 @@ def editar_analise(request, analise_id):
 
 def index(request):
     """View para a página inicial"""
+    # Criar diretório de mídia se não existir
+    media_dir = settings.MEDIA_ROOT / 'geral'
+    media_dir.mkdir(parents=True, exist_ok=True)
+    
     return render(request, 'Analises/index.html', {
-        'original_exists': True  # Simplificado para sempre mostrar o conteúdo
+        'original_exists': True
     })

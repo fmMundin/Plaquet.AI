@@ -83,17 +83,17 @@
                             <td>
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Ações">
                                     {% if analise.status == 'concluido' %}
-                                    <a href="{% url 'Analises:detalhes_analise' analise.id %}"
+                                    <a href="{% url 'Analises:detalhes_analise' analise.titulo %}"
                                         class="btn btn-info" title="Ver detalhes">
                                         <i class="fas fa-microscope"></i>
                                     </a>
                                     {% endif %}
-                                    <a href="{% url 'Analises:editar_analise' analise.id %}"
+                                    <a href="{% url 'Analises:editar_analise' analise.titulo %}"
                                         class="btn btn-warning" title="Editar">
                                         <i class="fas fa-vial"></i>
                                     </a>
                                     <button type="button"
-                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')"
+                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.titulo %}', '{{ analise.titulo|escapejs }}')"
                                         class="btn btn-danger btn-sm" title="Excluir">
                                         <i class="fas fa-trash"></i>
                                     </button>

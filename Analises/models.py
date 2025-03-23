@@ -11,7 +11,7 @@ class Analise(models.Model):
         ('erro', 'Erro')
     ]
 
-    titulo = models.CharField(max_length=200)
+    titulo = models.CharField(max_length=200, primary_key=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
     paciente = models.CharField(max_length=200)
     img = models.ImageField(upload_to='analises/', null=True, blank=True)

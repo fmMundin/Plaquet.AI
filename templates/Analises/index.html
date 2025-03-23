@@ -1,221 +1,435 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Plaquet.AI - Sistema de Análise de Células{% endblock %}
+{% block title %}Plaquet.AI - Início{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- Seção Hero -->
+<!-- Layout de duas colunas -->
+<div class="container mt-4" id="features">
     <div class="row align-items-center">
-        <div class="col-lg-6">
-            <div class="welcome-card p-4">
-                <h1 class="display-4">Bem-vindo ao Plaquet.AI</h1>
-                <p class="lead">Sistema inteligente para análise de células sanguíneas usando Inteligência Artificial.
-                </p>
-                <div class="mt-4">
-                    <a href="{% url 'Analises:analises' %}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-microscope me-2"></i>Começar Análise
-                    </a>
+        <!-- Coluna Esquerda - Card de Boas-vindas -->
+        <div class="col-lg-5">
+            <div class="card welcome-card h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-4">
+                        <h1 class="card-title text-contrast">Bem-vindo ao Plaquet.AI</h1>
+                        <p class="text-muted mt-3">Sistema de análise de células sanguíneas com Inteligência Artificial
+                        </p>
+                    </div>
+
+                    <div class="welcome-features">
+                        <div class="feature-item">
+                            <i class="fas fa-bolt text-primary"></i>
+                            <div>
+                                <h5>Processamento Rápido</h5>
+                                <p>Resultados em menos de 10 segundos</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <i class="fas fa-crosshairs text-success"></i>
+                            <div>
+                                <h5>Alta Precisão</h5>
+                                <p>Detecção precisa com IA avançada</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <i class="fas fa-chart-bar text-info"></i>
+                            <div>
+                                <h5>Análise Detalhada</h5>
+                                <p>Contagem e classificação automática</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <a href="{% url 'Analises:analises' %}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-microscope me-2"></i>Começar Análise
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <!-- Hero Carousel -->
-            <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+
+        <!-- Coluna Direita - Hero Carousel -->
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-body p-0">
+                    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                        </div>
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="/media/geral/hero2.png" class="d-block w-100" alt="Análise de Plaquetas">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h3>Análise de Células</h3>
+                                    <p>Detecção precisa com IA</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="/media/geral/hero3.png" class="d-block w-100" alt="Células Brancas">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h3>Células Brancas</h3>
+                                    <p>Identificação automática</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="/media/geral/hero4.png" class="d-block w-100" alt="Células Vermelhas">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h3>Células Vermelhas</h3>
+                                    <p>Contagem precisa</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Atualizar a seção do carrossel de amostras -->
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="text-contrast mb-4">Amostras Interativas</h2>
+            <div class="samples-carousel">
+                <div class="samples-track" id="samplesTrack">
+                    <!-- Plaquetas -->
+                    <div class="sample-slide active">
+                        <div class="sample-image-container">
+                            <img src="{% static 'images/original1.png' %}" alt="Plaquetas" class="sample-base-image">
+                            <div class="sample-overlay">
+                                <img src="{% static 'images/detected1.png' %}" alt="Detecção"
+                                    class="sample-overlay-image">
+                            </div>
+                        </div>
+                        <p class="text-center mt-2">Plaquetas <span class="badge bg-primary">Platelets</span></p>
+                    </div>
+
+                    <!-- Células Brancas -->
+                    <div class="sample-slide">
+                        <div class="sample-image-container">
+                            <img src="{% static 'images/original2.png' %}" alt="WBC" class="sample-base-image">
+                            <div class="sample-overlay">
+                                <img src="{% static 'images/detected2.png' %}" alt="Detecção"
+                                    class="sample-overlay-image">
+                            </div>
+                        </div>
+                        <p class="text-center mt-2">Células Brancas <span class="badge bg-success">WBC</span></p>
+                    </div>
+
+                    <!-- Células Vermelhas -->
+                    <div class="sample-slide">
+                        <div class="sample-image-container">
+                            <img src="{% static 'images/original3.png' %}" alt="RBC" class="sample-base-image">
+                            <div class="sample-overlay">
+                                <img src="{% static 'images/detected3.jpg' %}" alt="Detecção"
+                                    class="sample-overlay-image">
+                            </div>
+                        </div>
+                        <p class="text-center mt-2">Células Vermelhas <span class="badge bg-danger">RBC</span></p>
+                    </div>
+                </div>
+
+                <div class="samples-controls">
+                    <button class="prev" id="samplesPrevBtn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="next" id="samplesNextBtn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <p class="text-muted mt-3 text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Passe o mouse sobre as imagens para ver as detecções realizadas pela IA
+            </p>
+        </div>
+    </div>
+
+    <!-- Seção de depoimentos -->
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="text-contrast mb-4">
+                <i class="fas fa-quote-left me-2 text-primary"></i>
+                Depoimentos
+            </h2>
+            <div id="depoimentosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="{% static 'C:/Plaquet.AI/media/geral/hero2.png' %}" class="d-block w-100" alt="Hero 2">
-                        <div class="carousel-caption">
-                            <h3>Análise Inteligente</h3>
-                            <p>Detecção automática de células sanguíneas</p>
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <div class="testimonial-text">
+                                    <i class="fas fa-quote-right text-primary float-end ms-2"></i>
+                                    <p class="lead mb-0">Parabéns pelo projeto! Muito bem feito e de grande relevância!</p>
+                                </div>
+                                <div class="testimonial-author mt-4">
+                                    <div class="author-avatar">
+                                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                    </div>
+                                    <div class="author-info">
+                                        <h5 class="mb-1">Adriana Coelho</h5>
+                                        <p class="text-muted mb-0">Feira Bentotec - ETEC Bento Quirino</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <img src="{% static 'C:/Plaquet.AI/media/geral/hero3.png' %}" class="d-block w-100" alt="Hero 3">
-                        <div class="carousel-caption">
-                            <h3>Resultados Precisos</h3>
-                            <p>Alta acurácia na identificação de células</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{% static 'C:/Plaquet.AI/media/geral/hero4.png' %}" class="d-block w-100" alt="Hero 4">
-                        <div class="carousel-caption">
-                            <h3>Interface Amigável</h3>
-                            <p>Sistema fácil e intuitivo de usar</p>
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <div class="testimonial-text">
+                                    <i class="fas fa-quote-right text-primary float-end ms-2"></i>
+                                    <p class="lead mb-0">Maravilhoso! Presença pertinente da pesquisa para auxiliar as pessoas que não tem acesso rápido a um hemograma!</p>
+                                </div>
+                                <div class="testimonial-author mt-4">
+                                    <div class="author-avatar">
+                                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                    </div>
+                                    <div class="author-info">
+                                        <h5 class="mb-1">Rita Carvalho</h5>
+                                        <p class="text-muted mb-0">Feira Bragantec - IFSP Bragança Paulista</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                    <span class="visually-hidden">Anterior</span>
+                <button class="carousel-control-prev" type="button" data-bs-target="#depoimentosCarousel" data-bs-slide="prev">
+                    <i class="fas fa-chevron-left text-primary"></i>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                    <span class="visually-hidden">Próximo</span>
+                <button class="carousel-control-next" type="button" data-bs-target="#depoimentosCarousel" data-bs-slide="next">
+                    <i class="fas fa-chevron-right text-primary"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Seção de Recursos -->
-    <div class="feature-grid mt-5">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-microscope"></i>
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="text-contrast mb-4">Perguntas Frequentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Como funciona o Plaquet.AI?
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O Plaquet.AI utiliza algoritmos de IA para analisar imagens microscópicas e realizar a contagem
+                        precisa de células.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Qual a precisão do sistema?
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O sistema precisa passar por uma melhora na prrecisão, mas no momento, o sistema tem uma acurácia média de 82%.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Quais tipos de células são detectadas?
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O sistema detecta três tipos principais de células: plaquetas (PLT), células brancas (WBC) e células vermelhas (RBC).
+                    </div>
+                </div>
             </div>
-            <h3 class="feature-title">Análise Automática</h3>
-            <p class="feature-text">Detecção e contagem automática de células sanguíneas usando IA avançada.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <h3 class="feature-title">Resultados Precisos</h3>
-            <p class="feature-text">Alta precisão na identificação e classificação de diferentes tipos de células.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-clock"></i>
-            </div>
-            <h3 class="feature-title">Rápido e Eficiente</h3>
-            <p class="feature-text">Processamento rápido de imagens e resultados em tempo real.</p>
         </div>
     </div>
 
-    <!-- Seção de Demonstração -->
-    <div class="demonstration-section mt-5">
-        <h3 class="text-center mb-4">Exemplos de Detecção</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="detection-example">
-                    <div class="detection-image original">
-                        <img src="{% static 'media/exemplos/original1.jpg' %}" alt="Imagem Original" class="img-fluid">
-                        <div class="image-label">Original</div>
-                    </div>
-                    <div class="detection-image detected">
-                        <img src="{% static 'media/exemplos/detectado1.jpg' %}" alt="Imagem com Detecções" class="img-fluid">
-                        <div class="image-label">Detecções</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="detection-stats">
-                    <h4>Resultados da Detecção</h4>
-                    <ul class="detection-list">
-                        <li><span class="stat-label">Plaquetas:</span> <span class="stat-value">127</span></li>
-                        <li><span class="stat-label">Células Brancas:</span> <span class="stat-value">45</span></li>
-                        <li><span class="stat-label">Células Vermelhas:</span> <span class="stat-value">892</span></li>
-                        <li><span class="stat-label">Acurácia:</span> <span class="stat-value">98.5%</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<button class="theme-switch" onclick="toggleTheme()" data-bs-toggle="tooltip" data-bs-placement="left"
+    title="Alternar tema claro/escuro">
+    <i class="fas fa-moon"></i>
+</button>
 {% endblock %}
 
 {% block css %}
 <style>
-    .hero-image-1 {
-        background-image: url("{% static 'C:/Plaquet.AI/media/geral/hero2.png' %}");
-    }
+/* Mudança do caminho das imagens */
+.hero-image-1 {
+    background-image: url("/media/geral/hero2.png");
+}
+.hero-image-2 {
+    background-image: url("/media/geral/hero3.png");
+}
+.hero-image-3 {
+    background-image: url("/media/geral/hero4.png");
+}
 
-    .hero-image-2 {
-        background-image: url("{% static 'C:/Plaquet.AI/media/geral/hero3.png' %}");
-    }
+/* Ajuste do caminho das imagens do hero */
+.hero-image-1 {
+    background-image: url("{{ MEDIA_URL }}geral/hero2.png");
+}
+.hero-image-2 {
+    background-image: url("{{ MEDIA_URL }}geral/hero3.png");
+}
+.hero-image-3 {
+    background-image: url("{{ MEDIA_URL }}geral/hero4.png");
+}
 
-    .hero-image-3 {
-        background-image: url("{% static 'C:/Plaquet.AI/media/geral/hero4.png' %}");
-    }
+/* Ajustes do carrossel */
+.carousel-item img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
 
-    /* Estilos do Carrossel */
-    #heroCarousel {
-        margin-bottom: 2rem;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 20px;
+    bottom: 20px;
+}
 
+.carousel-indicators {
+    bottom: -10px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
     .carousel-item img {
-        height: 400px;
-        object-fit: cover;
+        height: 300px;
     }
-
+    
     .carousel-caption {
-        background: rgba(0,0,0,0.6);
-        padding: 20px;
-        border-radius: 10px;
+        padding: 10px;
     }
-
-    /* Estilos da Seção de Demonstração */
-    .detection-example {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 2rem;
+    
+    .carousel-caption h3 {
+        font-size: 1.2rem;
     }
-
-    .detection-image {
-        flex: 1;
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    
+    .carousel-caption p {
+        font-size: 0.9rem;
     }
+}
 
-    .image-label {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,0.7);
-        color: white;
-        padding: 8px;
-        text-align: center;
+/* Estilos para os depoimentos */
+.testimonial-card {
+    padding: 2rem;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.testimonial-content {
+    position: relative;
+    padding: 1rem;
+}
+
+.testimonial-text {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    padding-top: 1.5rem;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 110, 253, 0.1);
+    border-radius: 50%;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    opacity: 1;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.carousel-control-prev {
+    left: -20px;
+}
+
+.carousel-control-next {
+    right: -20px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    display: none;
+}
+
+#depoimentosCarousel .fas {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .testimonial-card {
+        padding: 1rem;
     }
-
-    .detection-stats {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none;
     }
+}
 
-    .detection-list {
-        list-style: none;
-        padding: 0;
+/* Estilos do carrossel */
+#heroCarousel {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#heroCarousel .carousel-item {
+    height: 400px;
+}
+
+#heroCarousel .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#heroCarousel .carousel-caption {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    #heroCarousel .carousel-item {
+        height: 300px;
     }
-
-    .detection-list li {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .stat-label {
-        font-weight: bold;
-        color: #495057;
-    }
-
-    .stat-value {
-        color: #0d6efd;
-        font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-        .carousel-item img {
-            height: 300px;
-        }
-
-        .detection-example {
-            flex-direction: column;
-        }
-    }
+}
 </style>
 {% endblock %}
 
@@ -316,7 +530,6 @@
         updateSlides();
     });
 
-    // Samples Carousel
     document.addEventListener('DOMContentLoaded', function () {
         const track = document.getElementById('samplesTrack');
         const slides = track.querySelectorAll('.sample-slide');
@@ -386,79 +599,124 @@
     });
 
     // Hero Carousel
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const heroCarousel = document.getElementById('heroCarousel');
-        if (heroCarousel) {
-            const slides = heroCarousel.querySelectorAll('.hero-slide');
-            const prevBtn = heroCarousel.querySelector('.hero-prev');
-            const nextBtn = heroCarousel.querySelector('.hero-next');
-            const indicators = heroCarousel.querySelector('.hero-indicators');
-            let currentSlide = 0;
-            let autoplayInterval;
+        const slides = heroCarousel.querySelectorAll('.hero-slide');
+        const prevBtn = heroCarousel.querySelector('.hero-prev');
+        const nextBtn = heroCarousel.querySelector('.hero-next');
+        const indicators = heroCarousel.querySelector('.hero-indicators');
+        let currentSlide = 0;
+        let autoplayInterval;
 
-            // Criar indicadores
-            slides.forEach((_, index) => {
-                const dot = document.createElement('button');
-                dot.classList.add('hero-indicator');
-                if (index === 0) dot.classList.add('active');
-                dot.addEventListener('click', () => goToSlide(index));
-                indicators.appendChild(dot);
-            });
-
-            function updateSlides() {
-                slides.forEach((slide, index) => {
-                    slide.classList.remove('active');
-                    if (index === currentSlide) {
-                        slide.classList.add('active');
-                        indicators.children[index].classList.add('active');
-                    } else {
-                        indicators.children[index].classList.remove('active');
-                    }
-                });
-            }
-
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % slides.length;
-                updateSlides();
-            }
-
-            function prevSlide() {
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                updateSlides();
-            }
-
-            function goToSlide(index) {
-                currentSlide = index;
-                updateSlides();
-            }
-
-            function startAutoplay() {
+        // Criar indicadores
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('hero-indicator');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => {
                 stopAutoplay();
-                autoplayInterval = setInterval(nextSlide, 5000);
-            }
+                goToSlide(index);
+                startAutoplay();
+            });
+            indicators.appendChild(dot);
+        });
 
-            function stopAutoplay() {
-                if (autoplayInterval) {
-                    clearInterval(autoplayInterval);
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev', 'next');
+                indicators.children[index].classList.remove('active');
+
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                    indicators.children[index].classList.add('active');
+                } else if (index === (currentSlide - 1 + slides.length) % slides.length) {
+                    slide.classList.add('prev');
+                } else if (index === (currentSlide + 1) % slides.length) {
+                    slide.classList.add('next');
                 }
-            }
-
-            // Event Listeners
-            prevBtn.addEventListener('click', () => {
-                prevSlide();
-                stopAutoplay();
-                startAutoplay();
             });
-
-            nextBtn.addEventListener('click', () => {
-                nextSlide();
-                stopAutoplay();
-                startAutoplay();
-            });
-
-            // Iniciar autoplay
-            startAutoplay();
         }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlides();
+        }
+
+        function startAutoplay() {
+            stopAutoplay();
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+            }
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            stopAutoplay();
+            prevSlide();
+            startAutoplay();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            stopAutoplay();
+            nextSlide();
+            startAutoplay();
+        });
+
+        // Pausar autoplay quando o mouse estiver sobre o carrossel
+        heroCarousel.addEventListener('mouseenter', stopAutoplay);
+        heroCarousel.addEventListener('mouseleave', startAutoplay);
+
+        // Iniciar autoplay
+        startAutoplay();
+        updateSlides();
+    });
+
+    function toggleFaq(element) {
+        const faqItem = element.parentElement;
+        const icon = element.querySelector('i');
+        const answer = faqItem.querySelector('.faq-answer');
+        
+        // Fecha todas as outras respostas
+        document.querySelectorAll('.faq-item').forEach(item => {
+            if (item !== faqItem && item.classList.contains('active')) {
+                item.classList.remove('active');
+                item.querySelector('i').classList.remove('fa-minus');
+                item.querySelector('i').classList.add('fa-plus');
+            }
+        });
+        
+        // Alterna o estado atual
+        faqItem.classList.toggle('active');
+        if (faqItem.classList.contains('active')) {
+            icon.classList.remove('fa-plus');
+            icon.classList.add('fa-minus');
+        } else {
+            icon.classList.remove('fa-minus');
+            icon.classList.add('fa-plus');
+        }
+    }
+
+    // Inicializar o carrossel Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        new bootstrap.Carousel(document.querySelector('#heroCarousel'), {
+            interval: 5000,
+            wrap: true,
+            keyboard: true
+        });
     });
 </script>
 {% endblock %}
