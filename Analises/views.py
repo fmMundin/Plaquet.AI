@@ -72,8 +72,8 @@ def criar_analise(request):
                     'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
                 })
 
-            # Gerar título automático baseado na data e hora
-            titulo = timezone.now().strftime("Análise_%Y%m%d_%H%M%S")
+            # Gerar título baseado apenas na data e hora
+            titulo = f"Análise_{timezone.now().strftime('%Y%m%d_%H%M%S')}"
             
             with transaction.atomic():
                 # Criar e salvar análise
@@ -152,14 +152,13 @@ def criar_analise(request):
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
 def deletar_analise(request, analise_id):
+    analise = get_object_or_404(Analise, id=analise_id)
     if request.method == 'POST':
         try:
-            analise = get_object_or_404(Analise, titulo=analise_id)  # Mudado para usar titulo
-            titulo = analise.titulo  # Guardar o título antes de deletar
             analise.delete()
             return JsonResponse({
                 'success': True,
-                'message': f'Análise "{titulo}" excluída com sucesso!'
+                'message': f'Análise "{analise_id}" excluída com sucesso!'
             })
         except Exception as e:
             logger.error(f"Erro ao excluir análise {analise_id}: {str(e)}", exc_info=True)
@@ -171,9 +170,8 @@ def deletar_analise(request, analise_id):
 
 def detalhes_analise(request, analise_id):
     try:
-        analise = get_object_or_404(Analise, titulo=analise_id)  # Mudado para usar titulo
+        analise = get_object_or_404(Analise, id=analise_id)
         
-        # Mapear as contagens para o formato correto
         contagens = {
             'plaquetas': analise.n_plaquetas or 0,
             'celulas_brancas': analise.n_celulas_brancas or 0,
@@ -196,7 +194,7 @@ def detalhes_analise(request, analise_id):
         return redirect('Analises:analises')
 
 def editar_analise(request, analise_id):
-    analise = get_object_or_404(Analise, titulo=analise_id)  # Mudado para usar titulo
+    analise = get_object_or_404(Analise, id=analise_id)
     
     if request.method == 'POST':
         try:

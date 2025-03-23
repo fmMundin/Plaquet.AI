@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from zoneinfo import ZoneInfo
 import os
+import uuid
 
 class Analise(models.Model):
     STATUS_CHOICES = [
@@ -11,7 +12,8 @@ class Analise(models.Model):
         ('erro', 'Erro')
     ]
 
-    titulo = models.CharField(max_length=200, primary_key=True)
+    id = models.AutoField(primary_key=True)
+    titulo = models.CharField(max_length=200)
     data_criacao = models.DateTimeField(auto_now_add=True)
     paciente = models.CharField(max_length=200)
     img = models.ImageField(upload_to='analises/', null=True, blank=True)

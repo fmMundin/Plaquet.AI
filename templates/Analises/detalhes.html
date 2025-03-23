@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container mt-4">
     <div class="card">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-purple text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0"><i class="fas fa-vial me-2"></i>{{ analise.titulo }}</h4>
             <a href="{% url 'Analises:analises' %}" class="btn btn-light">
                 <i class="fas fa-microscope me-2"></i>Voltar
@@ -14,8 +14,7 @@
         </div>
 
         <div class="card-body">
-            <!-- Métricas Principais -->
-            <div class="row g-3 mb-4"> <!-- Adicionado g-3 para espaçamento responsivo -->
+            <div class="row g-3 mb-4">
                 <div class="col-12 col-md-4">
                     <div class="card">
                         <div class="card-body text-center">
@@ -45,15 +44,13 @@
                 </div>
             </div>
 
-            <!-- Células detectadas -->
-            <div class="row g-3"> <!-- Adicionado g-3 para espaçamento responsivo -->
-                <div class="col-12 col-md-4">
+            <div class="row g-3">
+                <div class="col-12">
                     <div class="card h-100">
                         <div class="card-header">
                             <h6 class="mb-0"><i class="fas fa-dna me-2"></i>Células Principais</h6>
                         </div>
                         <div class="card-body">
-                            <!-- Células Principais -->
                             <div class="row mb-4">
                                 <div class="col-md-4">
                                     <h6 class="border-bottom pb-2">Contagem Principal</h6>
@@ -112,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- Imagens -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="card h-100">
@@ -148,7 +144,10 @@
 </div>
 
 <style>
-    /* Estilos responsivos para detalhes */
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+
     @media (max-width: 768px) {
         .card-body {
             padding: 0.75rem;
