@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Plaquet.AI - Início{% endblock %}
+{% block title %}Plaquet.AI - Sistema de Análise de Células{% endblock %}
 
 {% block content %}
 <div class="container mt-4" id="features">
@@ -15,6 +15,7 @@
                         </p>
                     </div>
 
+
                     <div class="welcome-features">
                         <div class="feature-item">
                             <i class="fas fa-bolt text-primary"></i>
@@ -24,6 +25,7 @@
                             </div>
                         </div>
 
+
                         <div class="feature-item">
                             <i class="fas fa-crosshairs text-success"></i>
                             <div>
@@ -31,6 +33,7 @@
                                 <p>Detecção precisa com IA avançada</p>
                             </div>
                         </div>
+
 
                         <div class="feature-item">
                             <i class="fas fa-chart-bar text-info"></i>
@@ -41,6 +44,7 @@
                         </div>
                     </div>
 
+
                     <div class="mt-auto">
                         <a href="{% url 'Analises:analises' %}" class="btn btn-primary btn-lg w-100">
                             <i class="fas fa-microscope me-2"></i>Começar Análise
@@ -49,6 +53,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="col-lg-7">
             <div class="card h-100">
@@ -94,6 +99,7 @@
         </div>
     </div>
 
+
     <div class="card mt-5">
         <div class="card-body">
             <h2 class="text-contrast mb-4">Amostras Interativas</h2>
@@ -110,6 +116,7 @@
                         <p class="text-center mt-2">Plaquetas <span class="badge bg-primary">Platelets</span></p>
                     </div>
 
+
                     <div class="sample-slide">
                         <div class="sample-image-container">
                             <img src="{% static 'images/original2.png' %}" alt="WBC" class="sample-base-image">
@@ -120,6 +127,7 @@
                         </div>
                         <p class="text-center mt-2">Células Brancas <span class="badge bg-success">WBC</span></p>
                     </div>
+
 
                     <div class="sample-slide">
                         <div class="sample-image-container">
@@ -133,11 +141,13 @@
                     </div>
                 </div>
 
+
                 <div class="samples-controls">
                     <button class="prev" id="samplesPrevBtn"><i class="fas fa-chevron-left"></i></button>
                     <button class="next" id="samplesNextBtn"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
+
 
             <p class="text-muted mt-3 text-center">
                 <i class="fas fa-info-circle me-2"></i>
@@ -145,6 +155,7 @@
             </p>
         </div>
     </div>
+
 
     <div class="card mt-5">
         <div class="card-body">
@@ -203,6 +214,7 @@
         </div>
     </div>
 
+
     <div class="card mt-5">
         <div class="card-body">
             <h2 class="text-contrast mb-4">Perguntas Frequentes</h2>
@@ -217,7 +229,7 @@
                         precisa de células.
                     </div>
                 </div>
-                
+               
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq(this)">
                         Qual a precisão do sistema?
@@ -227,6 +239,7 @@
                         O sistema precisa passar por uma melhora na prrecisão, mas no momento, o sistema tem uma acurácia média de 82%.
                     </div>
                 </div>
+
 
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq(this)">
@@ -241,12 +254,12 @@
         </div>
     </div>
 
+
 <button class="theme-switch" onclick="toggleTheme()" data-bs-toggle="tooltip" data-bs-placement="left"
     title="Alternar tema claro/escuro">
     <i class="fas fa-moon"></i>
 </button>
 {% endblock %}
-
 {% block css %}
 <style>
 .hero-image-1 {
@@ -259,6 +272,7 @@
     background-image: url("/media/geral/hero4.png");
 }
 
+
 .hero-image-1 {
     background-image: url("{{ MEDIA_URL }}geral/hero2.png");
 }
@@ -269,12 +283,14 @@
     background-image: url("{{ MEDIA_URL }}geral/hero4.png");
 }
 
+
 .carousel-item img {
     width: 100%;
     height: 400px;
     object-fit: cover;
     border-radius: 8px;
 }
+
 
 .carousel-caption {
     background: rgba(0, 0, 0, 0.7);
@@ -283,32 +299,36 @@
     bottom: 20px;
 }
 
+
 .carousel-indicators {
     bottom: -10px;
 }
+
 
 .carousel-control-prev,
 .carousel-control-next {
     width: 5%;
 }
 
+
 @media (max-width: 768px) {
     .carousel-item img {
         height: 300px;
     }
-    
+   
     .carousel-caption {
         padding: 10px;
     }
-    
+   
     .carousel-caption h3 {
         font-size: 1.2rem;
     }
-    
+   
     .carousel-caption p {
         font-size: 0.9rem;
     }
 }
+
 
 .testimonial-card {
     padding: 2rem;
@@ -318,20 +338,24 @@
     transition: all 0.3s ease;
 }
 
+
 .testimonial-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
+
 
 .testimonial-content {
     position: relative;
     padding: 1rem;
 }
 
+
 .testimonial-text {
     position: relative;
     margin-bottom: 2rem;
 }
+
 
 .testimonial-author {
     display: flex;
@@ -340,6 +364,7 @@
     border-top: 1px solid rgba(0,0,0,0.05);
     padding-top: 1.5rem;
 }
+
 
 .author-avatar {
     width: 50px;
@@ -350,6 +375,7 @@
     background: rgba(13, 110, 253, 0.1);
     border-radius: 50%;
 }
+
 
 .carousel-control-prev,
 .carousel-control-next {
@@ -362,42 +388,50 @@
     transform: translateY(-50%);
 }
 
+
 .carousel-control-prev {
     left: -20px;
 }
 
+
 .carousel-control-next {
     right: -20px;
 }
+
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
     display: none;
 }
 
+
 #depoimentosCarousel .fas {
     font-size: 1.2rem;
 }
+
 
 @media (max-width: 768px) {
     .testimonial-card {
         padding: 1rem;
     }
-    
+   
     .carousel-control-prev,
     .carousel-control-next {
         display: none;
     }
 }
 
+
 #heroCarousel {
     border-radius: 8px;
     overflow: hidden;
 }
 
+
 #heroCarousel .carousel-item {
     height: 400px;
 }
+
 
 #heroCarousel .carousel-item img {
     width: 100%;
@@ -405,11 +439,13 @@
     object-fit: cover;
 }
 
+
 #heroCarousel .carousel-caption {
     background: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     padding: 20px;
 }
+
 
 @media (max-width: 768px) {
     #heroCarousel .carousel-item {
@@ -419,6 +455,7 @@
 </style>
 {% endblock %}
 
+
 {% block js %}
 {{ block.super }}
 <script>
@@ -427,18 +464,22 @@
         const currentTheme = root.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
+
         root.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
+
 
         const icon = document.querySelector('.theme-switch i');
         icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
+
 
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -448,6 +489,7 @@
         }
     });
 
+
     document.addEventListener('DOMContentLoaded', function () {
         const heroCarousel = document.getElementById('heroCarousel');
         const slides = heroCarousel.querySelectorAll('.hero-slide');
@@ -456,6 +498,7 @@
         const indicators = heroCarousel.querySelector('.hero-indicators');
         let currentSlide = 0;
 
+
         slides.forEach((_, index) => {
             const dot = document.createElement('button');
             dot.classList.add('hero-indicator');
@@ -463,6 +506,7 @@
             dot.addEventListener('click', () => goToSlide(index));
             indicators.appendChild(dot);
         });
+
 
         function updateSlides() {
             slides.forEach((slide, index) => {
@@ -473,25 +517,30 @@
             });
         }
 
+
         function goToSlide(index) {
             currentSlide = index;
             updateSlides();
         }
+
 
         function nextSlide() {
             currentSlide = (currentSlide + 1) % slides.length;
             updateSlides();
         }
 
+
         function prevSlide() {
             currentSlide = (currentSlide - 1 + slides.length) % slides.length;
             updateSlides();
         }
 
+
         function startAutoplay() {
             stopAutoplay();
             autoplayInterval = setInterval(nextSlide, 5000);
         }
+
 
         function stopAutoplay() {
             if (autoplayInterval) {
@@ -499,15 +548,19 @@
             }
         }
 
+
         prevBtn.addEventListener('click', prevSlide);
         nextBtn.addEventListener('click', nextSlide);
+
 
         heroCarousel.addEventListener('mouseenter', stopAutoplay);
         heroCarousel.addEventListener('mouseleave', startAutoplay);
 
+
         startAutoplay();
         updateSlides();
     });
+
 
     document.addEventListener('DOMContentLoaded', function () {
         const track = document.getElementById('samplesTrack');
@@ -517,9 +570,11 @@
         let currentIndex = 0;
         const totalSlides = slides.length;
 
+
         function updateSlides() {
             slides.forEach((slide, index) => {
                 slide.classList.remove('active', 'prev', 'next');
+
 
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -531,6 +586,7 @@
             });
         }
 
+
         function moveSlide(direction) {
             if (direction === 'next') {
                 currentIndex = (currentIndex + 1) % totalSlides;
@@ -540,17 +596,21 @@
             updateSlides();
         }
 
+
         prevBtn.addEventListener('click', () => {
             moveSlide('prev');
         });
+
 
         nextBtn.addEventListener('click', () => {
             moveSlide('next');
         });
 
+
         slides.forEach(slide => {
             const container = slide.querySelector('.sample-image-container');
             const overlay = slide.querySelector('.sample-overlay');
+
 
             container.addEventListener('mousemove', function (e) {
                 if (!slide.classList.contains('active')) return;
@@ -559,19 +619,23 @@
                 overlay.style.clipPath = `inset(0 ${(1 - x) * 100}% 0 0)`;
             });
 
+
             container.addEventListener('mouseleave', function () {
                 if (!slide.classList.contains('active')) return;
                 overlay.style.clipPath = 'inset(0 100% 0 0)';
             });
         });
 
+
         document.addEventListener('keydown', function (e) {
             if (e.key === 'ArrowLeft') moveSlide('prev');
             if (e.key === 'ArrowRight') moveSlide('next');
         });
 
+
         updateSlides();
     });
+
 
     document.addEventListener('DOMContentLoaded', function() {
         const heroCarousel = document.getElementById('heroCarousel');
@@ -581,6 +645,7 @@
         const indicators = heroCarousel.querySelector('.hero-indicators');
         let currentSlide = 0;
         let autoplayInterval;
+
 
         slides.forEach((_, index) => {
             const dot = document.createElement('button');
@@ -594,10 +659,12 @@
             indicators.appendChild(dot);
         });
 
+
         function updateSlides() {
             slides.forEach((slide, index) => {
                 slide.classList.remove('active', 'prev', 'next');
                 indicators.children[index].classList.remove('active');
+
 
                 if (index === currentSlide) {
                     slide.classList.add('active');
@@ -610,25 +677,30 @@
             });
         }
 
+
         function goToSlide(index) {
             currentSlide = index;
             updateSlides();
         }
+
 
         function nextSlide() {
             currentSlide = (currentSlide + 1) % slides.length;
             updateSlides();
         }
 
+
         function prevSlide() {
             currentSlide = (currentSlide - 1 + slides.length) % slides.length;
             updateSlides();
         }
 
+
         function startAutoplay() {
             stopAutoplay();
             autoplayInterval = setInterval(nextSlide, 5000);
         }
+
 
         function stopAutoplay() {
             if (autoplayInterval) {
@@ -636,11 +708,13 @@
             }
         }
 
+
         prevBtn.addEventListener('click', () => {
             stopAutoplay();
             prevSlide();
             startAutoplay();
         });
+
 
         nextBtn.addEventListener('click', () => {
             stopAutoplay();
@@ -648,18 +722,21 @@
             startAutoplay();
         });
 
+
         heroCarousel.addEventListener('mouseenter', stopAutoplay);
         heroCarousel.addEventListener('mouseleave', startAutoplay);
+
 
         startAutoplay();
         updateSlides();
     });
 
+
     function toggleFaq(element) {
         const faqItem = element.parentElement;
         const icon = element.querySelector('i');
         const answer = faqItem.querySelector('.faq-answer');
-        
+       
         document.querySelectorAll('.faq-item').forEach(item => {
             if (item !== faqItem && item.classList.contains('active')) {
                 item.classList.remove('active');
@@ -667,7 +744,7 @@
                 item.querySelector('i').classList.add('fa-plus');
             }
         });
-        
+       
         faqItem.classList.toggle('active');
         if (faqItem.classList.contains('active')) {
             icon.classList.remove('fa-plus');
@@ -677,6 +754,7 @@
             icon.classList.add('fa-plus');
         }
     }
+
 
     document.addEventListener('DOMContentLoaded', function() {
         new bootstrap.Carousel(document.querySelector('#heroCarousel'), {

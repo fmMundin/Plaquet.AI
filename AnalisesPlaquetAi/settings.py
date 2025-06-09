@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Analises.apps.AnalisesConfig',  # Usar o formato completo
-    
+    'accounts.apps.AccountsConfig',
+    'axes',  # Proteção brute force
 ]
 
 MIDDLEWARE = [
@@ -47,8 +48,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'axes.middleware.AxesMiddleware',  # Proteção contra brute force
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.LoginRequiredMiddleware',  # Novo middleware de autenticação
 ]
 
 ROOT_URLCONF = 'AnalisesPlaquetAi.urls'
@@ -137,3 +140,104 @@ if DEBUG:
     STATICFILES_DIRS = [
         BASE_DIR / 'static',
     ]
+
+SITE_ID = 1
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# Authentication settings
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'Analises:analises'
+LOGOUT_REDIRECT_URL = 'accounts:login'
+
+# Django Axes settings (proteção contra brute force)
+AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
+AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
+AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
+AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
+AXES_LOCKOUT_URL = None  # Usar o template em vez de URL
+AXES_USERNAME_FORM_FIELD = 'username'  # Campo de usuário no form (que contém o email)
+
+# Session settings
+SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
+SESSION_COOKIE_SECURE = False  # Mudar para True em produção
+
+# Messages settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Email settings (para recuperação de senha)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Para desenvolvimento
+DEFAULT_FROM_EMAIL = 'noreply@plaquetai.com'
+
+# Django Axes settings (proteção contra brute force)
+AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
+AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
+AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
+AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
+
+# Session settings
+SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
+SESSION_COOKIE_SECURE = False  # Mudar para True em produção
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
+
+# Messages settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',  # Should be first
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# django-axes
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # em horas
+AXES_LOCKOUT_TEMPLATE = 'accounts/lockout.html'
+
+# django-allauth (atualizado para novas opções)
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_RATE_LIMITS = {
+    'login_failed': '5/m',
+}
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+
+# E-mail para desenvolvimento
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@plaquetai.com'
+
+# Para produção, use SMTP do Gmail:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'seu-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'sua-senha-ou-app-password'
+
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
+# Django Axes settings (proteção contra brute force)
+AXES_ENABLED = True
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # em horas
+AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'
+AXES_RESET_ON_SUCCESS = True
+AXES_USE_USER_AGENT = True
+AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username', 'user_agent']

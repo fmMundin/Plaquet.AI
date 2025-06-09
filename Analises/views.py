@@ -16,9 +16,6 @@ from zoneinfo import ZoneInfo  # Para Python 3.9+
 import shutil
 import time
 from scripts.analysis_service import analysis_service
-from .utils import preprocess_image, batch_process_cells
-from django.core.cache import cache
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -61,24 +58,21 @@ def analises(request):
 def criar_analise(request):
     if request.method == 'POST':
         try:
-            # Validar imagem primeiro
-            if 'img' not in request.FILES:
-                return JsonResponse({'success': False, 'error': 'Nenhuma imagem foi enviada'})
-            
-            img_file = request.FILES['img']
-            if not img_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                return JsonResponse({
-                    'success': False, 
-                    'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
-                })
-
-            # Gerar título baseado apenas na data e hora
-            titulo = f"Análise_{timezone.now().strftime('%Y%m%d_%H%M%S')}"
-            
             with transaction.atomic():
-                # Criar e salvar análise
+                # Validar imagem
+                if 'img' not in request.FILES:
+                    return JsonResponse({'success': False, 'error': 'Nenhuma imagem foi enviada'})
+                
+                img_file = request.FILES['img']
+                if not img_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Formato de imagem inválido. Use JPG, JPEG ou PNG'
+                    })
+
+                # Criar análise
                 analise = Analise(
-                    titulo=titulo,
+                    titulo=request.POST['titulo'],
                     paciente=request.POST['paciente'],
                     img=img_file,
                     status='processando',
@@ -90,21 +84,17 @@ def criar_analise(request):
                     # Configurar caminhos
                     weights_path = str(settings.BASE_DIR / 'scripts' / 'best.pt')
                     output_dir = str(settings.MEDIA_ROOT / 'resultados')
-                    
-                    # Processar imagem
-                    results = process_image(
-                        weights_path=weights_path,
-                        image_path=str(analise.img.path),
-                        output_dir=output_dir
-                    )
 
+                    # Processar imagem
+                    results = process_image(weights_path, str(analise.img.path), output_dir)
+                    
                     if results['success']:
                         # Salvar imagem processada
                         processed_path = Path(results['output_path'])
                         if processed_path.exists():
                             with processed_path.open('rb') as f:
                                 analise.img_resultado.save(
-                                    f'resultado_{analise.titulo}.jpg',
+                                    f'resultado_{analise.id}.jpg',
                                     File(f),
                                     save=True
                                 )
@@ -129,14 +119,13 @@ def criar_analise(request):
                         analise.status = 'concluido'
                         analise.save()
                         
+                        logger.info(f"Análise {analise.id} processada com sucesso. Acurácia: {analise.acuracia:.2f}%")
                         return JsonResponse({'success': True})
                     else:
-                        analise.status = 'erro'
-                        analise.erro_msg = results.get('error', 'Erro desconhecido no processamento')
-                        analise.save()
-                        raise Exception(analise.erro_msg)
+                        raise Exception(results.get('error', 'Erro no processamento'))
 
                 except Exception as e:
+                    logger.error(f"Erro no processamento: {str(e)}")
                     analise.status = 'erro'
                     analise.erro_msg = str(e)
                     analise.save()
@@ -152,13 +141,14 @@ def criar_analise(request):
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
 def deletar_analise(request, analise_id):
-    analise = get_object_or_404(Analise, id=analise_id)
     if request.method == 'POST':
         try:
+            analise = get_object_or_404(Analise, pk=analise_id)
+            titulo = analise.titulo  # Guardar o título antes de deletar
             analise.delete()
             return JsonResponse({
                 'success': True,
-                'message': f'Análise "{analise_id}" excluída com sucesso!'
+                'message': f'Análise "{titulo}" excluída com sucesso!'
             })
         except Exception as e:
             logger.error(f"Erro ao excluir análise {analise_id}: {str(e)}", exc_info=True)
@@ -170,8 +160,9 @@ def deletar_analise(request, analise_id):
 
 def detalhes_analise(request, analise_id):
     try:
-        analise = get_object_or_404(Analise, id=analise_id)
+        analise = get_object_or_404(Analise, pk=analise_id)
         
+        # Mapear as contagens para o formato correto
         contagens = {
             'plaquetas': analise.n_plaquetas or 0,
             'celulas_brancas': analise.n_celulas_brancas or 0,
@@ -194,7 +185,7 @@ def detalhes_analise(request, analise_id):
         return redirect('Analises:analises')
 
 def editar_analise(request, analise_id):
-    analise = get_object_or_404(Analise, id=analise_id)
+    analise = get_object_or_404(Analise, pk=analise_id)
     
     if request.method == 'POST':
         try:
@@ -210,10 +201,6 @@ def editar_analise(request, analise_id):
 
 def index(request):
     """View para a página inicial"""
-    # Criar diretório de mídia se não existir
-    media_dir = settings.MEDIA_ROOT / 'geral'
-    media_dir.mkdir(parents=True, exist_ok=True)
-    
     return render(request, 'Analises/index.html', {
-        'original_exists': True
+        'original_exists': True  # Simplificado para sempre mostrar o conteúdo
     })

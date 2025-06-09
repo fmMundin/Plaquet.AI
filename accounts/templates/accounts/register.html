@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}Cadastro{% endblock %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 1rem;">
+        <div class="text-center mb-4">
+            <i class="fas fa-user-plus fa-3x text-primary mb-2"></i>
+            <h2 class="mb-0">Criar Conta</h2>
+            <p class="text-muted">Preencha os dados para se cadastrar</p>
+        </div>
+        <form method="post" novalidate autocomplete="on">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+                <label for="id_email" class="form-label">E-mail</label>
+                <input type="email" name="email" class="form-control form-control-lg" id="id_email" placeholder="Seu e-mail" required>
+            </div>
+            <div class="mb-3">
+                <label for="id_nome" class="form-label">Nome completo</label>
+                <input type="text" name="nome" class="form-control form-control-lg" id="id_nome" placeholder="Seu nome" required>
+            </div>
+            <div class="mb-3">
+                <label for="id_password1" class="form-label">Senha</label>
+                <input type="password" name="password1" class="form-control form-control-lg" id="id_password1" placeholder="Crie uma senha" required>
+            </div>
+            <div class="mb-3">
+                <label for="id_password2" class="form-label">Confirme a senha</label>
+                <input type="password" name="password2" class="form-control form-control-lg" id="id_password2" placeholder="Repita a senha" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 btn-lg">Cadastrar</button>
+            <div class="mt-3 text-center">
+                <a href="{% url 'accounts:login' %}" class="link-primary">Já tem conta? Entrar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

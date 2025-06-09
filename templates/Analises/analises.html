@@ -3,20 +3,31 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Cabeçalho com botão -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-vial me-2"></i>Análises</h2>
+        <h2><i class="fas fa-microscope me-2"></i>Análises</h2>
+        {% if user.is_authenticated %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovaAnalise">
-            <i class="fas fa-flask me-2"></i>Nova Análise
+            <i class="fas fa-plus-circle me-2"></i>Nova Análise
         </button>
+        {% endif %}
     </div>
 
+    <!-- Lista de Análises -->
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Análises Realizadas</h5>
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Análises Realizadas</h5>
         </div>
         <div class="card-body">
+            {% if not user.is_authenticated %}
+            <div class="alert alert-warning">
+                <i class="fas fa-lock me-2"></i>Você precisa estar logado para visualizar as análises.
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm ms-2">Entrar</a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-sm ms-2">Cadastrar</a>
+            </div>
+            {% else %}
             {% if analises %}
-            <div class="table-responsive-xl">
+            <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -79,19 +90,19 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm" role="group" aria-label="Ações">
+                                <div class="btn-group" role="group" aria-label="Ações">
                                     {% if analise.status == 'concluido' %}
-                                    <a href="{% url 'Analises:detalhes_analise' analise_id=analise.id %}"
-                                        class="btn btn-info" title="Ver detalhes">
-                                        <i class="fas fa-microscope"></i>
+                                    <a href="{% url 'Analises:detalhes_analise' analise.id %}"
+                                        class="btn btn-info btn-sm" title="Ver detalhes">
+                                        <i class="fas fa-search"></i>
                                     </a>
                                     {% endif %}
-                                    <a href="{% url 'Analises:editar_analise' analise_id=analise.id %}"
-                                        class="btn btn-warning" title="Editar">
-                                        <i class="fas fa-vial"></i>
+                                    <a href="{% url 'Analises:editar_analise' analise.id %}"
+                                        class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                     <button type="button"
-                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise_id=analise.id %}', '{{ analise.titulo|escapejs }}')"
+                                        onclick="deletarAnalise('{% url 'Analises:deletar_analise' analise.id %}', '{{ analise.titulo|escapejs }}')"
                                         class="btn btn-danger btn-sm" title="Excluir">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -116,9 +127,9 @@
             </div>
             {% else %}
             <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>Nenhuma análise encontrada. Use o formulário acima para criar uma
-                nova análise.
+                <i class="fas fa-info-circle me-2"></i>Nenhuma análise encontrada. Use o formulário acima para criar uma nova análise.
             </div>
+            {% endif %}
             {% endif %}
         </div>
     </div>
@@ -221,6 +232,7 @@
         color: #bb2d3b;
     }
 
+    /* Ajustes para os modais */
     .modal-backdrop {
         z-index: 1040;
     }
@@ -236,16 +248,19 @@
         pointer-events: none;
     }
 
+    /* Estilo para container de modais */
     .modals-container {
         position: relative;
         z-index: 1100;
     }
 
+    /* Garantir que o footer não sobreponha os modais */
     footer {
         z-index: 1000;
         position: relative;
     }
 
+    /* Correções para o Modal */
     .modal-content {
         background-color: var(--card-bg) !important;
         color: var(--text-color) !important;
@@ -285,6 +300,7 @@
         pointer-events: auto !important;
     }
 
+    /* Remove estilos antigos e adiciona novos */
     .modal {
         background: none !important;
     }
@@ -329,7 +345,9 @@
     }
 </style>
 
+<!-- Mover todos os modais para um container específico no final do body, antes do footer -->
 <div class="modals-container">
+    <!-- Modal Nova Análise -->
     <div class="modal fade" id="modalNovaAnalise" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -342,25 +360,18 @@
                 <form id="formNovaAnalise" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-body bg-white">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-dark">Título da Análise</label>
-                                <input type="text" class="form-control" name="titulo" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-dark">Nome do Paciente</label>
-                                <input type="text" class="form-control" name="paciente" required>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark">Título da Análise</label>
+                            <input type="text" class="form-control" name="titulo" required>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <label class="form-label text-dark">Imagem para Análise</label>
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="img" accept="image/*" required>
-                                    <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                </div>
-                                <div class="form-text">Selecione uma imagem clara das células.</div>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark">Nome do Paciente</label>
+                            <input type="text" class="form-control" name="paciente" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark">Imagem para Análise</label>
+                            <input type="file" class="form-control" name="img" accept="image/*" required>
+                            <div class="form-text">Selecione uma imagem clara das células.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -375,6 +386,7 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação de Exclusão -->
     <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -415,9 +427,11 @@
         const spinner = form.querySelector('.spinner-border');
         const submitBtn = form.querySelector('button[type="submit"]');
 
+        // Otimiza o formulário
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            // Validação básica
             const titulo = form.querySelector('[name="titulo"]').value.trim();
             const paciente = form.querySelector('[name="paciente"]').value.trim();
             const imgFile = form.querySelector('[name="img"]').files[0];
@@ -427,12 +441,14 @@
                 return;
             }
 
+            // Validar tipo de arquivo
             const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
             if (!validTypes.includes(imgFile.type)) {
                 alert('Por favor, selecione apenas arquivos JPG, JPEG ou PNG');
                 return;
             }
 
+            // Mostrar loading
             submitBtn.disabled = true;
             spinner.classList.remove('d-none');
 
@@ -465,6 +481,7 @@
             }
         });
 
+        // Função otimizada para deletar análise
         window.deletarAnalise = function (url, titulo) {
             const confirmar = confirm(`Deseja realmente excluir a análise "${titulo}"?`);
 
@@ -496,6 +513,7 @@
                 });
         };
 
+        // Limpar formulário ao fechar modal
         const modalElement = document.getElementById('modalNovaAnalise');
         modalElement.addEventListener('hidden.bs.modal', function () {
             form.reset();

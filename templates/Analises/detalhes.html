@@ -6,16 +6,17 @@
 {% block content %}
 <div class="container mt-4">
     <div class="card">
-        <div class="card-header bg-purple text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0"><i class="fas fa-vial me-2"></i>{{ analise.titulo }}</h4>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fas fa-microscope me-2"></i>{{ analise.titulo }}</h4>
             <a href="{% url 'Analises:analises' %}" class="btn btn-light">
-                <i class="fas fa-microscope me-2"></i>Voltar
+                <i class="fas fa-arrow-left me-2"></i>Voltar
             </a>
         </div>
 
         <div class="card-body">
-            <div class="row g-3 mb-4">
-                <div class="col-12 col-md-4">
+            <!-- Informações Básicas -->
+            <div class="row mb-4">
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-body text-center">
                             <h6>Acurácia</h6>
@@ -23,7 +24,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-body text-center">
                             <h6>Tempo de Processamento</h6>
@@ -31,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-body text-center">
                             <h6>Status</h6>
@@ -44,71 +45,71 @@
                 </div>
             </div>
 
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="fas fa-dna me-2"></i>Células Principais</h6>
+            <!-- Contagens de Células -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Células Detectadas</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Células Principais -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2">Contagem Principal</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Plaquetas
+                                    <span class="badge bg-primary rounded-pill">{{ contagens.plaquetas }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Células Brancas
+                                    <span class="badge bg-success rounded-pill">{{ contagens.celulas_brancas }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Células Vermelhas
+                                    <span class="badge bg-danger rounded-pill">{{ contagens.celulas_vermelhas }}</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="card-body">
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <h6 class="border-bottom pb-2">Contagem Principal</h6>
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Plaquetas
-                                            <span class="badge bg-primary rounded-pill">{{ contagens.plaquetas }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Células Brancas
-                                            <span class="badge bg-success rounded-pill">{{ contagens.celulas_brancas }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Células Vermelhas
-                                            <span class="badge bg-danger rounded-pill">{{ contagens.celulas_vermelhas }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <h6 class="border-bottom pb-2">Células Brancas</h6>
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Linfócitos
-                                            <span class="badge bg-info rounded-pill">{{ contagens.linfocitos }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Monócitos
-                                            <span class="badge bg-info rounded-pill">{{ contagens.monocitos }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Basófilos
-                                            <span class="badge bg-info rounded-pill">{{ contagens.basofilos }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Eosinófilos
-                                            <span class="badge bg-info rounded-pill">{{ contagens.eosinofilos }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <h6 class="border-bottom pb-2">Neutrófilos</h6>
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Neutrófilos Banda
-                                            <span class="badge bg-warning rounded-pill">{{ contagens.neutrofilos_banda }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Neutrófilos Segmentados
-                                            <span class="badge bg-warning rounded-pill">{{ contagens.neutrofilos_segmentados }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2">Células Brancas</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Linfócitos
+                                    <span class="badge bg-info rounded-pill">{{ contagens.linfocitos }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Monócitos
+                                    <span class="badge bg-info rounded-pill">{{ contagens.monocitos }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Basófilos
+                                    <span class="badge bg-info rounded-pill">{{ contagens.basofilos }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Eosinófilos
+                                    <span class="badge bg-info rounded-pill">{{ contagens.eosinofilos }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="border-bottom pb-2">Neutrófilos</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Banda
+                                    <span class="badge bg-warning rounded-pill">{{ contagens.neutrofilos_banda }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Segmentados
+                                    <span class="badge bg-warning rounded-pill">{{ contagens.neutrofilos_segmentados
+                                        }}</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Imagens -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="card h-100">
@@ -142,60 +143,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .bg-purple {
-        background-color: #6f42c1 !important;
-    }
-
-    @media (max-width: 768px) {
-        .card-body {
-            padding: 0.75rem;
-        }
-        
-        .list-group-item {
-            padding: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .badge {
-            font-size: 0.85rem;
-            padding: 0.35rem 0.65rem;
-        }
-
-        .col-md-4 {
-            margin-bottom: 1rem;
-        }
-
-        h6.border-bottom {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .card-header h4 {
-            font-size: 1.1rem;
-        }
-        
-        .btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .list-group-item {
-            font-size: 0.85rem;
-            padding: 0.4rem;
-        }
-
-        .badge {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.5rem;
-        }
-
-        h6.border-bottom {
-            font-size: 0.95rem;
-        }
-    }
-</style>
 {% endblock %}
