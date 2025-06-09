@@ -6,28 +6,27 @@ import numpy as np
 import torch
 
 def process_image(weights_path, image_path, output_dir):
-    """Processa uma imagem usando o modelo YOLOv8 com otimizações"""
+    """Processa uma imagem usando o modelo YOLOv8"""
     try:
-        # Configurar CUDA para melhor performance
-        if torch.cuda.is_available():
+        # MOdelo foi feito para rodar em  GPU ou CPU
+        if torch.cuda.is_available(): 
             torch.backends.cudnn.benchmark = True
             torch.backends.cudnn.deterministic = False
 
-        # Carregar modelo com otimizações
         model = YOLO(weights_path)
-        model.fuse()  # Fundir camadas para maior velocidade
+        model.fuse()  
         
-        # Configurar para inferência rápida
-        model.conf = 0.25  # Reduzir threshold de confiança
-        model.iou = 0.45  # Ajustar IOU para melhor balanço
+        
+        model.conf = 0.25  
+        model.iou = 0.45  
         
         start_time = time.time()
         
-        # Fazer inferência com otimizações
-        results = model(image_path, verbose=False)[0]  # Desativar verbose
+        
+        results = model(image_path, verbose=False)[0]  
         processing_time = time.time() - start_time
 
-        # Inicializar contadores
+       
         class_counts = {
             'RBC': 0, 'WBC': 0, 'Platelets': 0,
             'Lymphocyte': 0, 'Monocyte': 0, 'Basophil': 0,
@@ -36,16 +35,16 @@ def process_image(weights_path, image_path, output_dir):
             'Promyelocyte': 0, 'Eosinophil': 0
         }
 
-        # Processar resultados eficientemente
+        
         boxes = results.boxes
         total_detections = len(boxes)
         if total_detections > 0:
-            # Processar todas as detecções de uma vez
+           
             classes = boxes.cls.cpu().numpy().astype(int)
             confs = boxes.conf.cpu().numpy()
-            total_confidence = confs.sum() * 100  # Converter para porcentagem
+            total_confidence = confs.sum() * 100  
 
-            # Mapear classes mais eficientemente
+            
             class_mapping = {
                 'hemacia': 'RBC',
                 'plaqueta': 'Platelets',
@@ -61,7 +60,7 @@ def process_image(weights_path, image_path, output_dir):
                 'eosinofilo': ['Eosinophil', 'WBC']
             }
 
-            # Contagem otimizada
+            
             for cls_id in classes:
                 class_name = results.names[cls_id]
                 mapped_classes = class_mapping.get(class_name, [])
@@ -71,11 +70,11 @@ def process_image(weights_path, image_path, output_dir):
                 else:
                     class_counts[mapped_classes] += 1
 
-        # Salvar imagem processada de forma otimizada
+        
         output_path = Path(output_dir) / f"detected_{Path(image_path).name}"
         output_path.parent.mkdir(parents=True, exist_ok=True)
         
-        res_plotted = results.plot(line_width=1)  # Reduzir espessura das linhas
+        res_plotted = results.plot(line_width=1)  
         cv2.imwrite(str(output_path), res_plotted, [cv2.IMWRITE_JPEG_QUALITY, 90])  # Comprimir imagem
 
         return {
