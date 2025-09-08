@@ -10,4 +10,5 @@ urlpatterns = [
     path('criar/', views.criar_analise, name='criar_analise'),
     path('deletar/<int:analise_id>/', views.deletar_analise, name='deletar_analise'),
     path('editar/<int:analise_id>/', views.editar_analise, name='editar_analise'),
+    path('analises/', include('Analises.urls')),
 ]
