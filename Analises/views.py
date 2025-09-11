@@ -16,7 +16,10 @@ from zoneinfo import ZoneInfo  # Para Python 3.9+
 import shutil
 import time
 from scripts.analysis_service import analysis_service
-
+try:
+    from scripts.infer import process_image
+except ImportError:
+    pass
 logger = logging.getLogger(__name__)
 
 def copiar_imagem_para_static(analise):
