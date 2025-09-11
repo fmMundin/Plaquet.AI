@@ -2,21 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import Analise
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
 import os
 import logging
 from pathlib import Path
-from scripts.infer import process_image
+from scripts.infer import process_image  # Mudamos para process_image
 import traceback
 from django.db import transaction
 from django.core.files import File
 from django.conf import settings
 from django.utils import timezone
+from zoneinfo import ZoneInfo  # Para Python 3.9+
 import shutil
 import time
 from scripts.analysis_service import analysis_service
-from django.contrib.auth.decorators import login_required
-
 try:
     from scripts.infer import process_image
 except ImportError:
@@ -49,6 +49,7 @@ def copiar_imagem_para_static(analise):
         return False
 
 # Create your views here.
+@login_required
 def analises(request):
     """View para listar todas as análises"""
     try:
@@ -59,6 +60,7 @@ def analises(request):
         messages.error(request, "Erro ao carregar análises")
         return render(request, 'Analises/analises.html', {'analises': []})
 
+@login_required
 def criar_analise(request):
     if request.method == 'POST':
         try:
@@ -98,7 +100,7 @@ def criar_analise(request):
                         if processed_path.exists():
                             with processed_path.open('rb') as f:
                                 analise.img_resultado.save(
-                                    f'resultado_{analise.id}.jpg',
+                                    f'resultado_{analise.pk}.jpg',
                                     File(f),
                                     save=True
                                 )
@@ -123,7 +125,7 @@ def criar_analise(request):
                         analise.status = 'concluido'
                         analise.save()
                         
-                        logger.info(f"Análise {analise.id} processada com sucesso. Acurácia: {analise.acuracia:.2f}%")
+                        logger.info(f"Análise {analise.pk} processada com sucesso. Acurácia: {analise.acuracia:.2f}%")
                         return JsonResponse({'success': True})
                     else:
                         raise Exception(results.get('error', 'Erro no processamento'))
@@ -144,6 +146,7 @@ def criar_analise(request):
 
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
+@login_required
 def deletar_analise(request, analise_id):
     if request.method == 'POST':
         try:
@@ -162,6 +165,7 @@ def deletar_analise(request, analise_id):
             })
     return JsonResponse({'success': False, 'error': 'Método não permitido'})
 
+@login_required
 def detalhes_analise(request, analise_id):
     try:
         analise = get_object_or_404(Analise, pk=analise_id)
@@ -188,6 +192,7 @@ def detalhes_analise(request, analise_id):
         messages.error(request, f'Erro ao exibir detalhes: {str(e)}')
         return redirect('Analises:analises')
 
+@login_required
 def editar_analise(request, analise_id):
     analise = get_object_or_404(Analise, pk=analise_id)
     
@@ -205,6 +210,13 @@ def editar_analise(request, analise_id):
 
 def index(request):
     """View para a página inicial"""
-    return render(request, 'Analises/index.html', {
-        'original_exists': True  # Simplificado para sempre mostrar o conteúdo
-    })
+    try:
+        return render(request, 'Analises/index.html')
+    except Exception as e:
+        logger.error(f"Erro na página inicial: {str(e)}")
+        messages.error(request, "Erro ao carregar a página inicial")
+        return render(request, 'Analises/index.html', {'error': str(e)})
+
+def sobre(request):
+    """View para a página Sobre"""
+    return render(request, 'Analises/sobre.html')

@@ -369,15 +369,8 @@
                             <input type="text" class="form-control" name="paciente" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-dark">Tipo de Análise</label>
-                            <select class="form-select" id="tipoAnalise" name="tipo_analise">
-                                <option value="imagem">Imagem Única</option>
-                                <option value="tempo_real">Análise em Tempo Real</option>
-                            </select>
-                        </div>
-                        <div class="mb-3" id="divImagemUnica">
                             <label class="form-label text-dark">Imagem para Análise</label>
-                            <input type="file" class="form-control" name="img" accept="image/*">
+                            <input type="file" class="form-control" name="img" accept="image/*" required>
                             <div class="form-text">Selecione uma imagem clara das células.</div>
                         </div>
                     </div>
@@ -433,42 +426,18 @@
         const modal = new bootstrap.Modal(document.getElementById('modalNovaAnalise'));
         const spinner = form.querySelector('.spinner-border');
         const submitBtn = form.querySelector('button[type="submit"]');
-        const tipoAnalise = document.getElementById('tipoAnalise');
-        const divImagemUnica = document.getElementById('divImagemUnica');
-
-        // Controlar visibilidade dos campos baseado no tipo de análise
-        tipoAnalise.addEventListener('change', function() {
-            if (this.value === 'tempo_real') {
-                divImagemUnica.style.display = 'none';
-                form.querySelector('[name="img"]').removeAttribute('required');
-            } else {
-                divImagemUnica.style.display = 'block';
-                form.querySelector('[name="img"]').setAttribute('required', 'required');
-            }
-        });
 
         // Otimiza o formulário
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            // Validação básica
             const titulo = form.querySelector('[name="titulo"]').value.trim();
             const paciente = form.querySelector('[name="paciente"]').value.trim();
-            const tipoAnaliseValue = tipoAnalise.value;
-
-            if (!titulo || !paciente) {
-                alert('Por favor, preencha título e paciente');
-                return;
-            }
-
-            if (tipoAnaliseValue === 'tempo_real') {
-                // Redirecionar para a página de análise em tempo real
-                window.location.href = '{% url "Analises:realtime_analysis" %}';
-                return;
-            }
-
             const imgFile = form.querySelector('[name="img"]').files[0];
-            if (!imgFile) {
-                alert('Por favor, selecione uma imagem');
+
+            if (!titulo || !paciente || !imgFile) {
+                alert('Por favor, preencha todos os campos e selecione uma imagem');
                 return;
             }
 

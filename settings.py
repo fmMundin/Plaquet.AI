@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-o#oan7heyy60f)dt=b%98qt^y($7pp&**jfwywn42@l0n))lx*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['plaquetai.studytask.com.br', '127.0.0.1', 'localhost']
 

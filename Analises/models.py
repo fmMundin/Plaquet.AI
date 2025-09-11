@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from zoneinfo import ZoneInfo
 import os
 
 class Analise(models.Model):
@@ -10,20 +11,11 @@ class Analise(models.Model):
         ('erro', 'Erro')
     ]
 
-    TIPO_ANALISE_CHOICES = [
-        ('imagem', 'Imagem Única'),
-        ('tempo_real', 'Tempo Real'),
-        ('video', 'Vídeo')
-    ]
-
     titulo = models.CharField(max_length=200)
     data_criacao = models.DateTimeField(auto_now_add=True)
     paciente = models.CharField(max_length=200)
-    tipo_analise = models.CharField(max_length=20, choices=TIPO_ANALISE_CHOICES, default='imagem')
     img = models.ImageField(upload_to='analises/', null=True, blank=True)
     img_resultado = models.ImageField(upload_to='resultados/', null=True, blank=True)
-    video = models.FileField(upload_to='analises/videos/', null=True, blank=True)
-    video_resultado = models.FileField(upload_to='resultados/videos/', null=True, blank=True)
     n_plaquetas = models.IntegerField(null=True, blank=True)
     n_celulas_brancas = models.IntegerField(null=True, blank=True)
     n_celulas_vermelhas = models.IntegerField(null=True, blank=True)
@@ -41,8 +33,6 @@ class Analise(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     erro_msg = models.TextField(null=True, blank=True)
     tempo_processamento = models.FloatField(null=True, blank=True)
-    esta_gravando = models.BooleanField(default=False)
-    duracao_video = models.FloatField(null=True, blank=True)
     
     # Campos para análise detalhada
     detalhes_processamento = models.JSONField(null=True, blank=True)
@@ -58,23 +48,6 @@ class Analise(models.Model):
         return f"{self.titulo} - {self.paciente}"
 
     def save(self, *args, **kwargs):
-        if not self.data_analise:
-            self.data_analise = timezone.now()
-        super(Analise, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        # Deletar arquivos associados
-        if self.img and os.path.isfile(self.img.path):
-            os.remove(self.img.path)
-        if self.img_resultado and os.path.isfile(self.img_resultado.path):
-            os.remove(self.img_resultado.path)
-        if self.video and os.path.isfile(self.video.path):
-            os.remove(self.video.path)
-        if self.video_resultado and os.path.isfile(self.video_resultado.path):
-            os.remove(self.video_resultado.path)
-        super().delete(*args, **kwargs)
-
-
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
