@@ -1,3 +1,4 @@
+
 """
 Django settings for AnalisesPlaquetAi project.
 
@@ -23,14 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-o#oan7heyy60f)dt=b%98qt^y($7pp&**jfwywn42@l0n))lx*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['plaquetai.studytask.com.br', '127.0.0.1', 'localhost']
-
-# Confiança no proxy (Caddy) terminando TLS
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['https://plaquetai.studytask.com.br']
+ALLOWED_HOSTS = ['195.35.43.48','127.0.0.1','localhost']
 
 
 # Application definition
@@ -127,9 +123,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# Em producao com Caddy, servimos static/media via Caddy apontando para as pastas do projeto
-# O collectstatic deve gerar arquivos em /home/mundin/plaquetai/Plaquet.AI/static
-STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -139,7 +136,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Nao usar STATICFILES_DIRS em producao; os arquivos serao coletados em STATIC_ROOT
+# Adicione estas configurações para debug
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
 
 SITE_ID = 1
 
