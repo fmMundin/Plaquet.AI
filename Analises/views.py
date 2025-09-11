@@ -6,16 +6,17 @@ from datetime import datetime
 import os
 import logging
 from pathlib import Path
-from scripts.infer import process_image  # Mudamos para process_image
+from scripts.infer import process_image
 import traceback
 from django.db import transaction
 from django.core.files import File
 from django.conf import settings
 from django.utils import timezone
-from zoneinfo import ZoneInfo  # Para Python 3.9+
 import shutil
 import time
 from scripts.analysis_service import analysis_service
+from django.contrib.auth.decorators import login_required
+
 try:
     from scripts.infer import process_image
 except ImportError:

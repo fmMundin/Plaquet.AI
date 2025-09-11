@@ -1,0 +1,327 @@
+:root {
+    --purple-primary: #6f42c1;
+    --purple-secondary: #563d7c;
+    --purple-light: #a991d4;
+    --purple-lighter: #e2d9f3;
+    --purple-dark: #45276d;
+    --purple-darker: #2c1845;
+    --purple-accent: #9b51e0;
+    --white: #ffffff;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+}
+
+/* Substituições de cores do Bootstrap */
+.bg-primary {
+    background-color: var(--purple-primary) !important;
+}
+
+.bg-secondary {
+    background-color: var(--purple-secondary) !important;
+}
+
+.bg-success {
+    background-color: var(--purple-light) !important;
+}
+
+.bg-info {
+    background-color: var(--purple-accent) !important;
+}
+
+.bg-warning {
+    background-color: var(--purple-lighter) !important;
+    color: var(--purple-dark) !important;
+}
+
+.bg-danger {
+    background-color: var(--purple-dark) !important;
+}
+
+.text-primary {
+    color: var(--purple-primary) !important;
+}
+
+.text-secondary {
+    color: var(--purple-secondary) !important;
+}
+
+.text-success {
+    color: var(--purple-light) !important;
+}
+
+.text-info {
+    color: var(--purple-accent) !important;
+}
+
+.text-warning {
+    color: var(--purple-dark) !important;
+}
+
+.text-danger {
+    color: var(--purple-darker) !important;
+}
+
+/* Botões */
+.btn-primary {
+    background-color: var(--purple-primary);
+    border-color: var(--purple-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--purple-dark);
+    border-color: var(--purple-dark);
+}
+
+.btn-success {
+    background-color: var(--purple-light);
+    border-color: var(--purple-light);
+}
+
+.btn-success:hover {
+    background-color: var(--purple-accent);
+    border-color: var(--purple-accent);
+}
+
+.btn-info {
+    background-color: var(--purple-accent);
+    border-color: var(--purple-accent);
+    color: var(--white);
+}
+
+.btn-info:hover {
+    background-color: var(--purple-light);
+    border-color: var(--purple-light);
+    color: var(--white);
+}
+
+.btn-warning {
+    background-color: var(--purple-lighter);
+    border-color: var(--purple-light);
+    color: var(--purple-dark);
+}
+
+.btn-warning:hover {
+    background-color: var(--purple-light);
+    border-color: var(--purple-dark);
+    color: var(--white);
+}
+
+.btn-danger {
+    background-color: var(--purple-dark);
+    border-color: var(--purple-darker);
+}
+
+.btn-danger:hover {
+    background-color: var(--purple-darker);
+    border-color: var(--purple-darker);
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+}
+
+.badge.bg-primary {
+    background-color: var(--purple-primary) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--purple-light) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--purple-accent) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--purple-lighter) !important;
+    color: var(--purple-dark) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--purple-dark) !important;
+}
+
+/* Cards */
+.card-header.bg-primary {
+    background-color: var(--purple-primary) !important;
+}
+
+.card-header.bg-success {
+    background-color: var(--purple-light) !important;
+}
+
+.card-header.bg-info {
+    background-color: var(--purple-accent) !important;
+}
+
+.card-header.bg-warning {
+    background-color: var(--purple-lighter) !important;
+    color: var(--purple-dark) !important;
+}
+
+.card-header.bg-danger {
+    background-color: var(--purple-dark) !important;
+}
+
+/* Links */
+a {
+    color: var(--purple-primary);
+}
+
+a:hover {
+    color: var(--purple-dark);
+}
+
+/* Tabelas */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--purple-lighter);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 500;
+    border-radius: 0.25rem;
+}
+
+.status-concluido {
+    background-color: var(--purple-light);
+    color: var(--white);
+}
+
+.status-processando {
+    background-color: var(--purple-accent);
+    color: var(--white);
+}
+
+.status-erro {
+    background-color: var(--purple-dark);
+    color: var(--white);
+}
+
+.status-pendente {
+    background-color: var(--purple-lighter);
+    color: var(--purple-dark);
+}
+
+/* Modal headers */
+.modal-header {
+    border-bottom: 1px solid var(--purple-lighter);
+}
+
+.modal-header.bg-primary {
+    background-color: var(--purple-primary) !important;
+}
+
+/* Textos coloridos específicos */
+.text-purple {
+    color: var(--purple-primary) !important;
+}
+
+.text-purple-light {
+    color: var(--purple-light) !important;
+}
+
+.text-purple-dark {
+    color: var(--purple-dark) !important;
+}
+
+/* Status específicos */
+.status-badge.status-concluido {
+    background-color: var(--purple-light);
+    color: var(--white);
+}
+
+.status-badge.status-processando {
+    background-color: var(--purple-accent);
+    color: var(--white);
+}
+
+.status-badge.status-erro {
+    background-color: var(--purple-dark);
+    color: var(--white);
+}
+
+.status-badge.status-pendente {
+    background-color: var(--purple-lighter);
+    color: var(--purple-dark);
+}
+
+/* Contadores e números */
+.counter-number {
+    color: var(--purple-primary);
+    font-weight: bold;
+}
+
+/* Ícones */
+.icon-purple {
+    color: var(--purple-primary);
+}
+
+.icon-purple-light {
+    color: var(--purple-light);
+}
+
+.icon-purple-dark {
+    color: var(--purple-dark);
+}
+
+/* Links em tabelas */
+.table a {
+    color: var(--purple-primary);
+    text-decoration: none;
+}
+
+.table a:hover {
+    color: var(--purple-dark);
+    text-decoration: underline;
+}
+
+/* Alerts personalizados */
+.alert-purple {
+    background-color: var(--purple-lighter);
+    border-color: var(--purple-light);
+    color: var(--purple-dark);
+}
+
+/* Navbar personalizada */
+.navbar-purple {
+    background-color: var(--purple-primary);
+}
+
+.navbar-purple .navbar-brand,
+.navbar-purple .nav-link {
+    color: var(--white);
+}
+
+.navbar-purple .nav-link:hover {
+    color: var(--purple-lighter);
+}
+
+/* Cards personalizados */
+.card-purple {
+    border-color: var(--purple-light);
+}
+
+.card-purple .card-header {
+    background-color: var(--purple-primary);
+    color: var(--white);
+}
+
+.card-purple-light {
+    border-color: var(--purple-lighter);
+}
+
+.card-purple-light .card-header {
+    background-color: var(--purple-light);
+    color: var(--white);
+}

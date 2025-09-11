@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sobre Nós - PlaquetAI{% endblock %}
+
+{% block css %}
+<style>
+    .about-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, var(--purple-darker) 0%, var(--purple-primary) 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "images/pattern.png" %}') repeat;
+        opacity: 0.1;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .profile-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--purple-light);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-card:hover .profile-image {
+        transform: scale(1.05);
+    }
+
+    .skill-tag {
+        display: inline-block;
+        padding: 8px 15px;
+        margin: 5px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .skill-tag:nth-child(2n) {
+        animation-delay: 0.5s;
+    }
+
+    .skill-tag:nth-child(3n) {
+        animation-delay: 1s;
+    }
+
+    .social-links {
+        margin-top: 20px;
+    }
+
+    .social-links a {
+        color: white;
+        margin: 0 10px;
+        font-size: 1.5em;
+        transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+        color: var(--purple-light);
+    }
+
+    .cv-button {
+        background: var(--purple-light);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 25px;
+        border: none;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .cv-button:hover {
+        background: var(--purple-accent);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .skills-container {
+        margin: 20px 0;
+        min-height: 100px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="about-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mb-4">Nossa Equipe</h1>
+                <p class="lead">Conheça os desenvolvedores por trás do PlaquetAI</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="profile-card">
+                    <div class="text-center">
+                        <img src="/media/geral/icon_felipe.jpg" alt="Felipe Mundin" class="profile-image">
+                        <h3 class="mt-3">Felipe Mundin</h3>
+                        <p class="text-light">Desenvolvedor </p>
+                        
+                        <div class="skills-container">
+                            <div class="skill-tag">Python</div>
+                            <div class="skill-tag">Django</div>
+                            <div class="skill-tag">JAVA</div>
+                            <div class="skill-tag">C#</div>
+                            <div class="skill-tag">Machine Learning</div>
+                            <div class="skill-tag">Deep Learning</div>
+                        </div>
+                        
+                        <div class="social-links">
+                            <a href="mailto:fmundin@alu.paulinia.sp.gov.br" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            <a href="https://github.com/fmMundin" target="_blank" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/felipemundin/" target="_blank" title="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
+                        
+                        <a href="{% static 'media/cv_felipe.pdf' %}" class="cv-button" download>
+                            <i class="fas fa-download me-2"></i>Download CV
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="profile-card">
+                    <div class="text-center">
+                        <img src="/media/geral/icon_maria.jpg" alt="Maria" class="profile-image">
+                        <h3 class="mt-3">Maria Clara dos Santos</h3>
+                        <p class="text-light">Desenvolvedora </p>
+                        
+                        <div class="skills-container">
+                            <div class="skill-tag">HTML</div>
+                            <div class="skill-tag">CSS</div>
+                            <div class="skill-tag">JavaScript</div>
+                            <div class="skill-tag">Python</div>
+                            <div class="skill-tag">Machine Learning</div>
+                            <div class="skill-tag">JAVA</div>
+                        </div>
+                        
+                        <div class="social-links">
+                            <a href="mailto:mcsantos@alu.paulinia.sp.gov.br" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            <a href="https://github.com/Maria02008" target="_blank" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/maria-clara-dos-santos-9a9916336/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" title="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
+                        
+                        <a href="{% static 'media/cv_maria.pdf' %}" class="cv-button" download>
+                            <i class="fas fa-download me-2"></i>Veja o Currículo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
