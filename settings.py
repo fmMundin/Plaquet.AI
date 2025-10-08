@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-o#oan7heyy60f)dt=b%98qt^y($7pp&**jfwywn42@l0n))lx*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['plaquetai.studytask.com.br', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['plaquetai.ia.br', 'www.plaquetai.ia.br', '127.0.0.1', 'localhost']
 
 # Confiança no proxy (Caddy) terminando TLS
 USE_X_FORWARDED_HOST = True
