@@ -30,6 +30,7 @@
     {% endif %}
 
     <!-- Navbar -->
+     {% if not login %}
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
             <a class="navbar-brand" href="{% url 'Analises:analises' %}">
@@ -76,7 +77,8 @@
             </div>
         </div>
     </nav>
-
+    {% endif %}
+    
     <main class="main-content container my-4 animate-fade-in">
         {% block content %}{% endblock %}
     </main>

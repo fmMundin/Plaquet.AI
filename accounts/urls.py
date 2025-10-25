@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
+from django.shortcuts import render
 
 app_name = 'accounts'
 
@@ -8,6 +9,7 @@ urlpatterns = [
     path('login/', views.custom_login, name='login'),
     path('logout/', views.custom_logout, name='logout'),
     path('register/', views.register, name='register'),
+    path('locked/', lambda request: render(request, 'accounts/locked.html'), name='locked'),
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('email-confirm/<uidb64>/<token>/', views.email_confirm, name='email_confirm'),

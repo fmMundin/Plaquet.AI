@@ -75,7 +75,7 @@
                         </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="{{ MEDIA_URL }}geral/hero2.png" class="d-block w-100" alt="Análise de Plaquetas">
+                                <img src="{% static 'images/hero2.png' %}" class="d-block w-100" alt="Análise de Plaquetas">
                                 <div class="carousel-caption d-none d-md-block">
                                     <h3>Análise de Células</h3>
                                     <p>Detecção precisa com IA</p>
@@ -142,7 +142,7 @@
                         <div class="sample-image-container">
                             <img src="{% static 'images/original3.png' %}" alt="RBC" class="sample-base-image">
                             <div class="sample-overlay">
-                                <img src="{% static 'images/detected3.jpg' %}" alt="Detecção"
+                                <img src="{% static 'images/detected3.png' %}" alt="Detecção"
                                     class="sample-overlay-image">
                             </div>
                         </div>
@@ -291,26 +291,6 @@
 {% endblock %}
 {% block css %}
 <style>
-.hero-image-1 {
-    background-image: url("{{ MEDIA_URL }}geral/hero2.png");
-}
-.hero-image-2 {
-    background-image: url("{{ MEDIA_URL }}geral/hero3.png");
-}
-.hero-image-3 {
-    background-image: url("{{ MEDIA_URL }}geral/hero4.png");
-}
-
-
-.hero-image-1 {
-    background-image: url("{{ MEDIA_URL }}geral/hero2.png");
-}
-.hero-image-2 {
-    background-image: url("{{ MEDIA_URL }}geral/hero3.png");
-}
-.hero-image-3 {
-    background-image: url("{{ MEDIA_URL }}geral/hero4.png");
-}
 
 
 .carousel-item img {
@@ -519,76 +499,6 @@
     });
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const heroCarousel = document.getElementById('heroCarousel');
-        const slides = heroCarousel.querySelectorAll('.hero-slide');
-        const prevBtn = heroCarousel.querySelector('.hero-prev');
-        const nextBtn = heroCarousel.querySelector('.hero-next');
-        const indicators = heroCarousel.querySelector('.hero-indicators');
-        let currentSlide = 0;
-
-
-        slides.forEach((_, index) => {
-            const dot = document.createElement('button');
-            dot.classList.add('hero-indicator');
-            if (index === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => goToSlide(index));
-            indicators.appendChild(dot);
-        });
-
-
-        function updateSlides() {
-            slides.forEach((slide, index) => {
-                slide.classList.remove('active');
-                indicators.children[index].classList.remove('active');
-                slide.classList.add(index === currentSlide ? 'active' : 'inactive');
-                indicators.children[index].classList.add(index === currentSlide ? 'active' : '');
-            });
-        }
-
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateSlides();
-        }
-
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            updateSlides();
-        }
-
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            updateSlides();
-        }
-
-
-        function startAutoplay() {
-            stopAutoplay();
-            autoplayInterval = setInterval(nextSlide, 5000);
-        }
-
-
-        function stopAutoplay() {
-            if (autoplayInterval) {
-                clearInterval(autoplayInterval);
-            }
-        }
-
-
-        prevBtn.addEventListener('click', prevSlide);
-        nextBtn.addEventListener('click', nextSlide);
-
-
-        heroCarousel.addEventListener('mouseenter', stopAutoplay);
-        heroCarousel.addEventListener('mouseleave', startAutoplay);
-
-
-        startAutoplay();
-        updateSlides();
-    });
 
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -666,99 +576,6 @@
     });
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const heroCarousel = document.getElementById('heroCarousel');
-        const slides = heroCarousel.querySelectorAll('.hero-slide');
-        const prevBtn = heroCarousel.querySelector('.hero-prev');
-        const nextBtn = heroCarousel.querySelector('.hero-next');
-        const indicators = heroCarousel.querySelector('.hero-indicators');
-        let currentSlide = 0;
-        let autoplayInterval;
-
-
-        slides.forEach((_, index) => {
-            const dot = document.createElement('button');
-            dot.classList.add('hero-indicator');
-            if (index === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => {
-                stopAutoplay();
-                goToSlide(index);
-                startAutoplay();
-            });
-            indicators.appendChild(dot);
-        });
-
-
-        function updateSlides() {
-            slides.forEach((slide, index) => {
-                slide.classList.remove('active', 'prev', 'next');
-                indicators.children[index].classList.remove('active');
-
-
-                if (index === currentSlide) {
-                    slide.classList.add('active');
-                    indicators.children[index].classList.add('active');
-                } else if (index === (currentSlide - 1 + slides.length) % slides.length) {
-                    slide.classList.add('prev');
-                } else if (index === (currentSlide + 1) % slides.length) {
-                    slide.classList.add('next');
-                }
-            });
-        }
-
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateSlides();
-        }
-
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            updateSlides();
-        }
-
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            updateSlides();
-        }
-
-
-        function startAutoplay() {
-            stopAutoplay();
-            autoplayInterval = setInterval(nextSlide, 5000);
-        }
-
-
-        function stopAutoplay() {
-            if (autoplayInterval) {
-                clearInterval(autoplayInterval);
-            }
-        }
-
-
-        prevBtn.addEventListener('click', () => {
-            stopAutoplay();
-            prevSlide();
-            startAutoplay();
-        });
-
-
-        nextBtn.addEventListener('click', () => {
-            stopAutoplay();
-            nextSlide();
-            startAutoplay();
-        });
-
-
-        heroCarousel.addEventListener('mouseenter', stopAutoplay);
-        heroCarousel.addEventListener('mouseleave', startAutoplay);
-
-
-        startAutoplay();
-        updateSlides();
-    });
 
 
     function toggleFaq(element) {

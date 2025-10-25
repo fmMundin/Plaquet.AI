@@ -1,8 +1,34 @@
 {% extends 'base.html' %}
-{% block title %}Conta bloqueada{% endblock %}
+{% load static %}
+
+{% block title %}Acesso Bloqueado - Plaquet.AI{% endblock %}
+
 {% block content %}
-<div class="container mt-5" style="max-width: 400px;">
-    <h2 class="mb-4">Conta bloqueada</h2>
-    <p>Por motivos de segurança, sua conta foi temporariamente bloqueada devido a muitas tentativas de login. Tente novamente mais tarde.</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-ban fa-4x text-warning mb-4"></i>
+                    <h2 class="card-title mb-4">Acesso Temporariamente Bloqueado</h2>
+                    <p class="card-text">
+                        Muitas tentativas de login falharam.
+                    </p>
+                    <p class="card-text">
+                        Seu acesso foi bloqueado por <strong>1 hora</strong> por segurança.
+                    </p>
+                    <hr>
+                    <p class="text-muted small">
+                        Se você é o proprietário da conta e esqueceu sua senha, 
+                        <a href="{% url 'accounts:password_reset' %}">clique aqui para recuperá-la</a>.
+                    </p>
+                    <a href="{% url 'Analises:index' %}" class="btn btn-secondary mt-3">
+                        Voltar para a Página Inicial
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+

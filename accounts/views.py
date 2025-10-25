@@ -83,7 +83,7 @@ def custom_login(request):
         else:
             messages.error(request, _('Por favor, corrija os erros abaixo.'))
     
-    return render(request, 'accounts/login.html', {'form': form})
+    return render(request, 'accounts/login.html', {'form': form, 'login': True})
 
 def custom_logout(request):
     logout(request)

@@ -23,14 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-o#oan7heyy60f)dt=b%98qt^y($7pp&**jfwywn42@l0n))lx*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True  # True para desenvolvimento, False em produção!
 
-ALLOWED_HOSTS = ['plaquetai.studytask.com.br', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['www.plaquetai.ia.br', 'plaquetai.ia.br', '127.0.0.1', 'localhost']
 
 # Confiança no proxy (Caddy) terminando TLS
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['https://plaquetai.studytask.com.br']
+CSRF_TRUSTED_ORIGINS = ['https://plaquetai.ia.br']
 
 
 # Application definition
@@ -127,9 +127,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# Em producao com Caddy, servimos static/media via Caddy apontando para as pastas do projeto
-# O collectstatic deve gerar arquivos em /home/mundin/plaquetai/Plaquet.AI/static
-STATIC_ROOT = BASE_DIR / 'static'
+
+# Configuração de arquivos estáticos
+# STATIC_ROOT: onde collectstatic coleta os arquivos (usado em produção)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# STATICFILES_DIRS: onde Django procura arquivos estáticos em desenvolvimento
+# Em produção, após collectstatic, isso não é mais necessário
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Sempre incluir para garantir que arquivos sejam encontrados
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -139,50 +144,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Nao usar STATICFILES_DIRS em producao; os arquivos serao coletados em STATIC_ROOT
-
 SITE_ID = 1
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
-
-# Authentication settings
-LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'Analises:analises'
-LOGOUT_REDIRECT_URL = 'accounts:login'
-
-# Django Axes settings (proteção contra brute force)
-AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
-AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
-AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
-AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
-AXES_LOCKOUT_URL = None  # Usar o template em vez de URL
-AXES_USERNAME_FORM_FIELD = 'username'  # Campo de usuário no form (que contém o email)
-
-# Session settings
-SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
-SESSION_COOKIE_SECURE = False  # Mudar para True em produção
-
-# Messages settings
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
-# Email settings (para recuperação de senha)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Para desenvolvimento
-DEFAULT_FROM_EMAIL = 'noreply@plaquetai.com'
-
-# Django Axes settings (proteção contra brute force)
-AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
-AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
-AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
-AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
-
-# Session settings
-SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
-SESSION_COOKIE_SECURE = False  # Mudar para True em produção
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
-
-# Messages settings
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
@@ -190,32 +154,21 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/accounts/profile/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+# Authentication settings
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'Analises:analises'
+LOGOUT_REDIRECT_URL = 'accounts:login'
 
-# django-axes
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1  # em horas
-AXES_LOCKOUT_TEMPLATE = 'accounts/lockout.html'
+# Session settings
+SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
+SESSION_COOKIE_SECURE = False  # Mudar para True em produção com HTTPS
 
-# django-allauth (atualizado para novas opções)
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_RATE_LIMITS = {
-    'login_failed': '5/m',
-}
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-    }
-}
+# Messages settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-# E-mail para desenvolvimento
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email settings (para recuperação de senha)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Para desenvolvimento
 DEFAULT_FROM_EMAIL = 'noreply@plaquetai.com'
 
 # Para produção, use SMTP do Gmail:
@@ -235,9 +188,9 @@ CACHES = {
 
 # Django Axes settings (proteção contra brute force)
 AXES_ENABLED = True
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1  # em horas
-AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'
-AXES_RESET_ON_SUCCESS = True
-AXES_USE_USER_AGENT = True
-AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username', 'user_agent']
+AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
+AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
+AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
+AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
+AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username', 'user_agent']  # Parâmetros de bloqueio
+AXES_USERNAME_FORM_FIELD = 'username'  # Campo de usuário no form (que contém o email)

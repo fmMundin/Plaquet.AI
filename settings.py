@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Analises.apps.AnalisesConfig',  # Usar o formato completo
     'accounts.apps.AccountsConfig',
-    'axes',  # Proteção brute force
 ]
 
 MIDDLEWARE = [
@@ -53,7 +52,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'axes.middleware.AxesMiddleware',  # Proteção contra brute force
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'accounts.middleware.LoginRequiredMiddleware',  # Novo middleware de autenticação
@@ -150,14 +148,6 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'Analises:analises'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
-# Django Axes settings (proteção contra brute force)
-AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
-AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
-AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
-AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
-AXES_LOCKOUT_URL = None  # Usar o template em vez de URL
-AXES_USERNAME_FORM_FIELD = 'username'  # Campo de usuário no form (que contém o email)
-
 # Session settings
 SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
@@ -169,35 +159,6 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 # Email settings (para recuperação de senha)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Para desenvolvimento
 DEFAULT_FROM_EMAIL = 'noreply@plaquetai.com'
-
-# Django Axes settings (proteção contra brute force)
-AXES_FAILURE_LIMIT = 5  # Número de tentativas antes de bloquear
-AXES_COOLOFF_TIME = 1  # Tempo de bloqueio em horas
-AXES_RESET_ON_SUCCESS = True  # Reseta contagem após login bem sucedido
-AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'  # Template para usuário bloqueado
-
-# Session settings
-SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
-SESSION_COOKIE_SECURE = False  # Mudar para True em produção
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sessão persiste mesmo fechando o navegador
-
-# Messages settings
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
-# Authentication backends
-AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesBackend',  # Should be first
-    'django.contrib.auth.backends.ModelBackend',
-]
-
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/accounts/profile/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
-
-# django-axes
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1  # em horas
-AXES_LOCKOUT_TEMPLATE = 'accounts/lockout.html'
 
 # django-allauth (atualizado para novas opções)
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -232,12 +193,3 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-
-# Django Axes settings (proteção contra brute force)
-AXES_ENABLED = True
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1  # em horas
-AXES_LOCKOUT_TEMPLATE = 'accounts/locked.html'
-AXES_RESET_ON_SUCCESS = True
-AXES_USE_USER_AGENT = True
-AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username', 'user_agent']
